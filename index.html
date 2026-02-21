@@ -108,6 +108,13 @@ section{padding:80px 0;border-top:1px solid var(--border)}
 .project-type{font-size:10px;color:var(--accent2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
 .project-desc{font-size:12px;color:var(--muted);line-height:1.6}
 
+.results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:20px}
+.result-card{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:14px 16px}
+.result-num{font-family:'Syne',sans-serif;font-size:22px;font-weight:800}
+.result-desc{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.5}
+.result-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.result-label::before{content:'';display:inline-block;width:16px;height:1px;background:var(--accent3);flex-shrink:0}
+
 .edu-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:24px 28px;display:flex;align-items:center;gap:28px}
 .edu-year{font-family:'Syne',sans-serif;font-size:34px;font-weight:800;color:var(--border);flex-shrink:0}
 .edu-uni{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:5px}
@@ -140,6 +147,7 @@ footer{border-top:1px solid var(--border);padding:48px 0}
   .hero-stats{grid-template-columns:1fr 1fr}
   .about-grid{grid-template-columns:1fr}
   .projects-grid{grid-template-columns:1fr}
+  .results-grid{grid-template-columns:1fr 1fr}
   .nav-links{display:none}
   .case-header{flex-direction:column}
   .exp-header{flex-direction:column}
@@ -470,6 +478,36 @@ footer{border-top:1px solid var(--border);padding:48px 0}
 <section id="experience">
   <div class="section-label">// 03 — experience</div>
   <h2 class="section-title">Опыт работы</h2>
+
+  <!-- TUMANOV GROUP — новое место работы -->
+  <div class="exp-card reveal" style="border-color:rgba(0,229,255,.18);box-shadow:0 0 32px rgba(0,229,255,.04);">
+    <div class="exp-header">
+      <div>
+        <div class="exp-company">TUMANOV GROUP</div>
+        <div class="exp-role">Специалист по CRM, автоматизации и BI-аналитике</div>
+      </div>
+      <div>
+        <div class="exp-period-main">Декабрь 2025 — сейчас</div>
+        <div class="exp-period-sub">Таиланд (Пхукет) / Москва · удалённо</div>
+      </div>
+    </div>
+    <ul class="exp-duties">
+      <li>Техническое сопровождение amoCRM: настройка воронок, этапов, полей, триггеров и автоматических действий под специфику международного рынка недвижимости (Пхукет) и образовательных продуктов</li>
+      <li>Разработка и поддержка интеграций через amoCRM API: вебхуки, синхронизация с внешними сервисами, обработка событий в реальном времени, фильтрация и пагинация больших массивов данных (до 1 500+ сделок)</li>
+      <li>Создание кастомных виджетов и JavaScript-скриптов для amoCRM с применением Claude и ChatGPT в качестве AI-ассистентов при разработке</li>
+      <li>Построение автоматизаций на n8n: умное распределение лидов по менеджерам (Круг 2, 3, 4) с анти-повтором и дедупликацией, цепочки Telegram-уведомлений, интеграции с Google Drive и PostgreSQL</li>
+      <li>Разработка и миграция Telegram-ботов: переход с коммерческих решений (Salebot) на self-hosted инфраструктуру n8n + PostgreSQL-бэкенд; проектирование схемы данных и логики взаимодействия</li>
+      <li>BI-аналитика в Google Sheets: воронки по менеджерам и кругам продаж, стоимость лида, конверсии по этапам, аналитика эффективности интернов с автоматическим сбором данных</li>
+      <li>Автоматизация анализа звонков и встреч: n8n + AssemblyAI + OpenAI — расшифровка, классификация типа разговора, AI-оценка по скрипту, сохранение результатов в Google Sheets</li>
+      <li>Работа с нестандартными сценариями amoCRM API: массовая фильтрация по массивам ID, batch-обработка, корректная работа с часовыми поясами (UTC+7 Пхукет, Московское время)</li>
+      <li>Google Apps Script: автоматические отчёты, обращения к amoCRM API, агрегация данных из нескольких источников, append-or-update операции для исключения дублей</li>
+      <li>Управление серверной инфраструктурой: self-hosted n8n на VPS Hostkey, настройка процессов, резервное копирование воркфлоу, мониторинг стабильности</li>
+      <li>Разработка системы дайджестов для инвесторов в недвижимость: автоматическая агрегация и рассылка актуальных новостей по рынку Пхукета через n8n + Telegram</li>
+    </ul>
+
+  </div>
+
+  <!-- Рыбаков Плэйскул -->
   <div class="exp-card reveal">
     <div class="exp-header">
       <div>
@@ -555,7 +593,7 @@ footer{border-top:1px solid var(--border);padding:48px 0}
       <p>
         Наталья — руководитель отдела маркетинга, «Рыбаков Плэйскул»<br>
         <span style="color:var(--accent);font-size:11px;">контакт по запросу</span><br><br>
-        Юрий Кузьмичев — руководитель отдела продаж<br>
+        Владислав Умнов — IT Lead, TUMANOV GROUP<br>
         <span style="color:var(--accent);font-size:11px;">контакт по запросу</span>
       </p>
     </div>
