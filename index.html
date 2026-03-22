@@ -123,6 +123,16 @@ section{padding:80px 0;border-top:1px solid var(--border)}
 .course-year{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--border);flex-shrink:0}
 .course-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px}
 .course-org{font-size:12px;color:var(--accent)}
+.cert-section-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin:28px 0 14px;display:flex;align-items:center;gap:8px}
+.cert-section-label::before{content:'';width:16px;height:1px;background:var(--accent2);flex-shrink:0}
+.cert-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:16px 24px;margin-top:10px;display:flex;align-items:center;gap:20px;text-decoration:none;transition:border-color .25s,box-shadow .25s,transform .2s;cursor:pointer}
+.cert-card:hover{border-color:rgba(124,58,237,.4);box-shadow:0 4px 24px rgba(0,0,0,.3);transform:translateY(-2px)}
+.cert-card-year{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--border);flex-shrink:0}
+.cert-card-body{flex:1;min-width:0}
+.cert-card-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px}
+.cert-card-org{font-size:12px;color:var(--accent2)}
+.cert-card-link{flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:4px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.2);color:#c4b5fd;transition:all .2s}
+.cert-card:hover .cert-card-link{background:rgba(124,58,237,.25);color:#fff}
 
 .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .about-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:22px;transition:border-color .2s}
@@ -163,6 +173,7 @@ footer{border-top:1px solid var(--border);padding:48px 0}
   .dashboards-grid{grid-template-columns:1fr}
   .edu-card{flex-direction:column;gap:8px}
   .edu-year{font-size:22px}
+  .cert-card-year{font-size:16px}
 }
 </style>
 </head>
@@ -188,9 +199,9 @@ footer{border-top:1px solid var(--border);padding:48px 0}
   <div style="width:100%">
     <div class="hero-label">// CRM · Автоматизация · BI-аналитика</div>
     <h1 class="hero-name">Хакунов<br><span>Алан</span></h1>
-    <div class="hero-title">Технический специалист amoCRM и автоматизации</div>
+    <div class="hero-title">Технический специалист amoCRM/Bitrix24 и BI-аналитик</div>
     <p class="hero-desc">
-      Почти 4 года в техническом сопровождении CRM-экосистем: amoCRM, Bitrix24, автоматизация
+      Более 4 лет в техническом сопровождении CRM-экосистем: amoCRM, Bitrix24, автоматизация
       процессов, интеграции через API, аналитика в Google Sheets. Фокус — на том, чтобы системы
       работали сами и давали измеримый результат бизнесу.
     </p>
@@ -213,7 +224,7 @@ footer{border-top:1px solid var(--border);padding:48px 0}
       </span>
     </div>
     <div class="hero-stats">
-      <div class="stat"><span class="stat-num">&#x2248;4</span><span class="stat-label">года опыта</span></div>
+      <div class="stat"><span class="stat-num">4+</span><span class="stat-label">лет опыта</span></div>
       <div class="stat"><span class="stat-num">80%</span><span class="stat-label">лидов авто</span></div>
       <div class="stat"><span class="stat-num">&#x2212;30%</span><span class="stat-label">расходов SaaS</span></div>
       <div class="stat"><span class="stat-num">&lt;$5</span><span class="stat-label">контроль звонков/мес</span></div>
@@ -613,6 +624,44 @@ footer{border-top:1px solid var(--border);padding:48px 0}
       <div class="course-org">Grebenuk Resulting · Москва</div>
     </div>
   </div>
+
+  <div class="cert-section-label">Сертификаты Битрикс24</div>
+
+  <a href="https://drive.google.com/file/d/1AQy3j9T-88a3dWOF2HoQ6QoZbk2kHp8v/view?usp=sharing" target="_blank" class="cert-card reveal">
+    <div class="cert-card-year">B24</div>
+    <div class="cert-card-body">
+      <div class="cert-card-name">Битрикс24. Основы</div>
+      <div class="cert-card-org">1С-Битрикс</div>
+    </div>
+    <div class="cert-card-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+  </a>
+
+  <a href="https://drive.google.com/file/d/1q5cu1P9rcAp5omGka5ScDqg4tGEL1_8Q/view?usp=sharing" target="_blank" class="cert-card reveal">
+    <div class="cert-card-year">B24</div>
+    <div class="cert-card-body">
+      <div class="cert-card-name">Автоматизация цифровых рабочих мест</div>
+      <div class="cert-card-org">1С-Битрикс</div>
+    </div>
+    <div class="cert-card-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+  </a>
+
+  <a href="https://drive.google.com/file/d/1W1-ev-3oCMc2mP7aisU2je84JDBs6Srh/view?usp=sharing" target="_blank" class="cert-card reveal">
+    <div class="cert-card-year">B24</div>
+    <div class="cert-card-body">
+      <div class="cert-card-name">Автоматизация бизнес-процессов</div>
+      <div class="cert-card-org">1С-Битрикс</div>
+    </div>
+    <div class="cert-card-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+  </a>
+
+  <a href="https://drive.google.com/file/d/1_VvIMuU65WRBhzzkgNo4n32_neL3YjR3/view?usp=sharing" target="_blank" class="cert-card reveal">
+    <div class="cert-card-year">B24</div>
+    <div class="cert-card-body">
+      <div class="cert-card-name">No-code в Битрикс24</div>
+      <div class="cert-card-org">1С-Битрикс</div>
+    </div>
+    <div class="cert-card-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
+  </a>
 </section>
 
 <!-- ABOUT -->
