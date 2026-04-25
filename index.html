@@ -19,6 +19,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .glow-orb{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;opacity:.12}
 .glow-orb-1{width:600px;height:600px;background:var(--accent2);top:-200px;right:-200px}
 .glow-orb-2{width:400px;height:400px;background:var(--accent);bottom:20%;left:-150px}
+.hero-avatar{width:104px;height:104px;border-radius:50%;object-fit:cover;object-position:center 30%;border:2px solid var(--accent);box-shadow:0 0 32px rgba(0,229,255,.22),0 8px 32px rgba(0,0,0,.4);margin-bottom:24px;display:block;opacity:0;animation:fadeUp .6s ease .05s forwards}
 .wrapper{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:0 24px}
 
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,15,.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
@@ -198,6 +199,7 @@ footer{border-top:1px solid var(--border);padding:48px 0}
 
 <section class="hero">
   <div style="width:100%">
+    <img src="./photo.jpg" alt="Хакунов Алан" class="hero-avatar" onerror="this.style.display='none'">
     <div class="hero-label">// CRM · Автоматизация · BI-аналитика</div>
     <h1 class="hero-name">Хакунов<br><span>Алан</span></h1>
     <div class="hero-title">Технический специалист amoCRM/Bitrix24 и BI-аналитик</div>
@@ -207,9 +209,9 @@ footer{border-top:1px solid var(--border);padding:48px 0}
       работали сами и давали измеримый результат бизнесу.
     </p>
     <div class="hero-contacts">
-      <a href="tel:+79640392554" class="contact-chip">
+      <a href="tel:+79640392854" class="contact-chip">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11a19.79 19.79 0 01-3.07-8.67 2 2 0 012-2.18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.18 6.18l1.36-1.37a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-        +7 (964) 039-25-54
+        +7 (964) 039-28-54
       </a>
       <a href="mailto:hakunov1991@gmail.com" class="contact-chip">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
@@ -226,9 +228,9 @@ footer{border-top:1px solid var(--border);padding:48px 0}
     </div>
     <div class="hero-stats">
       <div class="stat"><span class="stat-num">4+</span><span class="stat-label">лет опыта</span></div>
-      <div class="stat"><span class="stat-num">80%</span><span class="stat-label">лидов авто</span></div>
-      <div class="stat"><span class="stat-num">&#x2212;30%</span><span class="stat-label">расходов SaaS</span></div>
-      <div class="stat"><span class="stat-num">&lt;$5</span><span class="stat-label">контроль звонков/мес</span></div>
+      <div class="stat"><span class="stat-num">1&#x2013;3</span><span class="stat-label">мин — квал. лида</span></div>
+      <div class="stat"><span class="stat-num">100%</span><span class="stat-label">контроль звонков</span></div>
+      <div class="stat"><span class="stat-num">&#x2212;30%</span><span class="stat-label">SaaS / год</span></div>
     </div>
   </div>
   <div class="scroll-hint">
@@ -329,12 +331,12 @@ footer{border-top:1px solid var(--border);padding:48px 0}
       <div class="case-header">
         <div>
           <div class="case-num">01 / AI-квалификация лидов</div>
-          <div class="case-title">Бот берёт на себя 80% входящих диалогов — менеджер получает уже квалифицированный лид</div>
+          <div class="case-title">Время обработки входящего обращения — с 10–15 минут до 1–3 минут. Менеджер получает только квалифицированных</div>
         </div>
-        <div class="case-metric m-cyan">80%</div>
+        <div class="case-metric m-cyan">10&#x2192;1&#x2013;3 мин</div>
       </div>
       <div class="case-body">
-        Входящий поток обрабатывался вручную — даже рутинные вопросы про цену или расписание занимали время менеджеров. Внедрил AI-бота через <strong>Suvvy.ai</strong> с интеграцией в amoCRM и Wazzup. Бот самостоятельно ведёт первичный диалог, собирает нужные данные, заполняет карточку сделки и передаёт менеджеру уже квалифицированный лид. Первый ответ — <strong>в течение 15 секунд</strong>, 24/7. Менеджеры сосредоточились на сделках, а не на первичных переписках.
+        Каждое входящее обращение обрабатывал менеджер вручную: спам, повторные вопросы про цену и расписание, неквалифицированные лиды — всё в одном потоке. Внедрил AI-бота через <strong>Suvvy.ai</strong> с интеграцией в amoCRM и Wazzup. Бот ведёт первичный диалог, собирает нужные данные, заполняет карточку сделки и сам отсеивает спам и неквал. Первый ответ клиенту — <strong>в течение 15 секунд</strong>, 24/7. Из ~150 обращений в месяц до менеджера теперь доходит <strong>80–90 реально квалифицированных лидов</strong>; время на квалификацию у менеджера — <strong>с 1–3 часов в день до нуля</strong>.
       </div>
       <div class="case-stack">
         <span class="case-tag">amoCRM API</span><span class="case-tag">Suvvy.ai</span>
@@ -346,12 +348,12 @@ footer{border-top:1px solid var(--border);padding:48px 0}
       <div class="case-header">
         <div>
           <div class="case-num">02 / Автоматический анализ звонков</div>
-          <div class="case-title">Каждый звонок расшифрован и оценён по скрипту — за меньше $5 в месяц</div>
+          <div class="case-title">Заменил штатного контролёра качества за 40 000 ₽/мес на инфраструктуру за &lt;$5 — со 100% покрытием</div>
         </div>
         <div class="case-metric m-purple">&lt;$5/мес</div>
       </div>
       <div class="case-body">
-        Контроль качества звонков традиционно требует либо отдельного специалиста, либо времени руководителя. Собрал систему на <strong>n8n + AssemblyAI + DeepSeek</strong>: запись звонка из CRM автоматически расшифровывается, затем AI сравнивает текст с фиксированным скриптом продаж и выставляет оценку по каждому пункту. Итоговый разбор с баллами и резюме приходит в Telegram через несколько минут после завершения разговора. Стоимость всей инфраструктуры — <strong>меньше $5 в месяц</strong>. <a href="https://alan-n8n.ru/callsrps/" target="_blank" style="color:var(--accent);text-decoration:underline;text-underline-offset:3px;">Посмотреть дашборд →</a>
+        До: вручную прослушивались только звонки длиннее 90 секунд — выборочно, остальные 120–150 разговоров в месяц проходили мимо контроля. Собрал систему на <strong>n8n + AssemblyAI + DeepSeek</strong>: запись из CRM автоматически расшифровывается, AI сравнивает текст с фиксированным скриптом продаж и выставляет балл по каждому пункту. Итог с оценкой и резюме приходит в Telegram через несколько минут после разговора. После: <strong>100% звонков</strong> разбираются автоматически, инфраструктура стоит <strong>меньше $5 в месяц</strong> — против 40 000 ₽/мес зарплаты штатного специалиста контроля качества. <a href="https://alan-n8n.ru/callsrps/" target="_blank" style="color:var(--accent);text-decoration:underline;text-underline-offset:3px;">Посмотреть дашборд →</a>
       </div>
       <div class="case-stack">
         <span class="case-tag">n8n</span><span class="case-tag">AssemblyAI</span>
@@ -363,17 +365,17 @@ footer{border-top:1px solid var(--border);padding:48px 0}
     <div class="case-card reveal">
       <div class="case-header">
         <div>
-          <div class="case-num">03 / Аналитика вместо KPI</div>
-          <div class="case-title">Менеджеры на чистой комиссии стали продавать больше — без принудительных показателей</div>
+          <div class="case-num">03 / Оценка брокеров по чистой прибыли</div>
+          <div class="case-title">Не «кто больше продал», а «кто больше принёс компании» — с учётом стоимости потраченных лидов</div>
         </div>
-        <div class="case-metric m-green">&#x2191; Конверсия</div>
+        <div class="case-metric m-green">&#x2191; Прибыль</div>
       </div>
       <div class="case-body">
-        Менеджеры работали только на комиссии, без оклада — вводить KPI в такой модели сложно и рискованно. Вместо этого собрал в <strong>Google Sheets</strong> детальный аналитический файл: воронка по лидам, конверсия на каждом этапе, эффективность источников — отдельно для каждого сотрудника. Когда человек сам видит, где именно теряются деньги — он начинает это исправлять. Конверсия выросла без административного давления.
+        Менеджеры работают на чистой комиссии — стандартные KPI здесь не подходят. Раньше «лидером» считался тот, кто принёс больше выручки. Собрал в <strong>Google Sheets</strong> аналитику, где у каждого брокера видно: сколько лидов он потратил, во что эти лиды обошлись компании, и какой <strong>чистый вклад</strong> остался после вычета стоимости лидов. Простой пример: брокер №1 потратил 100 лидов и принёс $10 000 выручки; брокер №2 — 50 лидов и $7 000. При цене лида $100 первый принёс компании $0 чистыми, второй — $2 000. Без таблицы №1 выглядел сильнее, по факту компанию двигает №2. Помогло руководству принимать кадровые решения и пересматривать распределение лидов на фактах, а не на впечатлении.
       </div>
       <div class="case-stack">
         <span class="case-tag">Google Apps Script</span><span class="case-tag">amoCRM API</span>
-        <span class="case-tag">Google Sheets</span><span class="case-tag">Воронка продаж</span>
+        <span class="case-tag">Google Sheets</span><span class="case-tag">Юнит-экономика</span>
       </div>
     </div>
 
@@ -383,14 +385,14 @@ footer{border-top:1px solid var(--border);padding:48px 0}
           <div class="case-num">04 / Сквозная аналитика</div>
           <div class="case-title">Еженедельный отчёт для руководства: с 1–2 часов ручной сборки до 15 минут автоматически</div>
         </div>
-        <div class="case-metric m-amber">&#x2212;95% времени</div>
+        <div class="case-metric m-amber">1–2 ч &#x2192; 15 мин</div>
       </div>
       <div class="case-body">
-        Еженедельный отчёт для руководства собирался вручную из amoCRM, Яндекс.Метрики и Яндекс.Директа — уходило 1–2 часа и периодически возникали расхождения в данных. Написал скрипт на <strong>Google Apps Script</strong>, который автоматически запрашивает API всех трёх сервисов, сводит данные в единую таблицу и строит дашборд. Отчёт формируется <strong>за 15 минут</strong> без участия человека — данные всегда актуальны и согласованы.
+        Еженедельный отчёт собирался вручную из amoCRM, телефонии и Яндекс.Метрики — уходило 1–2 часа, периодически возникали расхождения в данных. Написал скрипт на <strong>Google Apps Script</strong>, который автоматически запрашивает API всех источников (amoCRM, телефония, Яндекс.Метрика, Ройстат), сводит данные в единую таблицу и строит дашборд. Отчёт формируется <strong>за 15 минут</strong> без участия человека — данные всегда актуальны и согласованы между источниками.
       </div>
       <div class="case-stack">
         <span class="case-tag">Google Apps Script</span><span class="case-tag">amoCRM API</span>
-        <span class="case-tag">Яндекс.Метрика API</span><span class="case-tag">Яндекс.Директ API</span>
+        <span class="case-tag">Яндекс.Метрика API</span><span class="case-tag">Roistat</span>
         <span class="case-tag">Google Sheets</span>
       </div>
     </div>
@@ -415,31 +417,13 @@ footer{border-top:1px solid var(--border);padding:48px 0}
     <div class="case-card reveal">
       <div class="case-header">
         <div>
-          <div class="case-num">06 / Мультиканальная воронка</div>
-          <div class="case-title">WhatsApp, Telegram, звонки, email и SMS — единая воронка в amoCRM</div>
+          <div class="case-num">06 / Транскрибация и резюме встреч</div>
+          <div class="case-title">40–50 часов записей в месяц превращаются в текст и краткое резюме без участия человека</div>
         </div>
-        <div class="case-metric m-teal">Omnichannel</div>
+        <div class="case-metric m-cyan">40–50 ч/мес</div>
       </div>
       <div class="case-body">
-        Входящие обращения приходили через разные каналы, каждый из которых существовал отдельно — менеджеры вручную переключались между интерфейсами. Собрал единую коммуникационную инфраструктуру: <strong>Wazzup и whatCRM</strong> для мессенджеров, SIPUNI и Mango для телефонии, DashaMail для email, smsc.ru для SMS. Все входящие автоматически попадают в карточку сделки в amoCRM. Настроены триггерные цепочки — нужный шаблон отправляется клиенту в нужный момент без участия менеджера.
-      </div>
-      <div class="case-stack">
-        <span class="case-tag">amoCRM</span><span class="case-tag">Wazzup</span>
-        <span class="case-tag">whatCRM</span><span class="case-tag">SIPUNI / Mango</span>
-        <span class="case-tag">DashaMail</span><span class="case-tag">smsc.ru</span>
-      </div>
-    </div>
-
-    <div class="case-card reveal">
-      <div class="case-header">
-        <div>
-          <div class="case-num">07 / Транскрибация и резюме встреч</div>
-          <div class="case-title">Запись встречи — текст, тип встречи и краткое резюме — автоматически</div>
-        </div>
-        <div class="case-metric m-cyan">Auto</div>
-      </div>
-      <div class="case-body">
-        Записи встреч накапливались в папке без использования — прослушивать часовые записи не было ни времени, ни ресурса. Настроил воркфлоу на <strong>n8n</strong>: файл попадает в Google Drive, расшифровывается через AssemblyAI, OpenAI определяет тип встречи и формирует краткое резюме, результат сохраняется в Google Sheets. Руководитель получает суть встречи за 30 секунд. Система полностью автономна.
+        Записи встреч накапливались в папке без использования — прослушивать часовые звонки не было ни времени, ни ресурса. Настроил воркфлоу на <strong>n8n</strong>: файл попадает в Google Drive, расшифровывается через AssemblyAI, OpenAI определяет тип встречи и формирует краткое резюме, результат сохраняется в Google Sheets. Через систему проходит <strong>40–50 часов записей в месяц</strong> — руководитель получает суть встречи за 30 секунд вместо часа прослушивания. Система полностью автономна.
       </div>
       <div class="case-stack">
         <span class="case-tag">n8n</span><span class="case-tag">AssemblyAI</span>
@@ -451,69 +435,18 @@ footer{border-top:1px solid var(--border);padding:48px 0}
     <div class="case-card reveal">
       <div class="case-header">
         <div>
-          <div class="case-num">08 / Умное распределение лидов</div>
-          <div class="case-title">Лид автоматически находит нужного менеджера — повторные назначения и дубли исключены</div>
+          <div class="case-num">07 / Умное распределение лидов</div>
+          <div class="case-title">Время от поступления лида до взятия в работу и дозвона — с 8–10 минут до 3–5 минут</div>
         </div>
-        <div class="case-metric m-amber">1 500 лидов</div>
+        <div class="case-metric m-rose">8–10 &#x2192; 3–5 мин</div>
       </div>
       <div class="case-body">
-        При высоком потоке лидов возникали ситуации: один лид назначался повторно или попадал к менеджеру, который уже работал с этим контактом. Построил систему распределения на <strong>n8n</strong>: по команде через Telegram воркфлоу обходит все незакрытые лиды (до 1 500), проверяет историю событий в amoCRM по каждому и назначает только на менеджера, который ранее не касался этого контакта. Дополнительно — автоматически закрывает дубликаты сделок по одному контакту, сохраняя самую раннюю.
+        При высоком потоке лидов менеджеры теряли время на ручное «разбирательство»: чей это контакт, кто уже звонил, кому передавать. Построил систему распределения на <strong>n8n</strong>: воркфлоу обходит до 1 500 незакрытых лидов в amoCRM, по каждому проверяет историю событий и назначает на менеджера, который ранее не касался этого контакта. Дополнительно — автоматически закрывает дубликаты сделок, оставляя самую раннюю. Среднее время от поступления лида до взятия в работу и дозвона сократилось <strong>с 8–10 минут до 3–5 минут</strong> — это напрямую влияет на конверсию первого касания.
       </div>
       <div class="case-stack">
         <span class="case-tag">n8n</span><span class="case-tag">amoCRM API</span>
         <span class="case-tag">Telegram Bot</span><span class="case-tag">PostgreSQL</span>
         <span class="case-tag">Google Sheets</span>
-      </div>
-    </div>
-
-    <div class="case-card reveal">
-      <div class="case-header">
-        <div>
-          <div class="case-num">09 / Автоматические напоминания о встречах</div>
-          <div class="case-title">За час до встречи менеджер получает уведомление в Telegram — пропущенных встреч больше нет</div>
-        </div>
-        <div class="case-metric m-lime">0 пропусков</div>
-      </div>
-      <div class="case-body">
-        Задачи в CRM создавались, но менеджеры не всегда успевали их проверить — встречи иногда пропускались. Реализовал воркфлоу на <strong>n8n</strong>, который по расписанию опрашивает amoCRM, находит задачи с типом «встреча» и отправляет персональное уведомление в Telegram ровно за час до начала. Отдельная цепочка — уведомление при создании новой сделки. Настроено на несколько получателей, легко расширяется.
-      </div>
-      <div class="case-stack">
-        <span class="case-tag">n8n</span><span class="case-tag">amoCRM API</span>
-        <span class="case-tag">Telegram Bot</span><span class="case-tag">Google Sheets</span>
-      </div>
-    </div>
-
-    <div class="case-card reveal">
-      <div class="case-header">
-        <div>
-          <div class="case-num">10 / Валидация 200 000 email-адресов</div>
-          <div class="case-title">Прошёлся по 86 рассылочным спискам и автоматически вычистил невалидные адреса</div>
-        </div>
-        <div class="case-metric m-rose">200k emails</div>
-      </div>
-      <div class="case-body">
-        База рассылки накопила 200 000 адресов в 86 списках — часть из них были невалидными, одноразовыми или неактивными, что снижало доставляемость. Написал скрипт на <strong>Google Apps Script</strong> с интеграцией DashaMail API: загружает все контакты, проверяет каждый адрес по 8 критериям (синтаксис, DNS/MX-записи, одноразовые домены, чёрные списки и другие), формирует отчёт с разбивкой по спискам. Удаление выполняется через чекбоксы — без риска случайно затронуть нужные контакты.
-      </div>
-      <div class="case-stack">
-        <span class="case-tag">Google Apps Script</span><span class="case-tag">DashaMail API</span>
-        <span class="case-tag">DNS/MX валидация</span><span class="case-tag">Google Sheets</span>
-      </div>
-    </div>
-
-    <div class="case-card reveal">
-      <div class="case-header">
-        <div>
-          <div class="case-num">11 / AI Ассистент для маркетолога</div>
-          <div class="case-title">Сервис, который генерирует контент с учётом ваших материалов и правил — без повторного объяснения контекста</div>
-        </div>
-        <div class="case-metric m-green">AI SaaS</div>
-      </div>
-      <div class="case-body">
-        AI Ассистент для маркетолога — сервис, который генерирует контент с учётом ваших материалов и правил. Загрузите описание продукта, портрет ЦА, анализ конкурентов, отзывы, tone of voice — и AI будет писать тексты, ТЗ, скрипты продаж и email-рассылки уже «в теме» вашего бизнеса. Не нужно каждый раз объяснять нейросети контекст — она помнит всё, что вы загрузили. 10 категорий для документов, настраиваемые правила генерации, история чатов с группировкой по проектам. Работает в РФ без VPN, стоимость до 1 000 ₽/мес. <a href="https://hakunov1991-afk.github.io/assistant_demo/" target="_blank" style="color:var(--accent);text-decoration:underline;">Демо →</a>
-      </div>
-      <div class="case-stack">
-        <span class="case-tag">AI / LLM</span><span class="case-tag">SaaS</span>
-        <span class="case-tag">Контент-генерация</span><span class="case-tag">RAG</span>
       </div>
     </div>
 
@@ -556,7 +489,7 @@ footer{border-top:1px solid var(--border);padding:48px 0}
   <div class="exp-card reveal" style="border-color:rgba(0,229,255,.18);box-shadow:0 0 32px rgba(0,229,255,.04);">
     <div class="exp-header">
       <div>
-        <div class="exp-company">TUMANOV GROUP</div>
+        <div class="exp-company"><a href="https://www.tumanov.group" target="_blank" style="color:inherit;text-decoration:none;border-bottom:1px dashed rgba(0,229,255,.5);">TUMANOV GROUP</a></div>
         <div class="exp-role">Специалист по CRM, автоматизации и BI-аналитике</div>
       </div>
       <div>
@@ -689,11 +622,11 @@ footer{border-top:1px solid var(--border);padding:48px 0}
   <div class="about-grid">
     <div class="about-card reveal">
       <div class="about-card-title">Формат работы</div>
-      <p>Удалённо. Частичная занятость или проектная работа. Нальчик.</p>
+      <p>Удалённо. Полная, частичная занятость или проектная работа. База — Нальчик.</p>
     </div>
     <div class="about-card reveal">
       <div class="about-card-title">Желаемая роль</div>
-      <p>Технический специалист CRM / инженер автоматизаций / BI-аналитик. Ожидаемый уровень — от 90 000 &#x20BD;.</p>
+      <p>Технический специалист amoCRM / Bitrix24, инженер автоматизаций (n8n / API) или BI-аналитик в Google Sheets. Ожидаемый уровень — 90 000–120 000 &#x20BD; на руки, обсуждается под объём задач.</p>
     </div>
     <div class="about-card reveal">
       <div class="about-card-title">Языки</div>
