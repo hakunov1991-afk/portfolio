@@ -98,11 +98,21 @@ section{padding:80px 0;border-top:1px solid var(--border)}
 .exp-header{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:24px;flex-wrap:wrap}
 .exp-company{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;color:var(--text);margin-bottom:4px}
 .exp-role{font-size:11px;color:var(--accent);letter-spacing:1px;text-transform:uppercase}
+.exp-role-prev{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5}
+.exp-role-prev::before{content:'↳ ';color:var(--accent2)}
 .exp-period-main{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--text);text-align:right}
 .exp-period-sub{font-size:11px;color:var(--muted);text-align:right;margin-top:2px}
 .exp-duties{list-style:none;display:flex;flex-direction:column;gap:9px}
 .exp-duties li{font-size:13px;color:var(--muted);padding-left:20px;position:relative;line-height:1.65}
 .exp-duties li::before{content:'→';position:absolute;left:0;color:var(--accent);font-size:11px;top:1px}
+.exp-results{margin-top:18px;padding-top:18px;border-top:1px dashed var(--border)}
+.exp-results-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent3);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.exp-results-label::before{content:'';width:16px;height:1px;background:var(--accent3);flex-shrink:0}
+.exp-results-list{list-style:none;display:flex;flex-direction:column;gap:9px}
+.exp-results-list li{font-size:13px;color:var(--muted);padding-left:20px;position:relative;line-height:1.65}
+.exp-results-list li::before{content:'✓';position:absolute;left:0;color:var(--accent3);font-size:11px;top:1px;font-weight:700}
+.exp-results-list strong{color:#6ee7b7;font-weight:600}
+.exp-sub{font-size:12px;color:var(--muted);margin-bottom:14px;margin-top:-12px;font-style:italic}
 .projects-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
 .project-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:18px;transition:border-color .2s}
 .project-card:hover{border-color:rgba(0,229,255,.18)}
@@ -204,9 +214,9 @@ footer{border-top:1px solid var(--border);padding:48px 0}
     <h1 class="hero-name">Хакунов<br><span>Алан</span></h1>
     <div class="hero-title">Технический специалист amoCRM/Bitrix24 и BI-аналитик</div>
     <p class="hero-desc">
-      Более 4 лет в техническом сопровождении CRM-экосистем: amoCRM, Bitrix24, автоматизация
-      процессов, интеграции через API, аналитика в Google Sheets. Фокус — на том, чтобы системы
-      работали сами и давали измеримый результат бизнесу.
+      7 лет в продажах и операционке: ~4 года руководил колл-центрами, последние 3 года — технический
+      специалист по CRM (amoCRM, Bitrix24), автоматизации на n8n и BI-аналитике в Google Sheets.
+      Знаю боль отдела продаж изнутри — и закрываю её кодом и автоматизациями.
     </p>
     <div class="hero-contacts">
       <a href="tel:+79640392854" class="contact-chip">
@@ -518,7 +528,8 @@ footer{border-top:1px solid var(--border);padding:48px 0}
     <div class="exp-header">
       <div>
         <div class="exp-company">Рыбаков Плэйскул / Глобальный университет Игоря Рыбакова</div>
-        <div class="exp-role">Технический специалист экосистем</div>
+        <div class="exp-role">Технический специалист CRM / автоматизация / BI</div>
+        <div class="exp-role-prev">В 2022–2023 — руководитель колл-центра и отдела контроля качества</div>
       </div>
       <div>
         <div class="exp-period-main">Июнь 2022 — сейчас</div>
@@ -526,6 +537,7 @@ footer{border-top:1px solid var(--border);padding:48px 0}
       </div>
     </div>
     <ul class="exp-duties">
+      <li><strong>Старт работы (2022–2023):</strong> руководство колл-центром и отделом контроля качества — регламенты, стандарты работы КЦ, контроль метрик, управление персоналом, расчёт ЗП, онбординг новых сотрудников, разработка скриптов, единой базы знаний и системы оценки операторов</li>
       <li>Полный цикл технического сопровождения CRM: amoCRM и Bitrix24 — настройка, доработка, поддержка пользователей, миграции данных</li>
       <li>Подключение и обслуживание смежных систем: телефония (SIPUNI, Mango, Вымпелком), мессенджеры (Wazzup), рассылки (DashaMail, smsc.ru)</li>
       <li>Интеграция образовательной платформы GetCourse: воронки продаж, управление доступами, транзакции и платёжные ссылки</li>
@@ -535,6 +547,49 @@ footer{border-top:1px solid var(--border);padding:48px 0}
       <li>Дашборды в Google Sheets: сквозная аналитика от рекламного клика до закрытой сделки</li>
       <li>Работа с сайтами на Tilda: правки контента, создание лендингов, подключение форм к CRM</li>
     </ul>
+    <div class="exp-results">
+      <div class="exp-results-label">// Ключевые результаты как руководитель колл-центра (2022–2023)</div>
+      <ul class="exp-results-list">
+        <li>Конверсия из входящей заявки в квалифицированный лид, переданный на экскурсию — <strong>с 76% до 95%</strong> (рост на 19 п.п.)</li>
+        <li>B2B-воронка: конверсия лид → встреча с клиентом — <strong>с 10% до 45%</strong> (по целевым лидам — 62%)</li>
+        <li>Клиентские оценки «5» работы оператора после звонка — <strong>с 35% до 83%</strong></li>
+        <li><strong>85%</strong> входящих лидов отрабатывается в первые 5 минут после поступления</li>
+        <li>Среднее время ответа на входящий звонок — <strong>7 секунд</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Где Материал — руководитель колл-центра -->
+  <div class="exp-card reveal">
+    <div class="exp-header">
+      <div>
+        <div class="exp-company"><a href="https://career.habr.com/companies/gdematerial-ru" target="_blank" style="color:inherit;text-decoration:none;border-bottom:1px dashed rgba(0,229,255,.5);">Где Материал</a></div>
+        <div class="exp-role">Руководитель колл-центра</div>
+      </div>
+      <div>
+        <div class="exp-period-main">Май 2019 — Май 2022</div>
+        <div class="exp-period-sub">3 года · Волгоград / Москва · удалённо</div>
+      </div>
+    </div>
+    <p class="exp-sub">Торговая площадка стройматериалов — сервис поиска и сравнения цен с доставкой из ближайшего магазина.</p>
+    <ul class="exp-duties">
+      <li>Управление командой ~10 операторов на каналах: звонки, почта, чаты, мессенджеры, SMM</li>
+      <li>Анализ операционных метрик контакт-центра, прогноз нагрузки и оперативное перераспределение сотрудников между каналами</li>
+      <li>Формализация регламентов и стандартов работы, оптимизация процессов обработки и передачи обращений</li>
+      <li>Запуск с нуля удалённого контакт-центра — филиал в Казахстане</li>
+      <li>Обучение и развитие персонала: операторы вырастали до менеджеров по продажам</li>
+      <li>Внедрение kanban-системы управления задачами контакт-центра</li>
+      <li>Разработка мер для повышения KPI сотрудников по производительности и качеству коммуникации</li>
+    </ul>
+    <div class="exp-results">
+      <div class="exp-results-label">// Ключевые операционные результаты</div>
+      <ul class="exp-results-list">
+        <li>Конверсия из входящего звонка в принятый — <strong>с 75% до 90%</strong> за счёт корректировки графика смен (часть команды переведена с 2/2 на 5/2)</li>
+        <li>Конверсия звонок → заказ по целевым звонкам — <strong>с 45% до 70%</strong> после внедрения скриптов по непрофильным товарам</li>
+        <li>Сокращение бюджета контакт-центра — <strong>с 650 000 ₽ до 320 000 ₽ в месяц</strong> (~−51%) без потери качества обслуживания</li>
+        <li>Реализован крупный заказ на сумму свыше <strong>3 000 000 ₽</strong> при среднем чеке 70 000 ₽</li>
+      </ul>
+    </div>
   </div>
 
   <div class="section-label" style="margin-top:40px;margin-bottom:16px;">// Консалтинг и внешние проекты</div>
