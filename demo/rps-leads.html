@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Лиды — демо</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+<link rel="stylesheet" href="rps.css">
+</head>
+<body>
+<script src="kit.js"></script>
+<script src="rpsdata.js"></script>
+<script>
+K.shell({ brand: 'Лиды', sub: 'Рыбаков Плэйскул · демо', back: '../index.html#playschool' });
+var D = RD, per = 30, lvl = 'all';
+function pool() { return D.within(per).filter(function (d) { return lvl === 'all' || (lvl === 'g' ? d.level === 'Сад' : d.level === 'Школа'); }); }
+function filters(el, again) {
+  var a = document.createElement('div'), b = document.createElement('div');
+  a.style.cssText = b.style.cssText = 'display:inline-block;margin:0 10px 14px 0';
+  el.appendChild(a); el.appendChild(b);
+  K.seg(a, [['7', '7 дней'], ['30', '30 дней'], ['90', '90 дней']], String(per), function (v) { per = +v; again(); });
+  K.seg(b, [['all', 'Все'], ['g', 'Сад'], ['s', 'Школа']], lvl, function (v) { lvl = v; again(); });
+}
+function rate(a, b) { return b ? a / b * 100 : 0; }
+function page(id, t, s, body) {
+  return { id: id, t: t, s: s, render: function (p) { var holder = document.createElement('div'), self = this; p.appendChild(holder); var draw = function () { var d = document.createElement('div'); d.innerHTML = ''; holder.innerHTML = ''; filters(holder, draw); var c = document.createElement('div'); holder.appendChild(c); body(c); }; draw(); } };
+}
+var pctCls = function (v, g, w) { return v >= g ? 'c-ok' : v >= w ? 'c-warn' : 'c-bad'; };
+
+var sections = [
+  page('funnels', 'Воронки', 'Сколько заявок в каждой воронке и где они сейчас', function (c) {
+    var P = pool(), won = P.filter(function (d) { return d.status === 'won'; }).length, lost = P.filter(function (d) { return d.status === 'lost'; }).length;
+    c.innerHTML = K.kpis([{ l: 'Заявок', v: K.fmt(P.length), d: K.deltaHtml(P.length, P.length * .94) }, { l: 'Оплат', v: won, d: K.deltaHtml(won, won * .9) }, { l: 'Конверсия в оплату', v: K.pct(rate(won, P.length)), d: K.deltaHtml(rate(won, P.length), rate(won, P.length) * .97) }, { l: 'Закрыто без оплаты', v: lost, d: K.deltaHtml(lost, lost * 1.05, false) }]) +
+      '<div class="grid g2"><div class="card"><h2>Заявки по воронкам</h2><p class="note">&nbsp;</p><div id="a"></div></div><div class="card"><h2>Где сейчас открытые</h2><p class="note">По этапам</p><div id="b"></div></div></div>';
+    K.hbars(document.getElementById('a'), D.funnels.map(function (f, i) { return { n: f, v: P.filter(function (d) { return d.funnel === i; }).length }; }));
+    K.hbars(document.getElementById('b'), D.stages.map(function (s, i) { return { n: s, v: P.filter(function (d) { return d.stage === i && d.status === 'open'; }).length }; }));
+  }),
+  page('conv', 'Конверсии', 'От заявки до оплаты по этапам', function (c) {
+    var P = pool(), st = D.stages.map(function (s, i) { return { n: s, v: P.filter(function (d) { return d.stage >= i; }).length, c: i === 5 ? '#e45f36' : undefined }; });
+    c.innerHTML = '<div class="grid g21"><div class="card"><h2>Воронка</h2><p class="note">Сколько заявок дошло до этапа и дальше</p><div id="f"></div></div><div class="card"><h2>Конверсия по воронкам</h2><p class="note">Заявка → оплата</p><div class="scroll"><table id="t"></table></div></div></div>';
+    K.funnel(document.getElementById('f'), st);
+    document.getElementById('t').innerHTML = '<thead><tr><th>Воронка</th><th class="num">Заявки</th><th class="num">Оплаты</th><th class="num">Конв.</th></tr></thead><tbody>' + D.funnels.map(function (f, i) { var x = P.filter(function (d) { return d.funnel === i; }), w = x.filter(function (d) { return d.status === 'won'; }).length, r = rate(w, x.length); return '<tr><td>' + f + '</td><td class="num">' + x.length + '</td><td class="num">' + w + '</td><td class="num ' + pctCls(r, 12, 6) + '">' + K.pct(r) + '</td></tr>'; }).join('') + '</tbody>';
+  }),
+  page('campus', 'Филиалы', 'Сравнение кампусов', function (c) {
+    var P = pool();
+    c.innerHTML = '<div class="card"><h2>Кампусы</h2><p class="note">Заявки, оплаты и скорость первого ответа</p><div class="scroll"><table><thead><tr><th>Кампус</th><th class="num">Заявки</th><th class="num">Экскурсии</th><th class="num">Оплаты</th><th class="num">Конверсия</th><th class="num">Ответ, медиана</th></tr></thead><tbody>' + D.campuses.map(function (n, i) { var x = P.filter(function (d) { return d.campus === i; }), w = x.filter(function (d) { return d.status === 'won'; }).length, e = x.filter(function (d) { return d.stage >= 3; }).length, med = K.median(x.map(function (d) { return d.reply; })), r = rate(w, x.length); return '<tr><td><b>' + n + '</b></td><td class="num">' + x.length + '</td><td class="num">' + e + '</td><td class="num">' + w + '</td><td class="num ' + pctCls(r, 12, 6) + '">' + K.pct(r) + '</td><td class="num ' + (med <= 15 ? 'c-ok' : med <= 40 ? 'c-warn' : 'c-bad') + '">' + D.min(med) + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+  }),
+  page('mgrs', 'Менеджеры', 'Нагрузка и результат', function (c) {
+    var P = pool();
+    c.innerHTML = '<div class="card"><h2>Менеджеры</h2><p class="note">Рядом со средним всегда медиана</p><div class="scroll"><table><thead><tr><th>Менеджер</th><th class="num">В работе</th><th class="num">Оплаты</th><th class="num">Конв.</th><th class="num">Ответ, среднее</th><th class="num">Ответ, медиана</th></tr></thead><tbody>' + D.managers.map(function (n, i) { var x = P.filter(function (d) { return d.mgr === i; }), w = x.filter(function (d) { return d.status === 'won'; }).length, rp = x.map(function (d) { return d.reply; }), r = rate(w, x.length); return '<tr><td><b>' + n + '</b></td><td class="num">' + x.length + '</td><td class="num">' + w + '</td><td class="num ' + pctCls(r, 12, 6) + '">' + K.pct(r) + '</td><td class="num">' + D.min(K.avg(rp)) + '</td><td class="num">' + D.min(K.median(rp)) + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+  }),
+  page('lost', 'Отказы', 'Почему закрывают без оплаты', function (c) {
+    var L = pool().filter(function (d) { return d.status === 'lost'; });
+    c.innerHTML = '<div class="grid g21"><div class="card"><h2>Причины</h2><p class="note">Закрыто без оплаты: ' + L.length + '</p><div id="r"></div></div><div class="card"><h2>По источникам</h2><p class="note">Доля закрытых без оплаты</p><div id="s"></div></div></div>';
+    K.hbars(document.getElementById('r'), D.reasons.map(function (r, i) { return { n: r, v: L.filter(function (d) { return d.reason === i; }).length }; }).sort(function (a, b) { return b.v - a.v; }));
+    document.querySelectorAll('#r .bar-row').forEach(function (e) { e.style.gridTemplateColumns = 'minmax(110px,190px) 1fr 40px'; });
+    var P = pool(); K.hbars(document.getElementById('s'), D.sources.map(function (n, i) { var x = P.filter(function (d) { return d.src === i; }); return { n: n, v: Math.round(rate(x.filter(function (d) { return d.status === 'lost'; }).length, x.length)) }; }), { fmt: function (v) { return v + '%'; } });
+  }),
+  page('dyn', 'Динамика', 'Заявки и оплаты по неделям', function (c) {
+    var weeks = 13, lab = [], a = [], b = [];
+    for (var w = weeks - 1; w >= 0; w--) { var x = D.deals.filter(function (d) { return d.days >= w * 7 && d.days < w * 7 + 7 && (lvl === 'all' || (lvl === 'g' ? d.level === 'Сад' : d.level === 'Школа')); }); lab.push('−' + w + ' нед'); a.push(x.length); b.push(x.filter(function (d) { return d.status === 'won'; }).length); }
+    c.innerHTML = '<div class="card"><h2>Недели</h2><p class="note">Заявки и оплаты</p><div id="c"></div></div>';
+    K.line(document.getElementById('c'), lab, [{ name: 'Заявки', color: '#e45f36', data: a }, { name: 'Оплаты', color: '#4ade80', data: b }]);
+  }),
+  page('cycle', 'Цикл сделки', 'За сколько дней заявка доходит до оплаты', function (c) {
+    var W = pool().filter(function (d) { return d.status === 'won'; }), cy = W.map(function (d) { return d.cycle; });
+    c.innerHTML = K.kpis([{ l: 'Оплат в выборке', v: W.length }, { l: 'Цикл, среднее', v: K.fmt(K.avg(cy), 1) + ' дн' }, { l: 'Цикл, медиана', v: K.fmt(K.median(cy), 1) + ' дн' }, { l: 'Дольше 3 недель', v: cy.filter(function (x) { return x > 21; }).length }]) + '<div class="card"><h2>Распределение цикла</h2><p class="note">Сколько оплат закрылось за N дней</p><div id="h"></div></div>';
+    var b = [['до 7', 0, 7], ['8–14', 8, 14], ['15–21', 15, 21], ['22–30', 22, 30], ['30+', 31, 999]];
+    K.bars(document.getElementById('h'), b.map(function (x) { return x[0] + ' дн'; }), [{ name: 'Оплаты', color: '#e45f36', data: b.map(function (x) { return cy.filter(function (v) { return v >= x[1] && v <= x[2]; }).length; }) }], { h: 220 });
+  }),
+  { id: 'speed', t: 'Скорость ответа', s: 'Как быстро отвечают клиенту. Каждая цифра открывает список сделок', render: function (p) {
+    var P = D.within(30);
+    p.innerHTML = '<p class="note" style="margin-bottom:12px">Считаются рабочие часы с 10 до 20 по будням. Нажмите на цифру в таблице: откроется список сделок, из которых она посчитана.</p><div class="card"><h2>Первый ответ по этапам</h2><p class="note">Среднее и медиана рядом</p><div class="scroll"><table id="t"></table></div></div><div class="card" style="margin-top:14px"><h2>Сколько клиенты ждали ответа</h2><p class="note">Доля сделок по времени ожидания</p><div id="w"></div></div>';
+    var rows = D.stages.slice(0, 5).map(function (st, i) { return { n: st, d: P.filter(function (d) { return d.stage === i; }) }; });
+    document.getElementById('t').innerHTML = '<thead><tr><th>Этап</th><th class="num">Сделок</th><th class="num">Среднее</th><th class="num">Медиана</th><th class="num">Ещё ждут</th></tr></thead><tbody>' + rows.map(function (r, i) { var v = r.d.map(function (d) { return d.reply; }); return '<tr><td><b>' + r.n + '</b></td><td class="num"><button class="click" data-i="' + i + '" data-k="all">' + r.d.length + '</button></td><td class="num">' + D.min(K.avg(v)) + '</td><td class="num">' + D.min(K.median(v)) + '</td><td class="num"><button class="click" data-i="' + i + '" data-k="wait">' + r.d.filter(function (d) { return d.reply > 90; }).length + '</button></td></tr>'; }).join('') + '</tbody>';
+    document.querySelectorAll('.click').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var r = rows[+b.dataset.i], list = b.dataset.k === 'wait' ? r.d.filter(function (d) { return d.reply > 90; }) : r.d, v = list.map(function (d) { return d.reply; });
+        K.modal(r.n + (b.dataset.k === 'wait' ? ': ещё ждут ответа' : ': все сделки'), 'Строк: ' + list.length + '. Среднее ' + D.min(K.avg(v)) + ', медиана ' + D.min(K.median(v)), ['Сделка', 'Кампус', 'Менеджер', 'Первый ответ'], list.slice(0, 60).map(function (d) { return [D.link(d), D.campuses[d.campus], D.managers[d.mgr], D.min(d.reply)]; }));
+      });
+    });
+    var bk = [['до 5 мин', 0, 5], ['5–30 мин', 5, 30], ['30 мин – 3 ч', 30, 180], ['3 ч – 1 день', 180, 600], ['дольше 3 рабочих дней', 600, 1e9]];
+    K.hbars(document.getElementById('w'), bk.map(function (x) { return { n: x[0], v: P.filter(function (d) { return d.reply >= x[1] && d.reply < x[2]; }).length }; }));
+    document.querySelectorAll('#w .bar-row').forEach(function (e) { e.style.gridTemplateColumns = 'minmax(120px,200px) 1fr 40px'; });
+  } }
+];
+K.app({ sections: sections });
+</script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Оцифровка воронки — демо</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+<style>:root{--accent:#0e7c86;--accent-soft:#e3f2f3;--bg:#f4f7f7}.btn.pri{background:var(--accent);border-color:var(--accent)}.bar-row .fill{background:var(--accent)}.menu button[aria-selected=true]{background:#0e7c86}</style>
+</head>
+<body>
+<script src="kit.js"></script>
+<script>
+K.shell({ brand: 'Оцифровка воронки', sub: 'Где теряем лиды · демо' });
+var R = K.rng(314);
+
+var sections = [
+  { id: 'funnel', t: 'Воронка', s: 'Путь лида от обращения до сделки за 90 дней', render: function (p) {
+    var st = [{ n: 'Обращения', v: 4860 }, { n: 'Взяты в работу', v: 4520 }, { n: 'Дозвонились или написали', v: 2980 }, { n: 'Квалифицированы', v: 1740 }, { n: 'Встреча назначена', v: 690 }, { n: 'Показ состоялся', v: 470 }, { n: 'Сделка', v: 112, c: '#c9a96e' }];
+    p.innerHTML = K.kpis([{ l: 'Обращения за 90 дней', v: K.fmt(4860) }, { l: 'Дошли до сделки', v: K.pct(112 / 4860 * 100, 2) }, { l: 'Самая большая потеря', v: 'Дозвон', d: '<span class="delta down">отвал 34% после взятия</span>' }, { l: 'Потеряно лидов', v: K.fmt(4860 - 112) }]) +
+      '<div class="grid g21"><div class="card"><h2>Воронка</h2><p class="note">Под каждой полосой доля от предыдущего шага</p><div id="f"></div></div><div class="card"><h2>Где утечки</h2><p class="note">Шаги, где теряется больше всего</p><div id="l"></div></div></div>';
+    K.funnel(document.getElementById('f'), st);
+    var leaks = st.slice(1).map(function (x, i) { return { n: st[i].n + ' → ' + x.n, v: Math.round((1 - x.v / st[i].v) * 100), raw: st[i].v - x.v }; }).sort(function (a, b) { return b.v - a.v; }).slice(0, 5);
+    K.hbars(document.getElementById('l'), leaks.map(function (l) { return { n: l.n, v: l.v, c: l.v > 40 ? '#b42318' : '#a15c00' }; }), { fmt: function (v) { return v + '%'; } });
+    document.querySelectorAll('#l .bar-row').forEach(function (e) { e.style.gridTemplateColumns = '1fr 70px 40px'; });
+  } },
+
+  { id: 'lost', t: 'Причины потери', s: 'Почему лиды выпадают, по данным причин отказа', render: function (p) {
+    var by = [['Не дозвонились', 31], ['Нет бюджета', 19], ['Выбрали другого', 14], ['Нецелевой запрос', 12], ['Передумал', 9], ['Нет ответа после показа', 8], ['Прочее', 7]];
+    p.innerHTML = '<div class="grid g2"><div class="card"><h2>Причины, доля от потерь</h2><p class="note">&nbsp;</p><div id="b"></div></div><div class="card"><h2>На каком шаге теряем</h2><p class="note">Доля потерь по этапам воронки</p><div id="s"></div></div></div><div class="card"><h2>Пробелы в данных</h2><p class="note">Что мешает считать точнее</p><ul style="margin:0 0 0 18px;display:grid;gap:6px"><li>У 18% закрытых сделок не указана причина отказа.</li><li>Источник заполнен не у каждого лида: 12% приходят как «Прочее».</li><li>Звонки с одного номера склеиваются в карточку не всегда, часть лидов дублируется.</li></ul></div>';
+    K.hbars(document.getElementById('b'), by.map(function (x) { return { n: x[0], v: x[1] }; }), { fmt: function (v) { return v + '%'; } });
+    K.hbars(document.getElementById('s'), [{ n: 'До первого касания', v: 12 }, { n: 'Дозвон', v: 34 }, { n: 'Квалификация', v: 26 }, { n: 'Назначение встречи', v: 15 }, { n: 'После показа', v: 13 }], { fmt: function (v) { return v + '%'; } });
+  } },
+
+  { id: 'speed', t: 'Скорость реакции', s: 'Как быстро берём лид и как это связано с продажей', render: function (p) {
+    var cols = ['до 1 мин', '1–5 мин', '5–15 мин', '15–60 мин', 'больше часа'], conv = [24, 19, 12, 7, 3], share = [14, 47, 21, 12, 6];
+    p.innerHTML = '<div class="grid g2"><div class="card"><h2>Доля лидов по времени реакции</h2><p class="note">%</p><div id="a"></div></div><div class="card"><h2>Конверсия в встречу по времени реакции</h2><p class="note">%: чем быстрее, тем выше</p><div id="b"></div></div></div><div class="card"><h2>Вывод</h2><p class="note" style="margin:0">Лиды, взятые в течение пяти минут, доходят до встречи в два-три раза чаще, чем взятые через час. Каждые 10 минут задержки стоят примерно 3–4 пункта конверсии.</p></div>';
+    K.bars(document.getElementById('a'), cols, [{ name: 'Доля', color: '#0e7c86', data: share }], { axis: function (v) { return v + '%'; }, h: 210 });
+    K.bars(document.getElementById('b'), cols, [{ name: 'Конверсия', color: '#c9a96e', data: conv }], { axis: function (v) { return v + '%'; }, h: 210 });
+  } },
+
+  { id: 'attempts', t: 'Попытки контакта', s: 'Сколько раз звонят до того, как сдаются', render: function (p) {
+    var rows = [['1 попытка', 38, 6], ['2 попытки', 27, 11], ['3 попытки', 17, 16], ['4–5 попыток', 12, 21], ['6 и больше', 6, 24]];
+    p.innerHTML = '<div class="card"><h2>Попытки и результат</h2><p class="note">Доля лидов и доля дозвонившихся на этой попытке</p><div class="scroll"><table><thead><tr><th>Число попыток</th><th class="num">Доля лидов</th><th class="num">Дозвон</th><th>Оценка</th></tr></thead><tbody>' +
+      rows.map(function (r) { var c = r[2] < 10 ? ['bad', 'Сдаются рано'] : r[2] < 18 ? ['warn', 'Мало'] : ['ok', 'Хорошо']; return '<tr><td><b>' + r[0] + '</b></td><td class="num">' + r[1] + '%</td><td class="num">' + r[2] + '%</td><td><span class="pill ' + c[0] + '">' + c[1] + '</span></td></tr>'; }).join('') + '</tbody></table></div></div>' +
+      '<div class="card"><h2>Вывод</h2><p class="note" style="margin:0">38% лидов закрывают после одной попытки. Дозвон на четвёртой-пятой попытке в три раза выше, чем на первой. Нужно правило: минимум три попытки в разное время суток и сообщение в мессенджер.</p></div>';
+  } },
+
+  { id: 'sources', t: 'Источники лидов', s: 'Откуда приходят обращения и что с ними дальше', render: function (p) {
+    var rows = [['Реклама в соцсетях', 1620, 11.4, 52], ['Поиск', 1180, 14.2, 41], ['Партнёры и агенты', 640, 19.8, 70], ['Telegram', 520, 9.6, 28], ['Сайт, органика', 480, 12.1, 33], ['Прочее', 420, 5.2, 12]];
+    p.innerHTML = '<div class="card"><h2>Качество источников</h2><p class="note">Лиды за 90 дней, конверсия в встречу, число сделок</p><div class="scroll"><table><thead><tr><th>Источник</th><th class="num">Лиды</th><th class="num">В встречу</th><th class="num">Сделки</th></tr></thead><tbody>' +
+      rows.map(function (r) { var c = r[2] >= 15 ? 'c-ok' : r[2] >= 10 ? 'c-warn' : 'c-bad'; return '<tr><td><b>' + r[0] + '</b></td><td class="num">' + K.fmt(r[1]) + '</td><td class="num ' + c + '">' + K.fmt(r[2], 1) + '%</td><td class="num">' + Math.round(r[1] * r[2] / 100 * .24) + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+  } },
+
+  { id: 'sla', t: 'SLA и KPI', s: 'Предлагаемые правила и как будем их мерить', render: function (p) {
+    var rows = [['Первое касание', '5 минут', '47%', '85%', 'Робот раздачи + уведомление в Telegram'], ['Попыток дозвона', 'минимум 3', '38%', '90%', 'Задача на повтор через 2 часа и на следующий день'], ['Сделка без задачи', '0', '23', '0', 'Ежедневная проверка, дело ответственному'], ['Причина отказа', 'обязательна', '82%', '100%', 'Обязательное поле на этапе отказа'], ['Источник лида', 'обязателен', '88%', '100%', 'Метки и автозаполнение по форме']];
+    p.innerHTML = '<div class="card"><h2>Правила и цели</h2><p class="note">«Сейчас» и «Цель» в демо выдуманы</p><div class="scroll"><table><thead><tr><th>Показатель</th><th>Правило</th><th class="num">Сейчас</th><th class="num">Цель</th><th>Как обеспечим</th></tr></thead><tbody>' +
+      rows.map(function (r) { return '<tr><td><b>' + r[0] + '</b></td><td>' + r[1] + '</td><td class="num">' + r[2] + '</td><td class="num">' + r[3] + '</td><td class="wrap">' + r[4] + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+  } }
+];
+K.app({ sections: sections });
+</script>
+</body>
+</html>

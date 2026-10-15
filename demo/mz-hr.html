@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HR-сервис — демо</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+<link rel="stylesheet" href="mz.css">
+</head>
+<body>
+<script src="kit.js"></script>
+<script>
+K.shell({ brand: 'HR-сервис', sub: 'Кадры и обращения · демо', back: '../index.html#morozilka' });
+var R = K.rng(321), deps = ['Продажи', 'Кураторы', 'Преподаватели', 'Забота', 'Маркетинг', 'Техотдел'], roles = ['Менеджер', 'Куратор', 'Преподаватель', 'Оператор заботы', 'Таргетолог', 'Разработчик'];
+var staff = []; for (var i = 0; i < 40; i++) { var d = Math.floor(R() * 6); staff.push({ id: 'Сотр. ' + (101 + i), dep: d, role: roles[d], since: 2023 + Math.floor(R() * 4), st: R() < .86 ? 'Работает' : R() < .5 ? 'Испытательный' : 'Уволен', m: Math.floor(R() * 12) }); }
+var stages = ['Новое', 'Передано HR', 'В работе', 'Ждём сотрудника', 'Решено', 'Закрыто'];
+var tickets = [['Справка с места работы', 0], ['Вопрос по графику', 1], ['Отпуск в ноябре', 1], ['Доступ к рабочим чатам', 2], ['Ошибка в расчёте премии', 2], ['Перенос смены', 3], ['Запрос на обучение', 3], ['Справка 2-НДФЛ', 4], ['Смена должности', 4], ['Вопрос по бонусам', 5], ['Оформление нового сотрудника', 5]];
+
+K.app({ sections: [
+  { id: 'home', t: 'Главная', s: 'Что требует внимания сегодня', render: function (p) {
+    p.innerHTML = K.kpis([{ l: 'Сотрудников', v: staff.filter(function (s) { return s.st !== 'Уволен'; }).length }, { l: 'На испытательном', v: staff.filter(function (s) { return s.st === 'Испытательный'; }).length }, { l: 'Открытых обращений', v: tickets.filter(function (t) { return t[1] < 4; }).length }, { l: 'Дни рождения на неделе', v: 3 }]) +
+      '<div class="grid g2"><div class="card"><h2>Ближайшие дни рождения</h2><p class="note">&nbsp;</p><div class="todo"><b>Сотр. 107</b><span class="note" style="margin:0 0 0 auto">17 октября</span></div><div class="todo"><b>Сотр. 118</b><span class="note" style="margin:0 0 0 auto">19 октября</span></div><div class="todo"><b>Сотр. 125</b><span class="note" style="margin:0 0 0 auto">21 октября</span></div></div><div class="card"><h2>Нужно сделать</h2><p class="note">&nbsp;</p><div class="todo"><span class="pill bad"></span><b>Закрыть 2 просроченных обращения</b></div><div class="todo"><span class="pill warn"></span><b>Собрать опрос по итогам месяца</b></div><div class="todo"><span class="pill ok"></span><b>Выдать доступ новому куратору</b></div></div></div>';
+  } },
+  { id: 'staff', t: 'Кадры', s: 'Единый список сотрудников вместо таблицы', render: function (p) {
+    p.innerHTML = '<div class="seg" id="f" style="margin-bottom:14px"></div><div class="card"><div class="scroll"><table id="t"></table></div></div>';
+    var cur = 'all';
+    function draw() { document.getElementById('t').innerHTML = '<thead><tr><th>Сотрудник</th><th>Отдел</th><th>Должность</th><th class="num">С года</th><th>Статус</th></tr></thead><tbody>' + staff.filter(function (s) { return cur === 'all' || s.st === cur; }).slice(0, 25).map(function (s) { var c = s.st === 'Работает' ? 'ok' : s.st === 'Уволен' ? 'bad' : 'warn'; return '<tr><td><b>' + s.id + '</b></td><td>' + deps[s.dep] + '</td><td>' + s.role + '</td><td class="num">' + s.since + '</td><td><span class="pill ' + c + '">' + s.st + '</span></td></tr>'; }).join('') + '</tbody>'; }
+    K.seg(document.getElementById('f'), [['all', 'Все'], ['Работает', 'Работают'], ['Испытательный', 'Испытательный'], ['Уволен', 'Уволены']], 'all', function (v) { cur = v; draw(); }); draw();
+  } },
+  { id: 'tickets', t: 'Обращения', s: 'Канбан из шести этапов', render: function (p) {
+    p.innerHTML = '<div class="kanban">' + stages.map(function (s, i) { return '<div class="col"><h3>' + s + ' · ' + tickets.filter(function (t) { return t[1] === i; }).length + '</h3>' + tickets.filter(function (t) { return t[1] === i; }).map(function (t, k) { return '<div class="tk">' + t[0] + '<small>Сотр. ' + (110 + k * 3 + i) + ' · ' + (1 + k) + ' дн</small></div>'; }).join('') + '</div>'; }).join('') + '</div>';
+  } },
+  { id: 'an', t: 'Аналитика', s: 'Текучесть, наём, обращения по часам', render: function (p) {
+    var lab = ['Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт'], tur = [46, 41, 38, 35, 32, 29];
+    p.innerHTML = K.kpis([{ l: 'Текучесть за год', v: K.pct(29, 0), d: K.deltaHtml(29, 46, false) }, { l: 'Принято за месяц', v: 7 }, { l: 'Ушли за месяц', v: 3 }, { l: 'Средний стаж', v: '1,6 года' }]) + '<div class="grid g2"><div class="card"><h2>Текучесть по месяцам</h2><p class="note">%, скользящий год</p><div id="a"></div></div><div class="card"><h2>Наём по рекрутёрам</h2><p class="note">Принято за полгода</p><div id="b"></div></div></div><div class="card" style="margin-top:14px"><h2>Обращения по рабочим часам</h2><p class="note">Когда сотрудники чаще пишут в HR</p><div id="c"></div></div>';
+    K.line(document.getElementById('a'), lab, [{ name: 'Текучесть', color: '#f25c9c', data: tur }], { area: true, h: 210, axis: function (v) { return K.fmt(v) + '%'; } });
+    K.hbars(document.getElementById('b'), [{ n: 'Рекрутёр А', v: 14 }, { n: 'Рекрутёр Б', v: 11 }, { n: 'Рекрутёр В', v: 6 }]);
+    K.bars(document.getElementById('c'), ['9', '10', '11', '12', '13', '14', '15', '16', '17', '18'], [{ name: 'Обращений', color: '#2739b3', data: [4, 9, 14, 11, 6, 10, 15, 12, 8, 3] }], { h: 190 });
+  } },
+  { id: 'mail', t: 'Рассылки', s: 'Сообщения сотрудникам и ответы', render: function (p) {
+    var rows = [['Опрос по итогам месяца', 'Все сотрудники', 41, 33], ['График на праздники', 'Кураторы', 18, 17], ['Новый регламент проверки', 'Преподаватели', 14, 9]];
+    p.innerHTML = '<div class="card"><h2>Рассылки</h2><p class="note">Отправлено и прочитано</p><div class="scroll"><table><thead><tr><th>Тема</th><th>Кому</th><th class="num">Отправлено</th><th class="num">Прочитано</th><th class="num">Доля</th></tr></thead><tbody>' + rows.map(function (r) { return '<tr><td><b>' + r[0] + '</b></td><td>' + r[1] + '</td><td class="num">' + r[2] + '</td><td class="num">' + r[3] + '</td><td class="num">' + K.pct(r[3] / r[2] * 100, 0) + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+  } }
+] });
+</script>
+</body>
+</html>

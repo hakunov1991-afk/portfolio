@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тренажёр — демо</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+<link rel="stylesheet" href="mz.css">
+<style>
+body{padding:18px 12px 40px}
+.wrap{max-width:420px;margin:0 auto}
+.top{color:var(--muted);font-size:13px;margin-bottom:12px;display:flex;justify-content:space-between}
+.card{background:#fff}
+.opt{display:block;width:100%;text-align:left;border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px 14px;margin-top:8px;font-size:15px;cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.right{border-color:var(--ok);background:var(--ok-bg)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.word{font-family:var(--fd);font-size:26px;letter-spacing:.02em}
+</style>
+</head>
+<body>
+<script src="kit.js"></script>
+<div class="wrap">
+  <div class="top"><span>Telegram Mini App · демо</span><a href="../index.html#morozilka">К портфолио</a></div>
+  <div class="phone">
+    <div class="phone-top"><span>Тренажёр: русский язык</span><span class="pillb" id="pt"></span></div>
+    <div class="phone-body" id="body"></div>
+    <div class="tabbar" id="tabs"></div>
+  </div>
+</div>
+<script>
+var cur = 'train', qi = 0, right = 0, answered = false;
+var Q = [['Где пишется НН: «Он был ране…ый»?', ['одна Н', 'две Н', 'обе верны'], 1, 'Краткое причастие с приставкой: ранен, в полной форме «раненый» пишем НН.'], ['Выберите ударение в слове', ['звонИт', 'звОнит', 'обе формы'], 0, 'В глаголе «звонить» ударение падает на окончание: звонИт.'], ['Запятая в предложении: «Когда пришёл дождь мы вернулись домой»', ['до «мы»', 'после «домой»', 'не нужна'], 0, 'Придаточное с союзом «когда» отделяется запятой: «Когда пришёл дождь, мы вернулись домой».']];
+var tabs = [['lessons', 'Уроки'], ['train', 'Тренировка'], ['tasks', 'Задания'], ['stats', 'Статистика']];
+function draw() {
+  document.getElementById('pt').textContent = 'Задание ' + Math.min(qi + 1, Q.length) + ' из ' + Q.length;
+  document.getElementById('tabs').innerHTML = tabs.map(function (t) { return '<button type="button" role="tab" data-t="' + t[0] + '" aria-selected="' + (t[0] === cur) + '">' + t[1] + '</button>'; }).join('');
+  document.querySelectorAll('#tabs button').forEach(function (b) { b.addEventListener('click', function () { cur = b.dataset.t; draw(); }); });
+  var h = '';
+  if (cur === 'lessons') h = ['Орфография: НН и Н', 'Ударения: 26 слов', 'Пунктуация: сложные предложения', 'Слова для запоминания'].map(function (t, i) { return '<div class="card" style="margin-bottom:10px"><b>' + t + '</b><p class="note" style="margin:4px 0 0">' + (i === 0 ? 'Рекомендуем сегодня' : 'Урок ' + (i + 1)) + '</p></div>'; }).join('');
+  if (cur === 'train') {
+    if (qi >= Q.length) h = '<div class="card"><h2>Готово</h2><p style="margin:8px 0">Верных ответов: <b>' + right + ' из ' + Q.length + '</b>.</p><button class="btn pri" id="again" type="button">Пройти ещё раз</button></div>';
+    else { var q = Q[qi]; h = '<div class="card"><p class="word" style="font-size:18px;line-height:1.35">' + q[0] + '</p>' + q[1].map(function (o, i) { return '<button class="opt" type="button" data-o="' + i + '">' + o + '</button>'; }).join('') + '<div id="ex" style="margin-top:12px;font-size:14px"></div></div>'; }
+  }
+  if (cur === 'tasks') h = '<div class="card"><h2>26 заданий</h2><p class="note">Выберите номер: от 1 до 26</p><div style="display:flex;flex-wrap:wrap;gap:6px">' + Array.apply(null, Array(26)).map(function (_, i) { return '<span class="pillb" style="' + (i < 8 ? '' : 'opacity:.45') + '">' + (i + 1) + '</span>'; }).join('') + '</div></div>';
+  if (cur === 'stats') h = '<div class="card"><h2>Моя статистика</h2><p class="note">За неделю</p><div id="st"></div></div>';
+  document.getElementById('body').innerHTML = h;
+  if (cur === 'stats') K.bars(document.getElementById('st'), ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'], [{ name: 'Верных', color: '#2739b3', data: [8, 12, 6, 15, 10, 4, 9] }], { h: 180 });
+  document.querySelectorAll('.opt').forEach(function (b) { b.addEventListener('click', function () { if (answered) return; answered = true; var i = +b.dataset.o, q = Q[qi]; if (i === q[2]) { right++; b.classList.add('right'); } else { b.classList.add('wrong'); document.querySelectorAll('.opt')[q[2]].classList.add('right'); } document.getElementById('ex').innerHTML = '<p>' + q[3] + '</p><button class="btn pri" id="nx" type="button" style="margin-top:8px">Дальше</button>'; document.getElementById('nx').addEventListener('click', function () { qi++; answered = false; draw(); }); }); });
+  var ag = document.getElementById('again'); if (ag) ag.addEventListener('click', function () { qi = 0; right = 0; draw(); });
+}
+draw();
+</script>
+</body>
+</html>

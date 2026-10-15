@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Источники — демо</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+<link rel="stylesheet" href="rps.css">
+</head>
+<body>
+<script src="kit.js"></script>
+<script src="rpsdata.js"></script>
+<script>
+K.shell({ brand: 'Источники', sub: 'Рыбаков Плэйскул · демо', back: '../index.html#playschool' });
+var D = RD, per = 'm';
+function pool() { return D.within(per === 'm' ? 30 : per === 'q' ? 90 : 7); }
+function seg(p, again) { var s = document.createElement('div'); s.style.marginBottom = '14px'; p.appendChild(s); K.seg(s, [['w', '7 дней'], ['m', 'Месяц'], ['q', 'Квартал']], per, function (v) { per = v; again(); }); }
+function wrapPage(id, t, s, body) { return { id: id, t: t, s: s, render: function (p) { var h = document.createElement('div'); p.appendChild(h); var draw = function () { h.innerHTML = ''; seg(h, draw); var c = document.createElement('div'); h.appendChild(c); body(c); }; draw(); } }; }
+var cls = function (v, g, w) { return v >= g ? 'c-ok' : v >= w ? 'c-warn' : 'c-bad'; };
+function r(a, b) { return b ? a / b * 100 : 0; }
+
+K.app({ sections: [
+  wrapPage('src', 'Источники', 'Откуда приходят заявки и что с ними происходит', function (c) {
+    var P = pool(), cnt = P.length;
+    c.innerHTML = K.kpis([{ l: 'Заявок', v: K.fmt(cnt) }, { l: 'Лучший источник', v: 'Рекомендации', d: '<span class="delta up">конверсия в оплату выше всех</span>' }, { l: 'Больше всего заявок', v: 'Поиск' }, { l: 'Без источника', v: K.pct(4.2), d: '<span class="delta flat">нужно заполнять в форме</span>' }]) +
+      '<div class="card"><h2>Качество источников</h2><p class="note">Зелёный: конверсия в оплату от 14%, красный: ниже 7%</p><div class="scroll"><table><thead><tr><th>Источник</th><th class="num">Заявки</th><th class="num">Доля</th><th class="num">Экскурсии</th><th class="num">Оплаты</th><th class="num">Конверсия</th></tr></thead><tbody>' +
+      D.sources.map(function (n, i) { var x = P.filter(function (d) { return d.src === i; }), w = x.filter(function (d) { return d.status === 'won'; }).length, e = x.filter(function (d) { return d.stage >= 3; }).length, cv = r(w, x.length); return '<tr><td><b>' + n + '</b></td><td class="num">' + x.length + '</td><td class="num">' + K.pct(r(x.length, cnt)) + '</td><td class="num">' + e + '</td><td class="num">' + w + '</td><td class="num ' + cls(cv, 14, 7) + '">' + K.pct(cv) + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+  }),
+  wrapPage('matrix', 'Воронки и источники', 'Сколько заявок каждого источника в каждой воронке', function (c) {
+    var P = pool();
+    c.innerHTML = '<div class="card"><h2>Тепловая карта</h2><p class="note">Чем темнее, тем больше заявок</p><div id="h"></div></div>';
+    K.heat(document.getElementById('h'), D.sources, D.funnels, D.sources.map(function (_, i) { return D.funnels.map(function (_, j) { return P.filter(function (d) { return d.src === i && d.funnel === j; }).length; }); }), { corner: '', color: [228, 95, 54] });
+  }),
+  wrapPage('utm', 'Рекламные метки', 'UTM-кампании: заявки и оплаты', function (c) {
+    var camps = [['yandex / search / набор-сад', 'Поиск'], ['yandex / search / школа-1-класс', 'Поиск'], ['vk / lead / экскурсия', 'Соцсети'], ['tg / post / открытый-день', 'Соцсети'], ['partner / banner / семейный-клуб', 'Партнёры'], ['yandex / maps / карточка', 'Карты']], R2 = K.rng(11), k = per === 'w' ? .25 : per === 'm' ? 1 : 3;
+    c.innerHTML = '<div class="card"><h2>Кампании по меткам</h2><p class="note">Метки приходят вместе с заявкой и сохраняются в сделке</p><div class="scroll"><table><thead><tr><th>Кампания</th><th>Источник</th><th class="num">Заявки</th><th class="num">Оплаты</th><th class="num">Конверсия</th></tr></thead><tbody>' +
+      camps.map(function (x) { var a = Math.round((20 + R2() * 60) * k), w = Math.round(a * (.05 + R2() * .17)); return '<tr><td><b>' + x[0] + '</b></td><td>' + x[1] + '</td><td class="num">' + a + '</td><td class="num">' + w + '</td><td class="num ' + cls(r(w, a), 14, 7) + '">' + K.pct(r(w, a)) + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+  }),
+  wrapPage('forms', 'Формы на сайте', 'Какие формы приводят заявки', function (c) {
+    var f = [['Запись на экскурсию', 420, 12.4], ['Заказать звонок', 310, 8.1], ['Вопрос в чате', 260, 6.3], ['Запись на открытый день', 190, 15.2], ['Лагерь: бронь', 120, 17.5]], k = per === 'w' ? .25 : per === 'm' ? 1 : 3;
+    c.innerHTML = '<div class="grid g2"><div class="card"><h2>Заявки по формам</h2><p class="note">&nbsp;</p><div id="a"></div></div><div class="card"><h2>Конверсия формы в оплату</h2><p class="note">%</p><div id="b"></div></div></div>';
+    K.hbars(document.getElementById('a'), f.map(function (x) { return { n: x[0], v: Math.round(x[1] * k / 3) }; }));
+    K.hbars(document.getElementById('b'), f.map(function (x) { return { n: x[0], v: x[2] }; }), { fmt: function (v) { return K.fmt(v, 1) + '%'; } });
+    document.querySelectorAll('.bar-row').forEach(function (e) { e.style.gridTemplateColumns = 'minmax(110px,190px) 1fr 52px'; });
+  }),
+  wrapPage('metrika', 'Визиты и заявки', 'Связка сайта и CRM: визиты, заявки, конверсия сайта', function (c) {
+    var R3 = K.rng(5), lab = [], v = [], l = [];
+    for (var i = 29; i >= 0; i--) { lab.push('−' + i + ' д'); var vis = Math.round(520 + R3() * 220 + (29 - i) * 4); v.push(vis); l.push(Math.round(vis * (.04 + R3() * .02))); }
+    var tv = v.reduce(function (a, b) { return a + b; }, 0), tl = l.reduce(function (a, b) { return a + b; }, 0);
+    c.innerHTML = K.kpis([{ l: 'Визитов за 30 дней', v: K.fmt(tv) }, { l: 'Заявок с сайта', v: K.fmt(tl) }, { l: 'Конверсия сайта', v: K.pct(r(tl, tv), 2) }, { l: 'Отказы', v: K.pct(31.4) }]) + '<div class="grid g2"><div class="card"><h2>Визиты</h2><p class="note">&nbsp;</p><div id="a"></div></div><div class="card"><h2>Заявки</h2><p class="note">&nbsp;</p><div id="b"></div></div></div>';
+    K.line(document.getElementById('a'), lab, [{ name: 'Визиты', color: '#e45f36', data: v }], { area: true, h: 210 });
+    K.line(document.getElementById('b'), lab, [{ name: 'Заявки', color: '#4ade80', data: l }], { area: true, h: 210 });
+  })
+] });
+</script>
+</body>
+</html>

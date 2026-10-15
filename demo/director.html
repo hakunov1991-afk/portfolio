@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Дашборд директора — демо</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+</head>
+<body>
+<script src="kit.js"></script>
+<script>
+K.shell({ brand: 'CRM Dashboard', sub: 'Директор и РОП · демо' });
+
+/* ---------- выдуманные данные ---------- */
+var R = K.rng(7);
+var names = ['Игорь Л.', 'Мария С.', 'Денис К.', 'Алина В.', 'Павел Н.', 'Ольга Т.', 'Артём Р.', 'Елена Ш.', 'Кирилл Ф.', 'Вера Д.', 'Сергей Б.', 'Юлия М.'];
+var brokers = names.map(function (n, i) {
+  var skill = .35 + R() * .65;
+  return { n: n, circle: 2 + i % 3, leads: Math.round(38 + R() * 60), conv: 8 + skill * 22 + R() * 4, speed: Math.round(420 - skill * 330 + R() * 70), tasks: Math.round(62 + skill * 36 + R() * 4), margin: Math.round(2500 + skill * 21000 + R() * 5000), fines: R() < .45 ? Math.round(R() * 4) : 0, skill: skill };
+});
+var PERIODS = { w: ['Неделя', 1], m: ['Месяц', 4.2], q: ['Квартал', 12.5] };
+
+function score(b) {
+  var s = b.conv / 30 * 35 + Math.max(0, 1 - b.speed / 600) * 25 + b.tasks / 100 * 20 + Math.min(1, b.margin / 26000) * 20 - b.fines * 1.5;
+  return Math.max(0, Math.round(s));
+}
+function speedCls(s) { return s <= 180 ? 'c-ok' : s <= 300 ? 'c-warn' : 'c-bad'; }
+function convCls(c) { return c >= 20 ? 'c-ok' : c >= 13 ? 'c-warn' : 'c-bad'; }
+function taskCls(t) { return t >= 90 ? 'c-ok' : t >= 75 ? 'c-warn' : 'c-bad'; }
+function mmss(s) { return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
+
+K.app({ sections: [
+  { id: 'rating', t: 'Рейтинг брокеров', s: 'Кто приносит компании больше: конверсия, скорость, дисциплина, маржа', render: function (p) {
+    p.innerHTML = '<div style="margin-bottom:14px" id="seg"></div><div id="body"></div>';
+    function draw(per) {
+      var k = PERIODS[per][1];
+      var rows = brokers.map(function (b) { return { b: b, leads: Math.round(b.leads * k), margin: Math.round(b.margin * k), sc: score(b) }; }).sort(function (a, c) { return c.sc - a.sc; });
+      var L = rows.reduce(function (a, r) { return a + r.leads; }, 0), M = rows.reduce(function (a, r) { return a + r.margin; }, 0);
+      var conv = brokers.reduce(function (a, b) { return a + b.conv; }, 0) / brokers.length, med = brokers.map(function (b) { return b.speed; }).sort(function (a, c) { return a - c; })[6];
+      document.getElementById('body').innerHTML = K.kpis([
+        { l: 'Лидов в работе', v: K.fmt(L), d: K.deltaHtml(L, L * .93) },
+        { l: 'Конверсия в встречу', v: K.pct(conv), d: K.deltaHtml(conv, conv * .96) },
+        { l: 'Медиана скорости взятия', v: mmss(med), d: K.deltaHtml(med, med * 1.08, false) },
+        { l: 'Валовая маржа', v: K.money(M), d: K.deltaHtml(M, M * .9) }
+      ]) + '<div class="card"><h2>Рейтинг за период</h2><p class="note">Балл = конверсия 35 + скорость 25 + задачи в срок 20 + маржа 20, минус штрафы</p><div class="scroll"><table><thead><tr><th>#</th><th>Брокер</th><th>Круг</th><th class="num">Лидов</th><th class="num">Конверсия</th><th class="num">Скорость взятия</th><th class="num">Задачи в срок</th><th class="num">Маржа</th><th class="num">Штрафы</th><th class="num">Балл</th></tr></thead><tbody>' +
+        rows.map(function (r, i) { var b = r.b; return '<tr><td><span class="rank' + (i < 3 ? ' top3' : '') + '">' + (i + 1) + '</span></td><td><b>' + b.n + '</b></td><td>' + b.circle + ' круг</td><td class="num">' + r.leads + '</td><td class="num ' + convCls(b.conv) + '">' + K.pct(b.conv) + '</td><td class="num ' + speedCls(b.speed) + '">' + mmss(b.speed) + '</td><td class="num ' + taskCls(b.tasks) + '">' + b.tasks + '%</td><td class="num">' + K.money(r.margin) + '</td><td class="num">' + (b.fines ? b.fines : '–') + '</td><td class="num"><b>' + r.sc + '</b></td></tr>'; }).join('') + '</tbody></table></div></div>';
+    }
+    K.seg(document.getElementById('seg'), [['w', 'Неделя'], ['m', 'Месяц'], ['q', 'Квартал']], 'm', draw);
+    draw('m');
+  } },
+
+  { id: 'conv', t: 'Конверсия по неделям', s: 'От лида до сделки, 12 недель', render: function (p) {
+    var r = K.rng(21), weeks = [], lab = [];
+    for (var i = 0; i < 12; i++) {
+      var leads = Math.round(420 + r() * 140 + i * 6), q = Math.round(leads * (.58 + r() * .08)), m = Math.round(q * (.34 + r() * .07)), sh = Math.round(m * (.62 + r() * .08)), d = Math.round(sh * (.22 + r() * .06));
+      weeks.push({ leads: leads, q: q, m: m, sh: sh, d: d }); lab.push('нед. ' + (i + 1));
+    }
+    var last = weeks[11], prev = weeks[10];
+    p.innerHTML = K.kpis([
+      { l: 'Лидов за неделю', v: K.fmt(last.leads), d: K.deltaHtml(last.leads, prev.leads) },
+      { l: 'Лид → встреча', v: K.pct(last.m / last.leads * 100), d: K.deltaHtml(last.m / last.leads, prev.m / prev.leads) },
+      { l: 'Встреча → показ', v: K.pct(last.sh / last.m * 100), d: K.deltaHtml(last.sh / last.m, prev.sh / prev.m) },
+      { l: 'Лид → сделка', v: K.pct(last.d / last.leads * 100, 2), d: K.deltaHtml(last.d / last.leads, prev.d / prev.leads) }
+    ]) + '<div class="grid g21"><div class="card"><h2>Конверсия лид → встреча</h2><p class="note">% от всех лидов недели</p><div id="ch"></div></div><div class="card"><h2>Воронка последней недели</h2><p class="note">&nbsp;</p><div id="fn"></div></div></div><div class="card"><h2>Таблица по неделям</h2><p class="note">Стрелки показывают изменение к прошлой неделе</p><div class="scroll"><table><thead><tr><th>Неделя</th><th class="num">Лиды</th><th class="num">Квалиф.</th><th class="num">Встречи</th><th class="num">Показы</th><th class="num">Сделки</th><th class="num">Лид → встреча</th></tr></thead><tbody>' +
+      weeks.slice().reverse().map(function (w, ix) { var i = 11 - ix, c = w.m / w.leads * 100, pc = i ? weeks[i - 1].m / weeks[i - 1].leads * 100 : c, d = c - pc; return '<tr><td>' + lab[i] + '</td><td class="num">' + w.leads + '</td><td class="num">' + w.q + '</td><td class="num">' + w.m + '</td><td class="num">' + w.sh + '</td><td class="num">' + w.d + '</td><td class="num">' + K.pct(c) + ' <span class="' + (d >= 0 ? 'up' : 'down') + '">' + (d >= 0 ? '▲' : '▼') + K.fmt(Math.abs(d), 1) + '</span></td></tr>'; }).join('') + '</tbody></table></div></div>';
+    K.line(document.getElementById('ch'), lab, [{ name: 'Лид → встреча, %', color: '#0088cc', data: weeks.map(function (w) { return +(w.m / w.leads * 100).toFixed(1); }) }], { area: true, axis: function (v) { return K.fmt(v, 1) + '%'; }, d: 1 });
+    K.funnel(document.getElementById('fn'), [{ n: 'Лиды', v: last.leads }, { n: 'Квалифицированы', v: last.q }, { n: 'Встреча назначена', v: last.m }, { n: 'Показ состоялся', v: last.sh }, { n: 'Сделка', v: last.d, c: '#c9a96e' }]);
+  } },
+
+  { id: 'cohort', t: 'Когортный анализ', s: 'Какая доля лидов месяца дошла до сделки через N недель', render: function (p) {
+    var r = K.rng(33), months = ['Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь'], cols = [];
+    for (var i = 0; i <= 10; i++) cols.push(i === 0 ? 'нед. 0' : '+' + i);
+    var rows = months.map(function (m, mi) {
+      var tot = 0, ceiling = 6 + r() * 3, out = [];
+      for (var w = 0; w <= 10; w++) { if (w > (months.length - 1 - mi) * 2 + 2) { out.push(null); continue; } tot = ceiling * (1 - Math.exp(-(w + .6) / 3.2)) + r() * .3; out.push(+tot.toFixed(1)); }
+      return out;
+    });
+    p.innerHTML = '<div class="card"><h2>Когорты по месяцу появления лида</h2><p class="note">Накопительная доля лидов, закрытых в сделку. Чем темнее, тем выше</p><div id="h"></div></div>' +
+      '<div class="grid g2"><div class="card"><h2>Как читать</h2><p class="note" style="margin:0">Строка — все лиды, пришедшие в месяце. Столбец — сколько недель прошло с первого касания. Сравнивайте строки между собой в одном столбце: так видно, стали ли лиды конвертироваться лучше или хуже.</p></div><div class="card"><h2>Вывод по демо-данным</h2><p class="note" style="margin:0">Лиды июля и августа догоняют старые когорты быстрее: после запуска автораспределения основная часть сделок закрывается в первые 4 недели.</p></div></div>';
+    K.heat(document.getElementById('h'), months, cols, rows, { corner: 'Когорта', cell: function (v) { return K.fmt(v, 1) + '%'; } });
+  } },
+
+  { id: 'speed', t: 'Скорость взятия лида', s: 'От момента появления лида до первого касания менеджера', render: function (p) {
+    var r = K.rng(5);
+    var buckets = [['до 1 мин', 18], ['1–3 мин', 41], ['3–5 мин', 22], ['5–10 мин', 11], ['10–30 мин', 5], ['30+ мин', 3]];
+    p.innerHTML = '<div class="grid g2"><div class="card"><h2>Распределение за месяц</h2><p class="note">Доля лидов по времени до первого касания</p><div id="b"></div></div><div class="card"><h2>Цель</h2><p class="note">Первое касание в пределах 5 минут</p><div style="font-family:var(--fd);font-size:44px;font-weight:700;color:var(--ink)">81%</div><p class="note" style="margin-top:4px">Сейчас укладываются в 5 минут. Было 54% до автораспределения.</p><div id="g"></div></div></div>' +
+      '<div class="card"><h2>Медиана по брокерам</h2><p class="note">Зелёный до 3 минут, жёлтый до 5, красный дольше</p><div class="scroll"><table><thead><tr><th>Брокер</th><th class="num">Медиана</th><th class="num">В пределах 5 мин</th><th>Оценка</th></tr></thead><tbody>' +
+      brokers.slice().sort(function (a, b) { return a.speed - b.speed; }).map(function (b) { var ok = Math.min(97, Math.round(100 - b.speed / 7)); var c = b.speed <= 180 ? ['ok', 'Быстро'] : b.speed <= 300 ? ['warn', 'Нормально'] : ['bad', 'Медленно']; return '<tr><td><b>' + b.n + '</b></td><td class="num ' + speedCls(b.speed) + '">' + mmss(b.speed) + '</td><td class="num">' + ok + '%</td><td><span class="pill ' + c[0] + '">' + c[1] + '</span></td></tr>'; }).join('') + '</tbody></table></div></div>';
+    K.bars(document.getElementById('b'), buckets.map(function (x) { return x[0]; }), [{ name: 'Доля лидов, %', data: buckets.map(function (x) { return x[1]; }), colors: ['#15803d', '#15803d', '#a15c00', '#b42318', '#b42318', '#b42318'] }], { axis: function (v) { return K.fmt(v) + '%'; }, h: 220 });
+  } },
+
+  { id: 'reasons', t: 'Причины закрытия', s: 'Почему сделки уходят в отказ', render: function (p) {
+    var reasons = [{ n: 'Не дозвонились', v: 214 }, { n: 'Нет бюджета', v: 168 }, { n: 'Выбрали другого брокера', v: 121 }, { n: 'Передумал покупать', v: 96 }, { n: 'Не целевой запрос', v: 74 }, { n: 'Нет связи после показа', v: 52 }, { n: 'Дубль лида', v: 31 }];
+    var tot = reasons.reduce(function (a, x) { return a + x.v; }, 0);
+    p.innerHTML = '<div class="grid g21"><div class="card"><h2>Причины за квартал</h2><p class="note">Всего закрыто без сделки: ' + K.fmt(tot) + '</p><div id="r"></div></div><div class="card"><h2>На что смотреть</h2><p class="note" style="margin:0 0 10px">«Не дозвонились» — самая большая причина, и её можно уменьшать: добавить попытки в разное время и мессенджер.</p><p class="note" style="margin:0">«Выбрали другого» — повод проверить скорость первого касания и качество показов.</p></div></div>';
+    K.hbars(document.getElementById('r'), reasons, { fmt: function (v) { return K.fmt(v) + ' · ' + Math.round(v / tot * 100) + '%'; } });
+    document.querySelectorAll('.bar-row').forEach(function (e) { e.style.gridTemplateColumns = 'minmax(110px,190px) 1fr 80px'; });
+  } },
+
+  { id: 'fines', t: 'Штрафы', s: 'Нарушения дисциплины: правило, сумма, статус', render: function (p) {
+    var r = K.rng(77), rules = [['Лид не взят за 10 минут', 15], ['Сделка без задачи', 10], ['Просрочена задача', 5], ['Нет комментария после звонка', 5]], rows = [];
+    for (var i = 0; i < 10; i++) { var rl = rules[Math.floor(r() * 4)], b = brokers[Math.floor(r() * 12)]; rows.push({ d: ('0' + (28 - i * 2)).slice(-2) + '.09', b: b.n, rule: rl[0], sum: rl[1], st: r() < .6 ? 'Отправлено' : r() < .5 ? 'Ожидает' : 'Оспорен' }); }
+    var total = rows.reduce(function (a, x) { return a + x.sum; }, 0);
+    p.innerHTML = K.kpis([{ l: 'Штрафов за месяц', v: rows.length }, { l: 'Сумма', v: K.money(total) }, { l: 'Оспорено', v: rows.filter(function (x) { return x.st === 'Оспорен'; }).length }, { l: 'Чаще всего', v: 'Лид не взят', d: '<span class="delta flat">за 10 минут</span>' }]) +
+      '<div class="grid g21"><div class="card"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px"><div><h2>Журнал штрафов</h2><p class="note" style="margin:0">Правила считаются автоматически по данным amoCRM</p></div><button class="btn pri" id="send" type="button">Отправить сводку в Telegram</button></div><div class="scroll"><table><thead><tr><th>Дата</th><th>Брокер</th><th>Правило</th><th class="num">Сумма</th><th>Статус</th></tr></thead><tbody>' +
+      rows.map(function (x) { var c = x.st === 'Отправлено' ? 'ok' : x.st === 'Ожидает' ? 'warn' : 'bad'; return '<tr><td>' + x.d + '</td><td><b>' + x.b + '</b></td><td>' + x.rule + '</td><td class="num">' + x.sum + ' $</td><td><span class="pill ' + c + '">' + x.st + '</span></td></tr>'; }).join('') + '</tbody></table></div></div>' +
+      '<div class="card"><h2>Так выглядит сообщение</h2><p class="note">Что приходит в рабочий чат</p><div class="tg">Штрафы за неделю\n\n' + rows.slice(0, 4).map(function (x) { return x.b + ': ' + x.rule + ', ' + x.sum + ' $'; }).join('\n') + '\n\nИтого: ' + K.money(rows.slice(0, 4).reduce(function (a, x) { return a + x.sum; }, 0)) + '</div></div></div>';
+    document.getElementById('send').addEventListener('click', function () { K.toast('Демо: в боевой версии сводка уходит в Telegram'); });
+  } },
+
+  { id: 'queue', t: 'Стакан лидов', s: 'Очередь на раздачу по кругам 2, 3 и 4', render: function (p) {
+    var circles = [[2, 'Новые, не взятые', 14, 6], [3, 'Повторные касания', 38, 21], [4, 'Старая база', 112, 64]];
+    p.innerHTML = '<div class="grid g3">' + circles.map(function (c) { return '<div class="card"><p class="note" style="margin:0">' + c[0] + ' круг</p><h2 style="font-size:16px">' + c[1] + '</h2><div style="font-family:var(--fd);font-size:40px;font-weight:700;color:var(--ink);margin:6px 0">' + c[2] + '</div><p class="note" style="margin:0">в очереди. Раздано за сутки: ' + c[3] + '</p></div>'; }).join('') + '</div>' +
+      '<div class="card"><h2>Кому уйдёт следующий лид</h2><p class="note">Робот выбирает брокера, который раньше не касался этого контакта и сейчас свободнее всех</p><div class="scroll"><table><thead><tr><th>Лид</th><th>Круг</th><th>Ждёт</th><th>Кому уйдёт</th><th>Причина выбора</th></tr></thead><tbody>' +
+      [['Лид 1042', 2, '2 мин', 'Алина В.', 'Не касалась контакта, 3 лида в работе'], ['Лид 1043', 2, '1 мин', 'Денис К.', 'Не касался контакта, 4 лида в работе'], ['Лид 0987', 3, '27 мин', 'Артём Р.', 'Предыдущий брокер в отпуске'], ['Лид 0631', 4, '3 дня', 'Вера Д.', 'Свободна, не касалась контакта'], ['Лид 0615', 4, '3 дня', 'Юлия М.', 'Свободна, не касалась контакта']].map(function (x) { return '<tr><td><b>' + x[0] + '</b></td><td>' + x[1] + '</td><td>' + x[2] + '</td><td>' + x[3] + '</td><td class="wrap">' + x[4] + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+  } }
+] });
+</script>
+</body>
+</html>

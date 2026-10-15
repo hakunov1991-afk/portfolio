@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тёплая база по кампусам — демо</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+<link rel="stylesheet" href="rps-light.css">
+<style>:root{--accent:#1c2884}.menu button[aria-selected=true]{background:#1c2884}</style>
+</head>
+<body>
+<script src="kit.js"></script>
+<script src="rpsdata.js"></script>
+<script>
+K.shell({ brand: 'Тёплая база', sub: 'Отчёт по кампусам · демо', back: '../index.html#playschool' });
+var D = RD, base = D.deals.filter(function (d) { return d.status !== 'won'; });
+function cnt(f) { return base.filter(f).length; }
+var prio = function (d) { return d.stage >= 3 ? 'Высокий' : d.stage >= 1 ? 'Средний' : 'Низкий'; };
+K.app({ sections: [
+  { id: 'stages', t: 'Этапы и кампусы', s: 'Где сейчас находятся сделки, которые не дошли до оплаты', render: function (p) {
+    p.innerHTML = K.kpis([{ l: 'Тёплых сделок', v: K.fmt(base.length) }, { l: 'Дошли до экскурсии', v: cnt(function (d) { return d.stage >= 3; }) }, { l: 'Были договор или оплата', v: cnt(function (d) { return d.stage >= 4; }) }, { l: 'Закрыты без оплаты', v: cnt(function (d) { return d.status === 'lost'; }) }]) + '<div class="card"><h2>Этапы по кампусам</h2><p class="note">Чем темнее, тем больше сделок</p><div id="h"></div></div>';
+    K.heat(document.getElementById('h'), D.stages, D.campuses, D.stages.map(function (_, i) { return D.campuses.map(function (_, j) { return cnt(function (d) { return d.stage === i && d.campus === j; }); }); }), { corner: '', color: [28, 40, 132] });
+  } },
+  { id: 'months', t: 'По месяцам', s: 'Когда сделки были созданы', render: function (p) {
+    var names = ['июль', 'август', 'сентябрь', 'октябрь'], vals = [0, 1, 2, 3].map(function (m) { return cnt(function (d) { return d.days >= (3 - m) * 30 && d.days < (4 - m) * 30; }); });
+    p.innerHTML = '<div class="card"><h2>Сделки по месяцу создания</h2><p class="note">&nbsp;</p><div id="c"></div></div>';
+    K.bars(document.getElementById('c'), names, [{ name: 'Сделок', color: '#1c2884', data: vals }], { h: 220 });
+  } },
+  { id: 'why', t: 'Причины остановки', s: 'Почему диалог не продолжился', render: function (p) {
+    var L = base.filter(function (d) { return d.status === 'lost'; });
+    p.innerHTML = '<div class="grid g2"><div class="card"><h2>Причины</h2><p class="note">Закрыто: ' + L.length + '</p><div id="a"></div></div><div class="card"><h2>Последнее слово</h2><p class="note">Кто ответил последним в переписке</p><div id="b"></div></div></div>';
+    K.hbars(document.getElementById('a'), D.reasons.map(function (r, i) { return { n: r, v: L.filter(function (d) { return d.reason === i; }).length }; }).sort(function (a, b) { return b.v - a.v; }));
+    K.hbars(document.getElementById('b'), [{ n: 'Клиент, ответа не было', v: 142 }, { n: 'Менеджер, клиент молчит', v: 118 }, { n: 'Рассылка', v: 63 }]);
+    document.querySelectorAll('.bar-row').forEach(function (e) { e.style.gridTemplateColumns = 'minmax(110px,190px) 1fr 40px'; });
+  } },
+  { id: 'prio', t: 'Приоритет возврата', s: 'С кем вернуться в первую очередь', render: function (p) {
+    var rows = base.filter(function (d) { return d.status === 'open' && d.stage >= 2; }).sort(function (a, b) { return b.stage - a.stage || a.days - b.days; }).slice(0, 14);
+    p.innerHTML = '<div class="card"><h2>Список для возврата</h2><p class="note">Выше этап и свежее контакт, выше приоритет</p><div class="scroll"><table><thead><tr><th>Сделка</th><th>Кампус</th><th>Этап</th><th class="num">Дней без движения</th><th>Приоритет</th></tr></thead><tbody>' + rows.map(function (d) { var pr = prio(d); return '<tr><td><b>' + D.link(d) + '</b></td><td>' + D.campuses[d.campus] + '</td><td>' + D.stages[d.stage] + '</td><td class="num">' + d.days + '</td><td><span class="pill ' + (pr === 'Высокий' ? 'ok' : pr === 'Средний' ? 'warn' : 'bad') + '">' + pr + '</span></td></tr>'; }).join('') + '</tbody></table></div></div>';
+  } },
+  { id: 'reply', t: 'Скорость ответа', s: 'Как быстро отвечали тёплым клиентам', render: function (p) {
+    var v = base.map(function (d) { return d.reply; });
+    p.innerHTML = K.kpis([{ l: 'Среднее', v: D.min(K.avg(v)) }, { l: 'Медиана', v: D.min(K.median(v)) }, { l: 'Дольше часа', v: cnt(function (d) { return d.reply > 60; }) }, { l: 'Дольше суток', v: cnt(function (d) { return d.reply > 1440; }) }]) + '<div class="card"><h2>По кампусам</h2><p class="note">Среднее и медиана рядом</p><div class="scroll"><table><thead><tr><th>Кампус</th><th class="num">Среднее</th><th class="num">Медиана</th></tr></thead><tbody>' + D.campuses.map(function (n, i) { var x = base.filter(function (d) { return d.campus === i; }).map(function (d) { return d.reply; }); return '<tr><td><b>' + n + '</b></td><td class="num">' + D.min(K.avg(x)) + '</td><td class="num">' + D.min(K.median(x)) + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+  } }
+] });
+</script>
+</body>
+</html>

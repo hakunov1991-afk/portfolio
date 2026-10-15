@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Учебные планы — демо</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+<link rel="stylesheet" href="mz.css">
+<style>.day{display:grid;gap:8px}.lesson{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;background:var(--card);border-radius:14px;padding:12px 14px}.lesson i{width:12px;height:12px;border-radius:50%;background:var(--accent)}.lesson.done i{background:var(--ok)}.badge{font-size:12px;font-weight:600}.todo{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}.todo:first-child{border-top:0}</style>
+</head>
+<body>
+<script src="kit.js"></script>
+<script src="mzdata.js"></script>
+<script>
+K.shell({ brand: 'Учебные планы', sub: 'Показатели и кабинеты · демо', back: '../index.html#morozilka' });
+var M = MZ, S = M.students;
+K.app({ sections: [
+  { id: 'stats', t: 'Показатели', s: 'Общие цифры по индивидуальным планам. Где данных нет, так и написано', render: function (p) {
+    var withPlan = S.filter(function (s) { return s.plan === 'есть'; }).length;
+    p.innerHTML = K.kpis([{ l: 'Учеников', v: S.length }, { l: 'С планом', v: withPlan, d: '<span class="delta up">' + K.fmt(withPlan / S.length * 100, 0) + '% от всех</span>' }, { l: 'Без плана', v: S.length - withPlan, d: '<span class="delta down">напомнить кураторам</span>' }, { l: 'Правок куратором', v: 134 }]) +
+      '<div class="grid g2"><div class="card"><h2>По предметам</h2><p class="note">Доля учеников с планом</p><div id="a"></div></div><div class="card"><h2>Пройден вводный тест</h2><p class="note">Нет данных по физике: тест ещё не запущен</p><div id="b"></div></div></div>' +
+      '<div class="card" style="margin-top:14px"><h2>По кураторам</h2><p class="note">&nbsp;</p><div class="scroll"><table><thead><tr><th>Куратор</th><th class="num">Учеников</th><th class="num">Планов</th><th class="num">Отправлено ученикам</th></tr></thead><tbody>' + M.curators.map(function (n, i) { var x = S.filter(function (s) { return s.cur === i; }), w = x.filter(function (s) { return s.plan === 'есть'; }).length; return '<tr><td><b>' + n + '</b></td><td class="num">' + x.length + '</td><td class="num">' + w + '</td><td class="num">' + Math.round(w * .8) + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+    K.hbars(document.getElementById('a'), M.subjects.map(function (s, i) { var x = S.filter(function (t) { return t.subj === i; }); return { n: s, v: Math.round(x.filter(function (t) { return t.plan === 'есть'; }).length / (x.length || 1) * 100) }; }), { fmt: function (v) { return v + '%'; } });
+    document.getElementById('b').innerHTML = '<div class="bar-row"><span>Математика</span><div class="track"><div class="fill" style="width:78%"></div></div><b>78%</b></div><div class="bar-row"><span>Русский язык</span><div class="track"><div class="fill" style="width:66%"></div></div><b>66%</b></div><div class="bar-row"><span>Информатика</span><div class="track"><div class="fill" style="width:52%"></div></div><b>52%</b></div><div class="bar-row"><span>Физика</span><div class="track"></div><b style="color:var(--muted)">нет</b></div>';
+  } },
+  { id: 'curator', t: 'Кабинет куратора', s: 'Что сделать сегодня и кто из учеников ждёт', render: function (p) {
+    var my = S.filter(function (s) { return s.cur === 0; }).slice(0, 8);
+    p.innerHTML = '<div class="grid g21"><div class="card"><h2>Что сделать сегодня</h2><p class="note">Подборка по срочности</p><div id="td"></div></div><div class="card"><h2>Мои ученики</h2><p class="note">Все, без плана, отправлены</p><div class="seg" id="s"></div><div id="n" style="margin-top:10px"></div></div></div>' +
+      '<div class="card" style="margin-top:14px"><h2>Ученики</h2><p class="note">Нажмите «Сбросить план», чтобы ученик прошёл опрос заново</p><div class="scroll"><table><thead><tr><th>Ученик</th><th>Предмет</th><th class="num">Балл</th><th>План</th><th></th></tr></thead><tbody>' + my.map(function (s) { return '<tr><td><b>№' + s.id + '</b></td><td>' + M.subjects[s.subj] + '</td><td class="num">' + s.score + '</td><td>' + (s.plan === 'есть' ? '<span class="pill ok">Есть</span>' : '<span class="pill warn">Нет</span>') + '</td><td><button class="btn" type="button" data-b="1">Сбросить план</button></td></tr>'; }).join('') + '</tbody></table></div></div>';
+    document.getElementById('td').innerHTML = [['Проверить 6 работ', 'ждут больше суток', 'bad'], ['Отправить план трём ученикам', 'готовы, не отправлены', 'warn'], ['Ответить на вопрос по заданию 15', 'написали утром', 'warn'], ['Назначить пробник', 'у двух учеников', 'ok']].map(function (t) { return '<div class="todo"><span class="pill ' + t[2] + '"></span><div><b>' + t[0] + '</b><br><span class="note" style="margin:0">' + t[1] + '</span></div></div>'; }).join('');
+    var cnt = { all: my.length, no: my.filter(function (s) { return s.plan !== 'есть'; }).length, sent: my.filter(function (s) { return s.plan === 'есть'; }).length };
+    K.seg(document.getElementById('s'), [['all', 'Все'], ['no', 'Без плана'], ['sent', 'Отправлены']], 'all', function (v) { document.getElementById('n').innerHTML = '<div class="kpi" style="background:var(--bg)"><dt>Учеников</dt><dd>' + cnt[v] + '</dd></div>'; });
+    document.getElementById('n').innerHTML = '<div class="kpi" style="background:var(--bg)"><dt>Учеников</dt><dd>' + cnt.all + '</dd></div>';
+    p.querySelectorAll('[data-b]').forEach(function (b) { b.addEventListener('click', function () { K.toast('Демо: план сброшен, ученик пройдёт опрос заново'); }); });
+  } },
+  { id: 'student', t: 'Кабинет ученика', s: 'План по расписанию, пробники и достижения', render: function (p) {
+    var days = [['Понедельник', [['Алгебра: функции', 1], ['Домашка по заданию 7', 1]]], ['Среда', [['Геометрия: окружность', 0], ['Разбор пробника', 0]]], ['Пятница', [['Вероятность и статистика', 0], ['Тренировка 10 задач', 0]]]];
+    p.innerHTML = '<div class="grid g21"><div class="card"><h2>Мой учебный план</h2><p class="note">Математика, три занятия в неделю</p><div class="day">' + days.map(function (d) { return '<p class="note" style="margin:8px 0 0"><b>' + d[0] + '</b></p>' + d[1].map(function (l) { return '<div class="lesson' + (l[1] ? ' done' : '') + '"><i></i><span>' + l[0] + '</span><span class="badge" style="color:' + (l[1] ? 'var(--ok)' : 'var(--muted)') + '">' + (l[1] ? 'Готово' : 'Впереди') + '</span></div>'; }).join(''); }).join('') + '</div></div>' +
+      '<div class="card"><h2>Пробники</h2><p class="note">Мой балл и средний по потоку</p><div id="m"></div><h2 style="margin-top:18px">Достижения</h2><p class="note">Сосульки и уровни</p><div style="display:flex;gap:8px;flex-wrap:wrap"><span class="pillb">Сосулька: 5 домашек подряд</span><span class="pillb">Уровень 3</span><span class="pillb">+12 баллов</span></div></div></div>';
+    K.line(document.getElementById('m'), ['П1', 'П2', 'П3', 'П4'], [{ name: 'Мой балл', color: '#2739b3', data: [52, 58, 63, 71] }, { name: 'Средний по потоку', color: '#8d8db0', data: [55, 59, 62, 66] }], { h: 190 });
+  } }
+] });
+</script>
+</body>
+</html>

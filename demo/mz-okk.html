@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Контроль качества (ОКК) — демо</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+<link rel="stylesheet" href="mz.css">
+<style>.quote{background:var(--th);border-radius:12px;padding:12px 14px;font-size:14px;margin:8px 0}.quote small{color:var(--muted);display:block;margin-top:4px}</style>
+</head>
+<body>
+<script src="kit.js"></script>
+<script src="mzdata.js"></script>
+<script>
+K.shell({ brand: 'ОКК', sub: 'Контроль качества · демо', back: '../index.html#morozilka' });
+var M = MZ, R = K.rng(909);
+var items = [['Приветствие и представление', 94], ['Выяснил цель обращения', 81], ['Уточнил предмет и класс', 88], ['Выяснил уровень подготовки', 62], ['Назвал формат обучения', 79], ['Рассказал про кураторов', 58], ['Предложил пробный урок', 71], ['Назвал цену до возражения', 66], ['Отработал возражение «дорого»', 49], ['Предложил рассрочку', 44], ['Договорился о следующем шаге', 63], ['Зафиксировал итог в сделке', 85]];
+var rows = M.managers.map(function (n) { return { n: n, sc: Math.round(58 + R() * 34), calls: Math.round(40 + R() * 60), viol: Math.round(R() * 6) }; }).sort(function (a, b) { return b.sc - a.sc; });
+function cl(v) { return v >= 80 ? 'c-ok' : v >= 65 ? 'c-warn' : 'c-bad'; }
+K.app({ sections: [
+  { id: 'sum', t: 'Итоги', s: 'Результаты проверки за месяц', render: function (p) {
+    p.innerHTML = K.kpis([{ l: 'Проверено разговоров', v: K.fmt(286), d: K.deltaHtml(286, 240) }, { l: 'Средняя оценка', v: '71 балл', d: K.deltaHtml(71, 66) }, { l: 'Медиана', v: '73', d: '<span class="delta flat">рядом со средним</span>' }, { l: 'Нарушений сроков', v: 14, d: K.deltaHtml(14, 112, false) }]) + '<div class="grid g2"><div class="card"><h2>Слабые пункты</h2><p class="note">Где чаще всего не выполняется чек-лист</p><div id="w"></div></div><div class="card"><h2>Сильные пункты</h2><p class="note">&nbsp;</p><div id="s"></div></div></div>';
+    var srt = items.slice().sort(function (a, b) { return a[1] - b[1]; });
+    K.hbars(document.getElementById('w'), srt.slice(0, 5).map(function (x) { return { n: x[0], v: x[1], c: '#f25c9c' }; }), { fmt: function (v) { return v + '%'; } });
+    K.hbars(document.getElementById('s'), srt.slice(-5).reverse().map(function (x) { return { n: x[0], v: x[1] }; }), { fmt: function (v) { return v + '%'; } });
+    document.querySelectorAll('.bar-row').forEach(function (e) { e.style.gridTemplateColumns = 'minmax(130px,230px) 1fr 44px'; });
+  } },
+  { id: 'mgr', t: 'По менеджерам', s: 'Оценка, число разговоров и нарушения', render: function (p) {
+    p.innerHTML = '<div class="card"><h2>Менеджеры</h2><p class="note">Зелёный от 80, красный ниже 65</p><div class="scroll"><table><thead><tr><th>#</th><th>Менеджер</th><th class="num">Разговоров</th><th class="num">Оценка</th><th class="num">Нарушения срока</th></tr></thead><tbody>' + rows.map(function (r, i) { return '<tr><td><span class="rank' + (i < 3 ? ' top3' : '') + '">' + (i + 1) + '</span></td><td><b>' + r.n + '</b></td><td class="num">' + r.calls + '</td><td class="num ' + cl(r.sc) + '">' + r.sc + '</td><td class="num">' + (r.viol || '–') + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+  } },
+  { id: 'list', t: 'Чек-лист', s: 'Доля разговоров, где пункт выполнен', render: function (p) {
+    p.innerHTML = '<div class="card"><h2>Пункты чек-листа</h2><p class="note">Показано 12 из 31 пунктов</p><div class="scroll"><table><thead><tr><th>Пункт</th><th class="num">Выполнено</th></tr></thead><tbody>' + items.map(function (x) { return '<tr><td>' + x[0] + '</td><td class="num ' + cl(x[1]) + '">' + x[1] + '%</td></tr>'; }).join('') + '</tbody></table></div></div>';
+  } },
+  { id: 'proof', t: 'Пример оценки', s: 'Под каждым баллом стоит цитата из разговора', render: function (p) {
+    p.innerHTML = '<div class="card"><h2>Разговор №' + (52000 + 77) + '</h2><p class="note">Менеджер Ксения М. · 6 минут · оценка 74</p><p><b>Отработал возражение «дорого»: 0 из 3</b></p><div class="quote">«Ну да, цена такая. Можем сделать скидку, если решите сегодня».<small>Клиент не получил ценности курса, скидка предложена сразу.</small></div><p><b>Договорился о следующем шаге: 3 из 3</b></p><div class="quote">«Я пришлю план в мессенджер, созвонимся завтра в 18:00».<small>Время следующего контакта согласовано.</small></div></div>';
+  } },
+  { id: 'weights', t: 'Веса пунктов', s: 'Три варианта расчёта итоговой оценки', render: function (p) {
+    p.innerHTML = '<div class="card"><h2>Сравнение вариантов</h2><p class="note">РОП выбирает, что важнее: контакт с клиентом, работа с возражениями или дисциплина</p><div class="scroll"><table><thead><tr><th>Менеджер</th><th class="num">Сейчас</th><th class="num">Вариант А: возражения важнее</th><th class="num">Вариант Б: дисциплина важнее</th></tr></thead><tbody>' + rows.map(function (r, i) { return '<tr><td><b>' + r.n + '</b></td><td class="num">' + r.sc + '</td><td class="num">' + (r.sc - 4 + i * 2) + '</td><td class="num">' + (r.sc + 3 - i) + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+  } }
+] });
+</script>
+</body>
+</html>

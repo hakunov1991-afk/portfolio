@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Распределение заявок — демо</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+<link rel="stylesheet" href="mz.css">
+</head>
+<body>
+<script src="kit.js"></script>
+<script src="mzdata.js"></script>
+<script>
+K.shell({ brand: 'Распределение', sub: 'Заявки и промокоды · демо', back: '../index.html#morozilka' });
+var M = MZ, R = K.rng(41);
+K.app({ sections: [
+  { id: 'status', t: 'Статусы', s: 'Кто сейчас принимает заявки и сколько уже получил', render: function (p) {
+    var sh = [30, 25, 20, 15, 10], rows = M.managers.map(function (n, i) { return { n: n, share: sh[i], got: Math.round(sh[i] * 1.4 + R() * 6), on: i !== 3 }; });
+    p.innerHTML = '<div class="card"><h2>Менеджеры на линии</h2><p class="note">Заявки делятся по долям и графику. Ночные заявки раздаются в 10:00</p><div class="scroll"><table><thead><tr><th>Менеджер</th><th>Статус</th><th class="num">Доля</th><th class="num">Получил сегодня</th><th class="num">План по доле</th></tr></thead><tbody>' + rows.map(function (r) { var plan = Math.round(r.share * 1.4); return '<tr><td><b>' + r.n + '</b></td><td>' + (r.on ? '<span class="pill ok">На линии</span>' : '<span class="pill bad">Отпуск</span>') + '</td><td class="num">' + r.share + '%</td><td class="num">' + (r.on ? r.got : 0) + '</td><td class="num ' + (!r.on ? '' : Math.abs(r.got - plan) <= 3 ? 'c-ok' : 'c-warn') + '">' + plan + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+  } },
+  { id: 'mine', t: 'Мои заявки', s: 'Заявки менеджера за сегодня', render: function (p) {
+    var mine = M.deals.filter(function (d) { return d.mgr === 0 && d.days < 2; }).slice(0, 9);
+    p.innerHTML = '<div class="card"><h2>Заявки на мне</h2><p class="note">Робот выбирает менеджера, который раньше не касался контакта</p><div class="scroll"><table><thead><tr><th>Сделка</th><th>Категория</th><th>Этап</th><th class="num">Ответил за</th></tr></thead><tbody>' + mine.map(function (d) { return '<tr><td><b>' + M.link(d) + '</b></td><td>' + M.cats[d.cat] + '</td><td>' + M.stages[d.stage] + '</td><td class="num ' + (d.reply <= 5 ? 'c-ok' : d.reply <= 15 ? 'c-warn' : 'c-bad') + '">' + M.min(d.reply) + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+  } },
+  { id: 'reports', t: 'Отчёты', s: 'Распределения и смены статусов', render: function (p) {
+    var lab = [], a = [], b = []; for (var i = 0; i < 14; i++) { lab.push(('0' + (i + 1)).slice(-2) + '.10'); a.push(Math.round(34 + R() * 20)); b.push(Math.round(6 + R() * 8)); }
+    p.innerHTML = K.kpis([{ l: 'Заявок раздано', v: K.fmt(a.reduce(function (x, y) { return x + y; }, 0)) }, { l: 'Дублей склеено', v: 38 }, { l: 'Реанимировано', v: 21 }, { l: 'Время до взятия, медиана', v: '4 мин' }]) + '<div class="card"><h2>Раздача по дням</h2><p class="note">Новые и реанимированные</p><div id="c"></div></div>';
+    K.bars(document.getElementById('c'), lab, [{ name: 'Новые', color: '#2739b3', data: a }, { name: 'Реанимация', color: '#f25c9c', data: b }], { stack: true, h: 230 });
+  } },
+  { id: 'time', t: 'Рабочее время', s: 'График менеджеров по часам', render: function (p) {
+    var hrs = ['10', '12', '14', '16', '18', '20'], mx = M.managers.map(function (_, i) { return hrs.map(function (_, h) { return (i === 3 ? 0 : (i + h) % 5 === 0 ? 0 : 1) * 3; }); });
+    p.innerHTML = '<div class="card"><h2>Кто когда на линии</h2><p class="note">Закрашено, когда менеджер принимает заявки</p><div id="h"></div></div>';
+    K.heat(document.getElementById('h'), M.managers, hrs.map(function (h) { return h + ':00'; }), mx, { corner: '', color: [39, 57, 179], cell: function (v) { return v ? 'да' : '–'; } });
+  } },
+  { id: 'promo', t: 'Промокоды', s: 'Слово создаётся одной кнопкой: в боте и в задаче менеджеру', render: function (p) {
+    var codes = [['EGE-OCT', 'Скидка 10%', 34, 'Активен'], ['BLOGGER-AL', 'Скидка 7%', 18, 'Активен'], ['VIP-24', 'Бонус-занятие', 9, 'На паузе'], ['SUMMER', 'Скидка 5%', 52, 'Завершён']];
+    p.innerHTML = '<div class="card"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px"><div><h2>Промокоды</h2><p class="note" style="margin:0">Создание заводит слово в боте и ставит менеджеру задачу на 2 часа</p></div><button class="btn pri" id="n" type="button">Создать промокод</button></div><div class="scroll"><table><thead><tr><th>Слово</th><th>Условие</th><th class="num">Использований</th><th>Статус</th></tr></thead><tbody>' + codes.map(function (c) { var k = c[3] === 'Активен' ? 'ok' : c[3] === 'На паузе' ? 'warn' : 'bad'; return '<tr><td><b>' + c[0] + '</b></td><td>' + c[1] + '</td><td class="num">' + c[2] + '</td><td><span class="pill ' + k + '">' + c[3] + '</span></td></tr>'; }).join('') + '</tbody></table></div></div>';
+    document.getElementById('n').addEventListener('click', function () { K.toast('Демо: промокод появится в боте, менеджеру придёт задача'); });
+  } }
+] });
+</script>
+</body>
+</html>
