@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Family Health — демо</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+<link rel="stylesheet" href="rps-light.css">
+</head>
+<body>
+<script src="kit.js"></script>
+<script>
+K.shell({ brand: 'Family Health', sub: 'Риск ухода семей · демо', back: '../index.html#playschool' });
+var R = K.rng(1212), campus = ['Кампус Север', 'Кампус Юг', 'Кампус Восток', 'Кампус Запад'];
+var sigs = ['Низкая оценка в отзыве', 'Пропуски больше двух недель', 'Жалоба на питание', 'Вопрос про перевод в другую школу', 'Задержка оплаты', 'Конфликт с педагогом', 'Положительный отзыв'];
+var fam = []; for (var i = 0; i < 40; i++) { var score = Math.round(R() * 100), lvl = score >= 66 ? 'bad' : score >= 38 ? 'warn' : 'ok'; fam.push({ id: 400 + i * 7, camp: Math.floor(R() * 4), kids: 1 + (R() < .3 ? 1 : 0), score: score, lvl: lvl, sig: sigs[Math.floor(R() * 7)], days: Math.floor(R() * 60), since: 2019 + Math.floor(R() * 7) }); }
+fam.sort(function (a, b) { return b.score - a.score; });
+var lab = { ok: 'Зелёный', warn: 'Жёлтый', bad: 'Красный' };
+
+K.app({ sections: [
+  { id: 'fam', t: 'Семьи', s: 'Уровень риска ухода по каждой семье', render: function (p) {
+    var c = { ok: 0, warn: 0, bad: 0 }; fam.forEach(function (f) { c[f.lvl]++; });
+    p.innerHTML = K.kpis([{ l: 'Семей в системе', v: fam.length }, { l: 'Красный риск', v: c.bad }, { l: 'Жёлтый', v: c.warn }, { l: 'Зелёный', v: c.ok }]) + '<div style="margin-bottom:14px" id="f"></div><div class="card"><div class="scroll"><table id="t"></table></div></div>';
+    var cur = 'all';
+    function draw() { document.getElementById('t').innerHTML = '<thead><tr><th>Семья</th><th>Кампус</th><th class="num">Детей</th><th class="num">С нами с</th><th>Главный сигнал</th><th class="num">Дней назад</th><th class="num">Риск</th><th>Уровень</th></tr></thead><tbody>' + fam.filter(function (f) { return cur === 'all' || f.lvl === cur; }).map(function (f) { return '<tr><td><b>№' + f.id + '</b></td><td>' + campus[f.camp] + '</td><td class="num">' + f.kids + '</td><td class="num">' + f.since + '</td><td>' + f.sig + '</td><td class="num">' + f.days + '</td><td class="num"><b>' + f.score + '</b></td><td><span class="pill ' + f.lvl + '">' + lab[f.lvl] + '</span></td></tr>'; }).join('') + '</tbody>'; }
+    K.seg(document.getElementById('f'), [['all', 'Все'], ['bad', 'Красные'], ['warn', 'Жёлтые'], ['ok', 'Зелёные']], 'all', function (v) { cur = v; draw(); }); draw();
+  } },
+  { id: 'cases', t: 'Кейсы', s: 'Что делаем с семьями из красной зоны', render: function (p) {
+    var acts = [['Позвонить директору кампуса', 'Не начато', 'bad'], ['Встреча с психологом', 'В работе', 'warn'], ['Предложить компенсационное занятие', 'В работе', 'warn'], ['Извиниться и объяснить изменения в питании', 'Выполнено', 'ok'], ['Пригласить на открытый день', 'Выполнено', 'ok']];
+    p.innerHTML = '<div class="grid g2">' + fam.slice(0, 6).map(function (f, i) { var a = acts[i % acts.length]; return '<div class="card"><p class="note" style="margin:0">Семья №' + f.id + ' · ' + campus[f.camp] + '</p><h2 style="margin:4px 0 6px">' + f.sig + '</h2><p class="note" style="max-width:none">Риск ' + f.score + '. Действие: ' + a[0] + '</p><span class="pill ' + a[2] + '">' + a[1] + '</span></div>'; }).join('') + '</div>';
+  } },
+  { id: 'signals', t: 'Сигналы', s: 'Откуда приходят признаки риска', render: function (p) {
+    p.innerHTML = '<div class="grid g2"><div class="card"><h2>Источники сигналов</h2><p class="note">За 30 дней</p><div id="a"></div></div><div class="card"><h2>Типы сигналов</h2><p class="note">&nbsp;</p><div id="b"></div></div></div>';
+    K.hbars(document.getElementById('a'), [{ n: 'Отзывы на картах', v: 38 }, { n: 'Данные посещаемости', v: 64 }, { n: 'Диагностики', v: 21 }, { n: 'Оплаты', v: 17 }, { n: 'Обращения родителей', v: 29 }]);
+    K.hbars(document.getElementById('b'), sigs.slice(0, 6).map(function (s, i) { return { n: s, v: [31, 27, 18, 14, 12, 9][i] }; }));
+    document.querySelectorAll('.bar-row').forEach(function (e) { e.style.gridTemplateColumns = 'minmax(110px,200px) 1fr 40px'; });
+  } },
+  { id: 'unlinked', t: 'Не привязалось', s: 'Отзывы, которые система не смогла отнести к семье', render: function (p) {
+    var rows = [['Отзыв на картах', 'Очень не нравится изменение расписания, думаем о переходе.', 'Кампус Север'], ['Отзыв на картах', 'Педагоги отличные, ребёнок бежит в сад.', 'Кампус Юг'], ['Отзыв в соцсетях', 'Долго отвечают на вопросы про оплату.', 'Кампус Запад']];
+    p.innerHTML = '<div class="card"><h2>Очередь на ручную привязку</h2><p class="note">Выберите семью или нажмите «Не привязывать»</p><div class="grid">' + rows.map(function (r, i) { return '<div style="border:1px solid var(--line);border-radius:12px;padding:14px"><p class="note" style="margin:0 0 4px">' + r[0] + ' · ' + r[2] + '</p><p style="margin-bottom:10px">«' + r[1] + '»</p><button class="btn pri" type="button" data-i="' + i + '">Привязать к семье</button> <button class="btn" type="button" data-i="' + i + '">Не привязывать</button></div>'; }).join('') + '</div></div>';
+    p.querySelectorAll('button').forEach(function (b) { b.addEventListener('click', function () { K.toast('Демо: в рабочей версии выбор сохраняется'); }); });
+  } }
+] });
+</script>
+</body>
+</html>

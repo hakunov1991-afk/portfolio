@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Аналитика онлайн-школы — демо</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+<link rel="stylesheet" href="mz.css">
+</head>
+<body>
+<script src="kit.js"></script>
+<script src="mzdata.js"></script>
+<script>
+K.shell({ brand: 'Аналитика', sub: 'Онлайн-школа · демо', back: '../index.html#morozilka' });
+var M = MZ, per = 30;
+function pool() { return M.within(per); }
+function seg(p, again) { var s = document.createElement('div'); s.style.marginBottom = '14px'; p.appendChild(s); K.seg(s, [['7', '7 дней'], ['30', '30 дней'], ['90', '90 дней']], String(per), function (v) { per = +v; again(); }); }
+function pg(id, t, s, body) { return { id: id, t: t, s: s, render: function (p) { var h = document.createElement('div'); p.appendChild(h); var draw = function () { h.innerHTML = ''; seg(h, draw); var c = document.createElement('div'); h.appendChild(c); body(c); }; draw(); } }; }
+function rate(a, b) { return b ? a / b * 100 : 0; }
+function openList(title, list) { var v = list.map(function (d) { return d.reply; }); K.modal(title, 'Строк: ' + list.length + '. Среднее ' + M.min(K.avg(v)) + ', медиана ' + M.min(K.median(v)), ['Сделка', 'Менеджер', 'Этап', 'Сумма'], list.slice(0, 60).map(function (d) { return [M.link(d), M.managers[d.mgr], M.stages[d.stage], d.sum ? M.rub(d.sum) : '–']; })); }
+function click(el) { el.querySelectorAll('.click').forEach(function (b) { b.addEventListener('click', function () { b._open(); }); }); }
+
+K.app({ sections: [
+  pg('sales', 'Продажи', 'Воронка, цикл сделки, менеджеры. Каждая цифра открывает сделки', function (c) {
+    var P = pool(), won = P.filter(function (d) { return d.won; }), rev = won.reduce(function (a, d) { return a + d.sum; }, 0);
+    c.innerHTML = K.kpis([{ l: 'Заявок', v: K.fmt(P.length), d: K.deltaHtml(P.length, P.length * .93) }, { l: 'Оплат', v: won.length, d: K.deltaHtml(won.length, won.length * .9) }, { l: 'Выручка', v: M.rub(rev), d: K.deltaHtml(rev, rev * .88) }, { l: 'Конверсия', v: K.pct(rate(won.length, P.length)), d: K.deltaHtml(rate(won.length, P.length), rate(won.length, P.length) * .97) }]) +
+      '<div class="grid g2"><div class="card"><h2>Воронка</h2><p class="note">Заявка до оплаты</p><div id="f"></div></div><div class="card"><h2>Цикл сделки</h2><p class="note">Дней до оплаты</p><div id="cy"></div></div></div>' +
+      '<div class="card"><h2>Менеджеры</h2><p class="note">Нажмите на цифру: откроется список сделок. Рядом со средним медиана</p><div class="scroll"><table id="t"></table></div></div>';
+    K.funnel(document.getElementById('f'), M.stages.map(function (s, i) { return { n: s, v: P.filter(function (d) { return d.stage >= i; }).length, c: i === 4 ? '#f25c9c' : '#2739b3' }; }));
+    var cy = won.map(function (d) { return d.cycle; }).sort(function (a, b) { return a - b; }), q = function (x) { return cy[Math.floor((cy.length - 1) * x)] || 0; };
+    document.getElementById('cy').innerHTML = '<div class="scroll"><table><tbody><tr><td>Быстрые 25%</td><td class="num"><b>до ' + q(.25) + ' дн</b></td></tr><tr><td>Медиана</td><td class="num"><b>' + q(.5) + ' дн</b></td></tr><tr><td>Среднее</td><td class="num"><b>' + K.fmt(K.avg(cy), 1) + ' дн</b></td></tr><tr><td>Медленные 25%</td><td class="num"><b>от ' + q(.75) + ' дн</b></td></tr><tr><td>Самая долгая</td><td class="num"><b>' + q(1) + ' дн</b></td></tr></tbody></table></div>';
+    var t = document.getElementById('t'); t.innerHTML = '<thead><tr><th>Менеджер</th><th class="num">Заявок</th><th class="num">Оплат</th><th class="num">Конверсия</th><th class="num">Выручка</th><th class="num">Ответ, среднее</th><th class="num">Ответ, медиана</th></tr></thead><tbody></tbody>';
+    M.managers.forEach(function (n, i) {
+      var x = P.filter(function (d) { return d.mgr === i; }), w = x.filter(function (d) { return d.won; }), r = x.map(function (d) { return d.reply; }), tr = document.createElement('tr');
+      tr.innerHTML = '<td><b>' + n + '</b></td><td class="num"><button class="click">' + x.length + '</button></td><td class="num"><button class="click">' + w.length + '</button></td><td class="num">' + K.pct(rate(w.length, x.length)) + '</td><td class="num">' + M.rub(w.reduce(function (a, d) { return a + d.sum; }, 0)) + '</td><td class="num">' + M.min(K.avg(r)) + '</td><td class="num">' + M.min(K.median(r)) + '</td>';
+      var bs = tr.querySelectorAll('.click'); bs[0].addEventListener('click', function () { openList(n + ': все заявки', x); }); bs[1].addEventListener('click', function () { openList(n + ': оплаты', w); });
+      t.querySelector('tbody').appendChild(tr);
+    });
+  }),
+  pg('reasons', 'Причины отказа', 'Почему клиент не оплатил', function (c) {
+    var L = pool().filter(function (d) { return d.lost; });
+    c.innerHTML = '<div class="grid g2"><div class="card"><h2>Причины</h2><p class="note">Закрыто без оплаты: ' + L.length + '</p><div id="r"></div></div><div class="card"><h2>Нецелевые отдельно</h2><p class="note">Фильтр убирает случайные обращения</p><div id="n"></div></div></div>';
+    K.hbars(document.getElementById('r'), M.reasons.map(function (r, i) { return { n: r, v: L.filter(function (d) { return d.reason === i; }).length }; }).sort(function (a, b) { return b.v - a.v; }));
+    var nt = L.filter(function (d) { return d.reason === 3; }).length;
+    K.hbars(document.getElementById('n'), [{ n: 'Целевые отказы', v: L.length - nt }, { n: 'Нецелевые', v: nt, c: '#6c6f86' }]);
+    document.querySelectorAll('.bar-row').forEach(function (e) { e.style.gridTemplateColumns = 'minmax(110px,190px) 1fr 40px'; });
+  }),
+  pg('mkt', 'Маркетолог', 'Категории лидов, сайты, формы, метки', function (c) {
+    var P = pool(), R2 = K.rng(8);
+    c.innerHTML = '<div class="card"><h2>Качество лидов по категориям</h2><p class="note">Telegram, сайт, ВК, горячие и тёплые</p><div class="scroll"><table><thead><tr><th>Категория</th><th class="num">Лиды</th><th class="num">Оплаты</th><th class="num">Конверсия</th><th class="num">Цена лида</th></tr></thead><tbody>' + M.cats.map(function (n, i) { var x = P.filter(function (d) { return d.cat === i; }), w = x.filter(function (d) { return d.won; }).length, cv = rate(w, x.length); return '<tr><td><b>' + n + '</b></td><td class="num">' + x.length + '</td><td class="num">' + w + '</td><td class="num ' + (cv >= 18 ? 'c-ok' : cv >= 8 ? 'c-warn' : 'c-bad') + '">' + K.pct(cv) + '</td><td class="num">' + M.rub(Math.round(180 + R2() * 520)) + '</td></tr>'; }).join('') + '</tbody></table></div></div>' +
+      '<div class="grid g2" style="margin-top:14px"><div class="card"><h2>Рекламные метки</h2><p class="note">Сквозная UTM от клика до оплаты</p><div id="u"></div></div><div class="card"><h2>Цели Метрики</h2><p class="note">Достижения за период</p><div id="g"></div></div></div>';
+    K.hbars(document.getElementById('u'), [{ n: 'tg_ads / ege-math', v: 74 }, { n: 'vk / leadform', v: 51 }, { n: 'yandex / search', v: 47 }, { n: 'blogger / promo', v: 33 }, { n: 'site / organic', v: 29 }]);
+    K.hbars(document.getElementById('g'), [{ n: 'Открыл форму', v: 1480 }, { n: 'Отправил заявку', v: 420 }, { n: 'Нажал на бота', v: 760 }, { n: 'Оплата', v: 61 }]);
+  }),
+  pg('calls', 'Звонки', 'Когда звонят и сколько длятся разговоры', function (c) {
+    var days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'], hrs = ['9', '11', '13', '15', '17', '19', '21'], R2 = K.rng(19), mx = days.map(function (_, r) { return hrs.map(function (_, h) { return Math.round((r > 4 ? 4 : 11) * (h === 2 || h === 5 ? 1.6 : 1) * (.5 + R2())); }); });
+    c.innerHTML = K.kpis([{ l: 'Звонков', v: K.fmt(1240), d: K.deltaHtml(1240, 1180) }, { l: 'Дозвон', v: K.pct(63.5) }, { l: 'Средняя длительность', v: '3:42' }, { l: 'Медиана', v: '2:15' }]) + '<div class="card"><h2>Когда звонят</h2><p class="note">День недели и час</p><div id="h"></div></div>';
+    K.heat(document.getElementById('h'), days, hrs.map(function (h) { return h + ':00'; }), mx, { corner: '', color: [39, 57, 179] });
+  }),
+  { id: 'access', t: 'Доступы', s: 'Какая роль что видит', render: function (p) {
+    var secs = ['Продажи', 'Маркетолог', 'Звонки', 'Кабинет менеджера', 'Кабинет преподавателя', 'Настройки'], roles = ['Админ', 'РОП', 'Маркетолог', 'Менеджер', 'Преподаватель'], mx = [[1, 1, 1, 1, 1], [1, 1, 0, 0, 0], [1, 1, 0, 0, 0], [1, 1, 0, 1, 0], [1, 0, 0, 0, 1], [1, 0, 0, 0, 0]];
+    p.innerHTML = '<div class="card"><h2>Матрица «раздел × роль»</h2><p class="note">Вход по логину, права настраиваются в одном месте</p><div class="scroll"><table><thead><tr><th>Раздел</th>' + roles.map(function (r) { return '<th class="num">' + r + '</th>'; }).join('') + '</tr></thead><tbody>' + secs.map(function (s, i) { return '<tr><td><b>' + s + '</b></td>' + mx[i].map(function (v) { return '<td class="num">' + (v ? '<span class="pill ok">Да</span>' : '<span style="color:var(--muted)">Нет</span>') + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table></div></div>';
+  } }
+] });
+</script>
+</body>
+</html>

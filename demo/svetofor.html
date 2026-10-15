@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ИИ-контролёр качества — демо</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+<style>:root{--accent:#1f5fbf}.menu button[aria-selected=true]{background:#1f5fbf}.btn.pri{background:#1f5fbf;border-color:#1f5fbf}
+.mgr{display:grid;grid-template-columns:auto 1fr auto;gap:4px 14px;align-items:center}
+.lamp{width:40px;height:40px;border-radius:50%;grid-row:1/3;display:grid;place-items:center;font-weight:700;color:#fff;font-size:13px}
+.lamp.ok{background:var(--ok)}.lamp.warn{background:#c98a00}.lamp.bad{background:var(--bad)}
+.mgr b{font-size:14px}.mgr small{color:var(--muted);font-size:12px;grid-column:2}</style>
+</head>
+<body>
+<script src="kit.js"></script>
+<script>
+K.shell({ brand: 'ИИ-контролёр', sub: 'Качество работы РОП · демо' });
+var names = ['Игорь Л.', 'Мария С.', 'Денис К.', 'Алина В.', 'Павел Н.', 'Ольга Т.', 'Артём Р.', 'Елена Ш.'];
+var R = K.rng(88);
+var mg = names.map(function (n) { var sk = .3 + R() * .7, g = Math.round(sk * 14 + R() * 3), deals = Math.round(18 + R() * 20), score = Math.round(45 + sk * 50); return { n: n, deals: deals, green: g > 14 ? 14 : g, score: score, state: score >= 80 ? 'ok' : score >= 62 ? 'warn' : 'bad', open: Math.round((1 - sk) * 9 + R() * 2) }; }).sort(function (a, b) { return b.score - a.score; });
+var label = { ok: 'Всё в порядке', warn: 'Есть замечания', bad: 'Нужно внимание' };
+var issues = [['Сделка без следующего шага', 'Нет задачи по сделке 4 дня'], ['Долгий ответ клиенту', 'Клиент написал, менеджер ответил через 5 часов'], ['Не заполнена причина', 'Сделка закрыта без причины отказа'], ['Просрочена задача', 'Показ не подтверждён за день до встречи'], ['Нет итога звонка', 'После звонка нет комментария в карточке'], ['Слабый скрипт', 'Не выяснена цель покупки в первом разговоре']];
+
+K.app({ sections: [
+  { id: 'mgrs', t: 'По менеджерам', s: 'Светофор на сегодня: зелёный, жёлтый или красный', render: function (p) {
+    var c = { ok: 0, warn: 0, bad: 0 }; mg.forEach(function (m) { c[m.state]++; });
+    p.innerHTML = K.kpis([{ l: 'Зелёные', v: c.ok }, { l: 'Жёлтые', v: c.warn }, { l: 'Красные', v: c.bad }, { l: 'Сделок разобрано', v: mg.reduce(function (a, m) { return a + m.deals; }, 0), d: '<span class="delta flat">за сегодняшнее утро</span>' }]) +
+      '<div class="grid g2">' + mg.map(function (m) { return '<div class="card"><div class="mgr"><span class="lamp ' + m.state + '">' + m.score + '</span><b>' + m.n + '</b><span style="justify-self:end"><span class="pill ' + m.state + '">' + label[m.state] + '</span></span><small>Сделок: ' + m.deals + '. Замечаний открыто: ' + m.open + '</small></div></div>'; }).join('') + '</div>';
+  } },
+
+  { id: 'dyn', t: 'Динамика за 14 дней', s: 'Сколько сделок в каком цвете каждый день', render: function (p) {
+    var r = K.rng(12), lab = [], g = [], y = [], rd = [];
+    for (var i = 0; i < 14; i++) { lab.push(('0' + (i + 1)).slice(-2) + '.10'); var t = 60 + Math.round(r() * 14), re = Math.round(18 - i * .6 + r() * 5), ye = Math.round(14 + r() * 6); rd.push(re); y.push(ye); g.push(t + i * 1 - re - ye + 20); }
+    p.innerHTML = '<div class="card"><h2>Сделки по цветам</h2><p class="note">Красных становится меньше: контроль работает</p><div id="c"></div></div>';
+    K.bars(document.getElementById('c'), lab, [{ name: 'Зелёные', color: '#15803d', data: g }, { name: 'Жёлтые', color: '#e0a500', data: y }, { name: 'Красные', color: '#b42318', data: rd }], { stack: true, h: 260 });
+  } },
+
+  { id: 'report', t: 'Отчёт за день', s: 'Что нашёл ИИ в сделках и что предлагает сделать', render: function (p) {
+    var r = K.rng(4), rows = [];
+    for (var i = 0; i < 9; i++) { var it = issues[Math.floor(r() * issues.length)], m = mg[Math.floor(r() * mg.length)]; rows.push({ id: 2400 + Math.round(r() * 600), m: m.n, a: it[0], b: it[1], st: r() < .4 ? 'bad' : 'warn' }); }
+    p.innerHTML = '<div class="card"><h2>Замечания ИИ</h2><p class="note">ИИ читает карточку, историю дел и переписку и сравнивает со скриптом продаж</p><div class="scroll"><table><thead><tr><th>Сделка</th><th>Менеджер</th><th>Замечание</th><th>Подробности</th><th>Статус</th></tr></thead><tbody>' +
+      rows.map(function (x) { return '<tr><td><b>#' + x.id + '</b></td><td>' + x.m + '</td><td>' + x.a + '</td><td class="wrap">' + x.b + '</td><td><span class="pill ' + x.st + '">' + (x.st === 'bad' ? 'Срочно' : 'Проверить') + '</span></td></tr>'; }).join('') + '</tbody></table></div></div>';
+  } },
+
+  { id: 'tg', t: 'Сводка в Telegram', s: 'Так выглядит сообщение, которое приходит каждое утро в 09:30', render: function (p) {
+    var worst = mg.slice(-3);
+    p.innerHTML = '<div class="grid g2"><div class="card"><h2>Утренняя сводка</h2><p class="note">Пример текста</p><div class="tg">Светофор отдела на 15.10\n\nЗелёных менеджеров: ' + mg.filter(function (m) { return m.state === 'ok'; }).length + '\nЖёлтых: ' + mg.filter(function (m) { return m.state === 'warn'; }).length + '\nКрасных: ' + mg.filter(function (m) { return m.state === 'bad'; }).length + '\n\nСмотрим сегодня:\n' + worst.map(function (m) { return m.n + ': ' + m.open + ' замечаний'; }).join('\n') + '\n\nГлавное замечание дня: сделки без следующего шага.</div></div>' +
+      '<div class="card"><h2>Как это работает</h2><ul style="margin:8px 0 0 18px;display:grid;gap:8px"><li>В 09:30 запускается сценарий в n8n и берёт сделки из amoCRM.</li><li>Языковая модель проверяет каждую сделку по правилам и скрипту.</li><li>Результат пишется в Google Sheets и уходит в Telegram руководителю.</li><li>Менеджеры получают свои замечания личным сообщением.</li></ul><button class="btn pri" style="margin-top:14px" id="b" type="button">Отправить пробное сообщение</button></div></div>';
+    document.getElementById('b').addEventListener('click', function () { K.toast('Демо: в боевой версии сообщение уходит в Telegram'); });
+  } }
+] });
+</script>
+</body>
+</html>

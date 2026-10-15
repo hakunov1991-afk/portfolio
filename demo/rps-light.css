@@ -1,0 +1,6 @@
+/* Светлая тема: Family Health и Тёплая база */
+:root{--bg:#fafafa;--card:#fff;--line:#e8e6e1;--ink:#151515;--text:#2a2a2a;--muted:#6f6c66;--accent:#e45f36;--navy:#151515;--track:#efede8;--th:#f6f5f2;--hover:#faf9f6;--chip:#efede8;
+--ok:#177245;--ok-bg:#e1f3e8;--warn:#9a5b00;--warn-bg:#fdf0d3;--bad:#b42318;--bad-bg:#fde6e2;--f:'DM Sans','Inter',system-ui,sans-serif;--fd:'DM Sans','Inter',system-ui,sans-serif}
+.seg button[aria-pressed=true]{background:#fff}
+.menu button[aria-selected=true]{background:var(--accent);color:#fff}
+.tg{background:#17212b}

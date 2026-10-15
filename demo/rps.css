@@ -1,0 +1,16 @@
+/* Тёмная тема демо-дашбордов Рыбаков Плэйскул */
+:root{--bg:#0f0f1a;--card:#1a1a2e;--line:#2c2c4a;--ink:#f1f1f8;--text:#d9d9e8;--muted:#8d8db0;--accent:#e45f36;--accent-soft:#2a1d24;--navy:#0a0a14;
+--ok:#4ade80;--ok-bg:#12301f;--warn:#fbbf24;--warn-bg:#35290d;--bad:#f87171;--bad-bg:#3a1618;--track:#252540;--th:#16162a;--hover:#20203a;--chip:#252540;--shadow:0 1px 3px rgba(0,0,0,.4);
+--f:'DM Sans','Inter',system-ui,sans-serif;--fd:'DM Sans','Inter',system-ui,sans-serif}
+.side{border-right:1px solid var(--line)}
+.btn{background:var(--card);color:var(--ink)}
+.btn.pri{color:#fff}
+.btn.pri:hover{background:#cf5028}
+.badge-demo{background:var(--warn-bg);color:var(--warn)}
+.kpi,.card{background:var(--card)}
+.tag2{display:inline-block;padding:2px 9px;border-radius:999px;background:var(--track);font-size:12px;color:var(--text)}
+.click{background:none;border:0;color:inherit;font:inherit;font-weight:700;cursor:pointer;border-bottom:1px dashed var(--muted);padding:0}
+.click:hover{color:var(--accent);border-bottom-color:var(--accent)}
+.tg{background:#101a25}
+.seg button[aria-pressed=true]{background:var(--accent);color:#fff}
+.seg button{color:var(--muted)}

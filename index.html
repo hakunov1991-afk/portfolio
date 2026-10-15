@@ -2,735 +2,603 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Хакунов Алан — CRM и Автоматизация</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Хакунов Алан — CRM, автоматизация, BI</title>
+<meta name="description" content="Портфолио Алана Хакунова: amoCRM, Bitrix24, n8n и BI-аналитика. Места работы, кейсы, дашборды.">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#0a0a0f; --bg2:#0f0f18; --bg3:#141425;
-  --accent:#00e5ff; --accent2:#7c3aed; --accent3:#10b981;
-  --text:#e8e8f0; --muted:#6b6b8a; --border:#1e1e35; --card:#111120;
-}
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.7;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.4}
-.grid-bg{position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-.glow-orb{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;opacity:.12}
-.glow-orb-1{width:600px;height:600px;background:var(--accent2);top:-200px;right:-200px}
-.glow-orb-2{width:400px;height:400px;background:var(--accent);bottom:20%;left:-150px}
-.hero-avatar{width:104px;height:104px;border-radius:50%;object-fit:cover;object-position:center 30%;border:2px solid var(--accent);box-shadow:0 0 32px rgba(0,229,255,.22),0 8px 32px rgba(0,0,0,.4);margin-bottom:24px;display:block;opacity:0;animation:fadeUp .6s ease .05s forwards}
-.wrapper{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:0 24px}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--font-b);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+p{max-width:68ch}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,15,.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
-.nav-logo{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--accent);letter-spacing:2px;text-transform:uppercase}
-.nav-links{display:flex;gap:28px;list-style:none}
-.nav-links a{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
-.nav-links a:hover{color:var(--accent)}
+.panel.enter{animation:rise .45s cubic-bezier(.2,.7,.2,1)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.panel.enter{animation:none}html{scroll-behavior:auto}}
 
-.hero{min-height:100vh;display:flex;align-items:center;padding:100px 0 80px;position:relative}
-.hero-label{color:var(--accent);font-size:11px;letter-spacing:4px;text-transform:uppercase;margin-bottom:20px;opacity:0;animation:fadeUp .6s ease .1s forwards}
-.hero-name{font-family:'Syne',sans-serif;font-size:clamp(44px,8vw,84px);font-weight:800;line-height:1.0;margin-bottom:14px;opacity:0;animation:fadeUp .6s ease .2s forwards}
-.hero-name span{background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-title{font-family:'Syne',sans-serif;font-size:clamp(15px,2.5vw,20px);font-weight:600;color:var(--muted);margin-bottom:28px;opacity:0;animation:fadeUp .6s ease .3s forwards}
-.hero-desc{font-size:13px;color:var(--muted);max-width:580px;margin-bottom:40px;opacity:0;animation:fadeUp .6s ease .4s forwards;border-left:2px solid var(--accent);padding-left:16px;line-height:1.85}
-.hero-contacts{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:48px;opacity:0;animation:fadeUp .6s ease .5s forwards}
-.contact-chip{display:flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--border);border-radius:4px;font-size:12px;color:var(--muted);background:var(--card);text-decoration:none;transition:all .2s}
-.contact-chip:hover{border-color:var(--accent);color:var(--accent);box-shadow:0 0 16px rgba(0,229,255,.12)}
-.contact-chip svg{width:14px;height:14px;flex-shrink:0}
-.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;opacity:0;animation:fadeUp .6s ease .6s forwards}
-.stat{background:var(--card);padding:20px 16px;text-align:center}
-.stat-num{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--accent);display:block}
-.stat-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:4px;display:block}
-.scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--muted);font-size:10px;letter-spacing:2px;text-transform:uppercase;animation:pulse 2.5s ease infinite}
-.scroll-hint svg{animation:bounce 2s ease infinite}
+.eyebrow,.status,.cn,.pt,.lk span,.fact h3,.sk h3{font-family:var(--font-m);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.hero{padding:8px 0 40px}
+.name{font-family:var(--font-d);font-size:clamp(44px,13vw,96px);line-height:.98;letter-spacing:-.02em;margin:14px 0 16px}
+.hero .role,.phead .role{font-family:var(--font-d);font-size:clamp(17px,4.4vw,24px);line-height:1.3;color:var(--text);max-width:30ch}
+.summary{color:var(--muted);margin-top:18px;max-width:58ch}
+.contacts{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 34px}
+.chip{display:inline-flex;align-items:center;padding:8px 14px;border:1px solid var(--line);border-radius:var(--r);font-size:13px;color:var(--text);text-decoration:none;background:var(--surface);transition:border-color .2s,color .2s}
+a.chip:hover{border-color:var(--accent);color:var(--accent)}
 
-section{padding:80px 0;border-top:1px solid var(--border)}
-.section-label{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
-.section-title{font-family:'Syne',sans-serif;font-size:clamp(26px,5vw,40px);font-weight:800;margin-bottom:48px;color:var(--text)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.stat{background:var(--surface);padding:18px 16px;display:flex;flex-direction:column-reverse;gap:4px}
+.stat dd{font-family:var(--font-d);font-size:clamp(22px,6vw,32px);font-weight:800;color:var(--accent);line-height:1.1}
+.stat dt{font-size:12px;color:var(--muted);line-height:1.35}
+.headline{margin-bottom:8px}
 
-.skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
-.skill-group{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px;transition:border-color .2s}
-.skill-group:hover{border-color:rgba(124,58,237,.4)}
-.skill-group-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.skill-group-title::before{content:'';width:16px;height:1px;background:var(--accent2);flex-shrink:0}
-.skill-tags{display:flex;flex-wrap:wrap;gap:6px}
-.tag{padding:4px 10px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.25);border-radius:3px;font-size:11px;color:#c4b5fd;transition:all .2s}
-.tag:hover{background:rgba(124,58,237,.22);border-color:var(--accent2);color:#fff}
-.tag.green{background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.25);color:#6ee7b7}
-.tag.green:hover{background:rgba(16,185,129,.18)}
-.tag.cyan{background:rgba(0,229,255,.07);border-color:rgba(0,229,255,.22);color:#67e8f9}
-.tag.cyan:hover{background:rgba(0,229,255,.14)}
+.block{padding:44px 0 0}
+.h{font-family:var(--font-d);font-size:clamp(22px,5.5vw,32px);line-height:1.15;margin-bottom:22px;letter-spacing:-.01em}
+.skills,.facts{display:grid;gap:12px}
+.sk,.fact{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.sk h3,.fact h3{margin-bottom:12px}
+.fact p{font-size:14px;color:var(--muted)}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{padding:3px 10px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:var(--text);background:var(--bg)}
+.edu{display:grid;gap:12px;margin-bottom:18px}
+.edu-i{display:flex;gap:18px;align-items:baseline;padding:16px 18px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.yr{font-family:var(--font-d);font-size:22px;font-weight:800;color:var(--muted);flex-shrink:0}
+.edu-i h3{font-size:15px;line-height:1.35}
+.edu-i p{font-size:13px;color:var(--muted)}
+.certs{list-style:none;display:flex;flex-wrap:wrap;gap:8px}
+.certs a,.link{display:inline-flex;align-items:center;gap:6px;font-size:13px;text-decoration:none;color:var(--accent);padding:6px 0}
+.certs a{padding:8px 14px;border:1px solid var(--line);border-radius:var(--r)}
+.certs a:hover,.link:hover{text-decoration:underline;text-underline-offset:4px}
 
-.cases-list{display:flex;flex-direction:column;gap:20px}
-.case-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:28px 32px;position:relative;overflow:hidden;transition:border-color .25s,box-shadow .25s}
-.case-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
-.case-card:nth-child(1)::before{background:var(--accent)}
-.case-card:nth-child(2)::before{background:var(--accent2)}
-.case-card:nth-child(3)::before{background:var(--accent3)}
-.case-card:nth-child(4)::before{background:#f59e0b}
-.case-card:nth-child(5)::before{background:#ec4899}
-.case-card:nth-child(6)::before{background:#06b6d4}
-.case-card:nth-child(7)::before{background:#8b5cf6}
-.case-card:nth-child(8)::before{background:#f97316}
-.case-card:nth-child(9)::before{background:#84cc16}
-.case-card:nth-child(10)::before{background:#e11d48}
-.case-card:nth-child(11)::before{background:#14b8a6}
-.case-card:hover{border-color:rgba(0,229,255,.2);box-shadow:0 8px 40px rgba(0,0,0,.35)}
-.case-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap}
-.case-num{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
-.case-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--text);line-height:1.35;max-width:580px}
-.case-metric{display:flex;align-items:center;padding:8px 14px;border-radius:4px;font-family:'Syne',sans-serif;font-size:19px;font-weight:800;white-space:nowrap;flex-shrink:0}
-.m-cyan{background:rgba(0,229,255,.09);color:var(--accent);border:1px solid rgba(0,229,255,.2)}
-.m-purple{background:rgba(124,58,237,.12);color:#c4b5fd;border:1px solid rgba(124,58,237,.2)}
-.m-green{background:rgba(16,185,129,.09);color:#6ee7b7;border:1px solid rgba(16,185,129,.2)}
-.m-amber{background:rgba(245,158,11,.1);color:#fcd34d;border:1px solid rgba(245,158,11,.2)}
-.m-pink{background:rgba(236,72,153,.1);color:#f9a8d4;border:1px solid rgba(236,72,153,.2)}
-.m-teal{background:rgba(6,182,212,.1);color:#67e8f9;border:1px solid rgba(6,182,212,.2)}
-.m-lime{background:rgba(132,204,22,.1);color:#bef264;border:1px solid rgba(132,204,22,.2)}
-.m-rose{background:rgba(225,29,72,.1);color:#fda4af;border:1px solid rgba(225,29,72,.2)}
-.case-body{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.85}
-.case-body strong{color:var(--text);font-weight:500}
-.case-stack{display:flex;flex-wrap:wrap;gap:6px}
-.case-tag{padding:3px 9px;font-size:10px;letter-spacing:1px;text-transform:uppercase;border-radius:3px;border:1px solid var(--border);color:var(--muted);background:var(--bg3)}
+.phead{padding:8px 0 28px}
+.status{display:inline-flex;align-items:center;gap:8px}
+.status i{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.status.live{color:var(--accent)}
+.status.live i{background:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%,transparent)}
+.company{font-family:var(--font-d);font-size:clamp(30px,8vw,56px);line-height:1.05;letter-spacing:-.02em;margin:14px 0 12px;max-width:20ch}
+.company a{text-decoration:none;border-bottom:1px dashed var(--muted)}
+.prev{font-size:13px;color:var(--muted);margin-top:6px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:14px;font-family:var(--font-m);font-size:12px;color:var(--muted)}
+.intro{margin-top:14px;color:var(--muted)}
 
-.exp-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:28px 32px;margin-bottom:24px}
-.exp-header{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:24px;flex-wrap:wrap}
-.exp-company{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;color:var(--text);margin-bottom:4px}
-.exp-role{font-size:11px;color:var(--accent);letter-spacing:1px;text-transform:uppercase}
-.exp-role-prev{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5}
-.exp-role-prev::before{content:'↳ ';color:var(--accent2)}
-.exp-period-main{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--text);text-align:right}
-.exp-period-sub{font-size:11px;color:var(--muted);text-align:right;margin-top:2px}
-.exp-duties{list-style:none;display:flex;flex-direction:column;gap:9px}
-.exp-duties li{font-size:13px;color:var(--muted);padding-left:20px;position:relative;line-height:1.65}
-.exp-duties li::before{content:'→';position:absolute;left:0;color:var(--accent);font-size:11px;top:1px}
-.exp-results{margin-top:18px;padding-top:18px;border-top:1px dashed var(--border)}
-.exp-results-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent3);margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.exp-results-label::before{content:'';width:16px;height:1px;background:var(--accent3);flex-shrink:0}
-.exp-results-list{list-style:none;display:flex;flex-direction:column;gap:9px}
-.exp-results-list li{font-size:13px;color:var(--muted);padding-left:20px;position:relative;line-height:1.65}
-.exp-results-list li::before{content:'✓';position:absolute;left:0;color:var(--accent3);font-size:11px;top:1px;font-weight:700}
-.exp-results-list strong{color:#6ee7b7;font-weight:600}
-.exp-sub{font-size:12px;color:var(--muted);margin-bottom:14px;margin-top:-12px;font-style:italic}
-.projects-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
-.project-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:18px;transition:border-color .2s}
-.project-card:hover{border-color:rgba(0,229,255,.18)}
-.project-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px}
-.project-type{font-size:10px;color:var(--accent2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
-.project-desc{font-size:12px;color:var(--muted);line-height:1.6}
+.list{list-style:none;display:grid;gap:12px;max-width:72ch}
+.list li{position:relative;padding-left:22px;color:var(--muted);font-size:14.5px}
+.list li::before{content:'';position:absolute;left:0;top:.72em;width:10px;height:2px;background:var(--accent)}
+.list.ok li{color:var(--text)}
 
-.results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:20px}
-.result-card{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:14px 16px}
-.result-num{font-family:'Syne',sans-serif;font-size:22px;font-weight:800}
-.result-desc{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.5}
-.result-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.result-label::before{content:'';display:inline-block;width:16px;height:1px;background:var(--accent3);flex-shrink:0}
+.cases{display:grid;gap:16px}
+.case{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px;display:flex;flex-direction:column;gap:14px}
+.case-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.metric{font-family:var(--font-d);font-weight:800;font-size:15px;color:var(--accent-ink);background:var(--accent);padding:5px 12px;border-radius:999px;white-space:nowrap}
+.case h3{font-family:var(--font-d);font-size:clamp(17px,4.4vw,21px);line-height:1.3;max-width:34ch}
+.cb{font-size:14px;color:var(--muted)}
+.cb strong{color:var(--text);font-weight:600}
+.links,.projects{display:grid;gap:12px}
+.lk{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;padding:16px 18px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);text-decoration:none;transition:border-color .2s}
+.lk b{font-weight:600;font-size:14px;grid-column:1}
+.lk span{grid-column:1}
+.lk .ico{grid-column:2;grid-row:1/3;color:var(--accent)}
+.lk:hover{border-color:var(--accent)}
+.proj{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:22px}
+.proj h3{font-family:var(--font-d);font-size:20px;margin:6px 0 8px}
+.proj .pd{font-size:14px;color:var(--muted)}
+.projects{grid-auto-rows:1fr}
+.proj .list{margin:18px 0}
 
-.edu-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:24px 28px;display:flex;align-items:center;gap:28px}
-.edu-year{font-family:'Syne',sans-serif;font-size:34px;font-weight:800;color:var(--border);flex-shrink:0}
-.edu-uni{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:5px}
-.edu-spec{font-size:12px;color:var(--muted)}
-.course-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:20px 24px;margin-top:14px;display:flex;align-items:center;gap:24px}
-.course-year{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--border);flex-shrink:0}
-.course-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px}
-.course-org{font-size:12px;color:var(--accent)}
-.cert-section-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin:28px 0 14px;display:flex;align-items:center;gap:8px}
-.cert-section-label::before{content:'';width:16px;height:1px;background:var(--accent2);flex-shrink:0}
-.cert-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:16px 24px;margin-top:10px;display:flex;align-items:center;gap:20px;text-decoration:none;transition:border-color .25s,box-shadow .25s,transform .2s;cursor:pointer}
-.cert-card:hover{border-color:rgba(124,58,237,.4);box-shadow:0 4px 24px rgba(0,0,0,.3);transform:translateY(-2px)}
-.cert-card-year{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--border);flex-shrink:0}
-.cert-card-body{flex:1;min-width:0}
-.cert-card-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px}
-.cert-card-org{font-size:12px;color:var(--accent2)}
-.cert-card-link{flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:4px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.2);color:#c4b5fd;transition:all .2s}
-.cert-card:hover .cert-card-link{background:rgba(124,58,237,.25);color:#fff}
-
-.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.about-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:22px;transition:border-color .2s}
-.about-card:hover{border-color:rgba(0,229,255,.18)}
-.about-card-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
-.about-card p{font-size:13px;color:var(--muted);line-height:1.75}
-
-footer{border-top:1px solid var(--border);padding:48px 0}
-.footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px}
-.footer-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px}
-.footer-note{font-size:11px;color:var(--muted)}
-.tg-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 30px;background:#229ED9;color:#fff;border-radius:6px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;text-decoration:none;transition:all .2s;box-shadow:0 0 28px rgba(34,158,217,.3)}
-.tg-btn:hover{background:#1a8fc4;box-shadow:0 0 44px rgba(34,158,217,.5);transform:translateY(-2px)}
-
-.dashboards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:20px}
-.dash-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px 24px;text-decoration:none;display:block;transition:border-color .25s,box-shadow .25s,transform .2s}
-.dash-card:hover{border-color:rgba(0,229,255,.3);box-shadow:0 4px 28px rgba(0,0,0,.35);transform:translateY(-2px)}
-.dash-card-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:8px}
-.dash-card-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;line-height:1.4}
-.dash-card-url{font-size:11px;color:var(--accent);display:flex;align-items:center;gap:6px;word-break:break-all}
-.dash-card-url svg{flex-shrink:0;width:12px;height:12px}
-
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
-.reveal{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .55s ease}
-.reveal.visible{opacity:1;transform:translateY(0)}
-
-@media(max-width:700px){
-  .hero-stats{grid-template-columns:1fr 1fr}
-  .about-grid{grid-template-columns:1fr}
-  .projects-grid{grid-template-columns:1fr}
-  .results-grid{grid-template-columns:1fr 1fr}
-  .nav-links{display:none}
-  .case-header{flex-direction:column}
-  .exp-header{flex-direction:column}
-  .footer-inner{flex-direction:column;text-align:center}
-  .dashboards-grid{grid-template-columns:1fr}
-  .edu-card{flex-direction:column;gap:8px}
-  .edu-year{font-size:22px}
-  .cert-card-year{font-size:16px}
+@media (min-width:640px){
+  .stats{grid-template-columns:repeat(4,1fr)}
+  .skills,.facts,.projects{grid-template-columns:1fr 1fr}
+  .links{grid-template-columns:1fr 1fr}
+}
+</style>
+<style>
+:root{--bg:#0b0d12;--surface:#11141b;--line:#232836;--text:#e9ecf3;--muted:#8d95a8;--accent:#46e3c8;--accent-ink:#04130f;--r:10px;
+--font-d:'Manrope',system-ui,sans-serif;--font-b:'Manrope',system-ui,sans-serif;--font-m:'JetBrains Mono',ui-monospace,monospace}
+body{padding-bottom:76px}
+.side{padding:18px 20px 6px}
+.brand{display:flex;align-items:center;gap:12px}
+.mono{width:40px;height:40px;border-radius:10px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:800;font-size:15px;letter-spacing:.02em}
+.brand b{display:block;font-size:15px;line-height:1.2}
+.brand span{font-size:12px;color:var(--muted)}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;gap:6px;overflow-x:auto;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(14px);border-top:1px solid var(--line);scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);cursor:pointer;font-size:13px;font-weight:600;white-space:nowrap;color:var(--muted);transition:all .2s}
+.tab small{display:none}
+.tab .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.tab:hover{color:var(--text);border-color:#3a4258}
+.tab[aria-selected=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tab[aria-selected=true] .dot{background:var(--accent-ink)}
+.panel{padding:18px 20px 48px;max-width:900px}
+.foot{display:none}
+@media (min-width:960px){
+  body{padding-bottom:0;padding-left:320px}
+  .side{position:fixed;left:0;top:0;bottom:0;width:320px;padding:32px 24px;display:flex;flex-direction:column;gap:28px;border-right:1px solid var(--line)}
+  .tabs{position:static;flex-direction:column;overflow:visible;padding:0;background:none;backdrop-filter:none;border:0;gap:8px}
+  .tab{border-radius:var(--r);padding:12px 14px;flex-direction:row;justify-content:space-between;align-items:center;white-space:normal;text-align:left}
+  .tab .tx{display:flex;flex-direction:column;gap:2px}
+  .tab small{display:block;font-family:var(--font-m);font-size:11px;font-weight:400;opacity:.75}
+  .panel{padding:56px 56px 80px}
+  .foot{display:block;margin-top:auto;font-size:12px;color:var(--muted)}
+  .foot a{color:var(--accent);text-decoration:none}
 }
 </style>
 </head>
 <body>
-
-<div class="grid-bg"></div>
-<div class="glow-orb glow-orb-1"></div>
-<div class="glow-orb glow-orb-2"></div>
-
-<nav>
-  <div class="nav-logo">AH · portfolio</div>
-  <ul class="nav-links">
-    <li><a href="#skills">Стек</a></li>
-    <li><a href="#cases">Кейсы</a></li>
-    <li><a href="#experience">Опыт</a></li>
-    <li><a href="#contact">Контакты</a></li>
-  </ul>
-</nav>
-
-<div class="wrapper">
-
-<section class="hero">
-  <div style="width:100%">
-    <img src="./photo.jpg" alt="Хакунов Алан" class="hero-avatar" onerror="this.style.display='none'">
-    <div class="hero-label">// CRM · Автоматизация · BI-аналитика</div>
-    <h1 class="hero-name">Хакунов<br><span>Алан</span></h1>
-    <div class="hero-title">Технический специалист amoCRM/Bitrix24 и BI-аналитик</div>
-    <p class="hero-desc">
-      7 лет в продажах и операционке: ~4 года руководил колл-центрами, последние 3 года — технический
-      специалист по CRM (amoCRM, Bitrix24), автоматизации на n8n и BI-аналитике в Google Sheets.
-      Знаю боль отдела продаж изнутри — и закрываю её кодом и автоматизациями.
-    </p>
-    <div class="hero-contacts">
-      <a href="tel:+79640392854" class="contact-chip">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11a19.79 19.79 0 01-3.07-8.67 2 2 0 012-2.18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.18 6.18l1.36-1.37a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-        +7 (964) 039-28-54
-      </a>
-      <a href="mailto:hakunov1991@gmail.com" class="contact-chip">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        hakunov1991@gmail.com
-      </a>
-      <a href="https://t.me/alanhakunov" target="_blank" class="contact-chip">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8l-1.7 8c-.12.58-.44.72-.9.45l-2.5-1.84-1.2 1.16c-.13.13-.24.24-.5.24l.18-2.56 4.6-4.16c.2-.18-.04-.28-.31-.1L8.13 15l-2.44-.76c-.53-.17-.54-.53.11-.78l9.55-3.68c.44-.16.83.1.69.78l-.4-.76z"/></svg>
-        @alanhakunov
-      </a>
-      <span class="contact-chip">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        Нальчик · удалённо
-      </span>
-    </div>
-    <div class="hero-stats">
-      <div class="stat"><span class="stat-num">4+</span><span class="stat-label">лет опыта</span></div>
-      <div class="stat"><span class="stat-num">1&#x2013;3</span><span class="stat-label">мин — квал. лида</span></div>
-      <div class="stat"><span class="stat-num">100%</span><span class="stat-label">контроль звонков</span></div>
-      <div class="stat"><span class="stat-num">&#x2212;30%</span><span class="stat-label">SaaS / год</span></div>
-    </div>
-  </div>
-  <div class="scroll-hint">
-    <span>scroll</span>
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-  </div>
-</section>
-
-<!-- SKILLS -->
-<section id="skills">
-  <div class="section-label">// 01 — stack</div>
-  <h2 class="section-title">Чем работаю</h2>
-  <div class="skills-grid">
-    <div class="skill-group reveal">
-      <div class="skill-group-title">CRM-системы</div>
-      <div class="skill-tags">
-        <span class="tag cyan">amoCRM</span>
-        <span class="tag cyan">Bitrix24</span>
-        <span class="tag cyan">GetCourse</span>
-        <span class="tag cyan">SendPulse</span>
-        <span class="tag cyan">Salebot</span>
-      </div>
-    </div>
-    <div class="skill-group reveal">
-      <div class="skill-group-title">Автоматизация</div>
-      <div class="skill-tags">
-        <span class="tag green">n8n</span>
-        <span class="tag green">REST API</span>
-        <span class="tag green">Webhooks</span>
-        <span class="tag green">JavaScript</span>
-        <span class="tag green">Google Apps Script</span>
-        <span class="tag green">Vakas Tools</span>
-      </div>
-    </div>
-    <div class="skill-group reveal">
-      <div class="skill-group-title">Мессенджеры и коммуникации</div>
-      <div class="skill-tags">
-        <span class="tag">Wazzup</span>
-        <span class="tag">whatCRM</span>
-        <span class="tag">DashaMail</span>
-        <span class="tag">smsc.ru</span>
-        <span class="tag">SIPUNI</span>
-        <span class="tag">Mango</span>
-        <span class="tag">Вымпелком</span>
-        <span class="tag">Телфин</span>
-        <span class="tag">UIS</span>
-      </div>
-    </div>
-    <div class="skill-group reveal">
-      <div class="skill-group-title">Аналитика и BI</div>
-      <div class="skill-tags">
-        <span class="tag green">Google Sheets BI</span>
-        <span class="tag green">Яндекс.Метрика</span>
-        <span class="tag green">Яндекс.Директ API</span>
-        <span class="tag green">Ройстат</span>
-        <span class="tag green">Дашборды</span>
-        <span class="tag green">Сквозная аналитика</span>
-      </div>
-    </div>
-    <div class="skill-group reveal">
-      <div class="skill-group-title">AI и языковые модели</div>
-      <div class="skill-tags">
-        <span class="tag cyan">ChatGPT / Claude</span>
-        <span class="tag cyan">OpenAI API</span>
-        <span class="tag cyan">DeepSeek</span>
-        <span class="tag cyan">AssemblyAI</span>
-        <span class="tag cyan">Suvvy.ai</span>
-      </div>
-    </div>
-    <div class="skill-group reveal">
-      <div class="skill-group-title">Инструменты</div>
-      <div class="skill-tags">
-        <span class="tag">Figma</span>
-        <span class="tag">Notion / WEEEK</span>
-        <span class="tag">Miro</span>
-        <span class="tag">Bubble.io</span>
-        <span class="tag">Tilda</span>
-        <span class="tag">Teleboss</span>
-        <span class="tag">PostgreSQL</span>
-        <span class="tag">MySQL</span>
-        <span class="tag">Google Drive</span>
-        <span class="tag">1C</span>
-        <span class="tag">Docker</span>
-        <span class="tag">Traefik / nginx</span>
-        <span class="tag">SSH</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CASES -->
-<section id="cases">
-  <div class="section-label">// 02 — portfolio</div>
-  <h2 class="section-title">Кейсы</h2>
-  <div class="cases-list">
-
-    <div class="case-card reveal">
-      <div class="case-header">
-        <div>
-          <div class="case-num">01 / AI-квалификация лидов</div>
-          <div class="case-title">Время обработки входящего обращения — с 10–15 минут до 1–3 минут. Менеджер получает только квалифицированных</div>
-        </div>
-        <div class="case-metric m-cyan">10&#x2192;1&#x2013;3 мин</div>
-      </div>
-      <div class="case-body">
-        Каждое входящее обращение обрабатывал менеджер вручную: спам, повторные вопросы про цену и расписание, неквалифицированные лиды — всё в одном потоке. Внедрил AI-бота через <strong>Suvvy.ai</strong> с интеграцией в amoCRM и Wazzup. Бот ведёт первичный диалог, собирает нужные данные, заполняет карточку сделки и сам отсеивает спам и неквал. Первый ответ клиенту — <strong>в течение 15 секунд</strong>, 24/7. Из ~150 обращений в месяц до менеджера теперь доходит <strong>80–90 реально квалифицированных лидов</strong>; время на квалификацию у менеджера — <strong>с 1–3 часов в день до нуля</strong>.
-      </div>
-      <div class="case-stack">
-        <span class="case-tag">amoCRM API</span><span class="case-tag">Suvvy.ai</span>
-        <span class="case-tag">Wazzup</span><span class="case-tag">Webhooks</span>
-      </div>
-    </div>
-
-    <div class="case-card reveal">
-      <div class="case-header">
-        <div>
-          <div class="case-num">02 / Автоматический анализ звонков</div>
-          <div class="case-title">Заменил штатного контролёра качества за 40 000 ₽/мес на инфраструктуру за &lt;$5 — со 100% покрытием</div>
-        </div>
-        <div class="case-metric m-purple">&lt;$5/мес</div>
-      </div>
-      <div class="case-body">
-        До: вручную прослушивались только звонки длиннее 90 секунд — выборочно, остальные 120–150 разговоров в месяц проходили мимо контроля. Собрал систему на <strong>n8n + AssemblyAI + DeepSeek</strong>: запись из CRM автоматически расшифровывается, AI сравнивает текст с фиксированным скриптом продаж и выставляет балл по каждому пункту. Итог с оценкой и резюме приходит в Telegram через несколько минут после разговора. После: <strong>100% звонков</strong> разбираются автоматически, инфраструктура стоит <strong>меньше $5 в месяц</strong> — против 40 000 ₽/мес зарплаты штатного специалиста контроля качества. <a href="https://alan-n8n.ru/callsrps/" target="_blank" style="color:var(--accent);text-decoration:underline;text-underline-offset:3px;">Посмотреть дашборд →</a>
-      </div>
-      <div class="case-stack">
-        <span class="case-tag">n8n</span><span class="case-tag">AssemblyAI</span>
-        <span class="case-tag">DeepSeek API</span><span class="case-tag">Telegram Bot</span>
-        <span class="case-tag">Google Sheets</span><span class="case-tag">amoCRM</span>
-      </div>
-    </div>
-
-    <div class="case-card reveal">
-      <div class="case-header">
-        <div>
-          <div class="case-num">03 / Оценка брокеров по чистой прибыли</div>
-          <div class="case-title">Не «кто больше продал», а «кто больше принёс компании» — с учётом стоимости потраченных лидов</div>
-        </div>
-        <div class="case-metric m-green">&#x2191; Прибыль</div>
-      </div>
-      <div class="case-body">
-        Менеджеры работают на чистой комиссии — стандартные KPI здесь не подходят. Раньше «лидером» считался тот, кто принёс больше выручки. Собрал в <strong>Google Sheets</strong> аналитику, где у каждого брокера видно: сколько лидов он потратил, во что эти лиды обошлись компании, и какой <strong>чистый вклад</strong> остался после вычета стоимости лидов. Простой пример: брокер №1 потратил 100 лидов и принёс $10 000 выручки; брокер №2 — 50 лидов и $7 000. При цене лида $100 первый принёс компании $0 чистыми, второй — $2 000. Без таблицы №1 выглядел сильнее, по факту компанию двигает №2. Помогло руководству принимать кадровые решения и пересматривать распределение лидов на фактах, а не на впечатлении.
-      </div>
-      <div class="case-stack">
-        <span class="case-tag">Google Apps Script</span><span class="case-tag">amoCRM API</span>
-        <span class="case-tag">Google Sheets</span><span class="case-tag">Юнит-экономика</span>
-      </div>
-    </div>
-
-    <div class="case-card reveal">
-      <div class="case-header">
-        <div>
-          <div class="case-num">04 / Сквозная аналитика</div>
-          <div class="case-title">Еженедельный отчёт для руководства: с 1–2 часов ручной сборки до 15 минут автоматически</div>
-        </div>
-        <div class="case-metric m-amber">1–2 ч &#x2192; 15 мин</div>
-      </div>
-      <div class="case-body">
-        Еженедельный отчёт собирался вручную из amoCRM, телефонии и Яндекс.Метрики — уходило 1–2 часа, периодически возникали расхождения в данных. Написал скрипт на <strong>Google Apps Script</strong>, который автоматически запрашивает API всех источников (amoCRM, телефония, Яндекс.Метрика, Ройстат), сводит данные в единую таблицу и строит дашборд. Отчёт формируется <strong>за 15 минут</strong> без участия человека — данные всегда актуальны и согласованы между источниками.
-      </div>
-      <div class="case-stack">
-        <span class="case-tag">Google Apps Script</span><span class="case-tag">amoCRM API</span>
-        <span class="case-tag">Яндекс.Метрика API</span><span class="case-tag">Roistat</span>
-        <span class="case-tag">Google Sheets</span>
-      </div>
-    </div>
-
-    <div class="case-card reveal">
-      <div class="case-header">
-        <div>
-          <div class="case-num">05 / Аудит SaaS-расходов</div>
-          <div class="case-title">Провёл аудит сервисов и срезал 30% лишних трат без потери функционала</div>
-        </div>
-        <div class="case-metric m-pink">&#x2212;30% / год</div>
-      </div>
-      <div class="case-body">
-        Провёл аудит всех используемых SaaS-сервисов: реальная нагрузка, пересечения по функционалу, дублирующие инструменты. Часть платных интеграций перенёс на <strong>n8n</strong> — self-hosted решение, которое уже было развёрнуто на своём сервере. Ряд задач закрыл через <strong>Google Apps Script</strong>. По итогам аудита ежегодные расходы на инструменты сократились <strong>на 30%</strong> без потери функциональности.
-      </div>
-      <div class="case-stack">
-        <span class="case-tag">amoCRM</span><span class="case-tag">n8n</span>
-        <span class="case-tag">Google Apps Script</span><span class="case-tag">Аудит процессов</span>
-      </div>
-    </div>
-
-    <div class="case-card reveal">
-      <div class="case-header">
-        <div>
-          <div class="case-num">06 / Транскрибация и резюме встреч</div>
-          <div class="case-title">40–50 часов записей в месяц превращаются в текст и краткое резюме без участия человека</div>
-        </div>
-        <div class="case-metric m-cyan">40–50 ч/мес</div>
-      </div>
-      <div class="case-body">
-        Записи встреч накапливались в папке без использования — прослушивать часовые звонки не было ни времени, ни ресурса. Настроил воркфлоу на <strong>n8n</strong>: файл попадает в Google Drive, расшифровывается через AssemblyAI, OpenAI определяет тип встречи и формирует краткое резюме, результат сохраняется в Google Sheets. Через систему проходит <strong>40–50 часов записей в месяц</strong> — руководитель получает суть встречи за 30 секунд вместо часа прослушивания. Система полностью автономна.
-      </div>
-      <div class="case-stack">
-        <span class="case-tag">n8n</span><span class="case-tag">AssemblyAI</span>
-        <span class="case-tag">OpenAI API</span><span class="case-tag">Google Drive</span>
-        <span class="case-tag">Google Sheets</span>
-      </div>
-    </div>
-
-    <div class="case-card reveal">
-      <div class="case-header">
-        <div>
-          <div class="case-num">07 / Умное распределение лидов</div>
-          <div class="case-title">Время от поступления лида до взятия в работу и дозвона — с 8–10 минут до 3–5 минут</div>
-        </div>
-        <div class="case-metric m-rose">8–10 &#x2192; 3–5 мин</div>
-      </div>
-      <div class="case-body">
-        При высоком потоке лидов менеджеры теряли время на ручное «разбирательство»: чей это контакт, кто уже звонил, кому передавать. Построил систему распределения на <strong>n8n</strong>: воркфлоу обходит до 1 500 незакрытых лидов в amoCRM, по каждому проверяет историю событий и назначает на менеджера, который ранее не касался этого контакта. Дополнительно — автоматически закрывает дубликаты сделок, оставляя самую раннюю. Среднее время от поступления лида до взятия в работу и дозвона сократилось <strong>с 8–10 минут до 3–5 минут</strong> — это напрямую влияет на конверсию первого касания.
-      </div>
-      <div class="case-stack">
-        <span class="case-tag">n8n</span><span class="case-tag">amoCRM API</span>
-        <span class="case-tag">Telegram Bot</span><span class="case-tag">PostgreSQL</span>
-        <span class="case-tag">Google Sheets</span>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="section-label" style="margin-top:48px;margin-bottom:16px;">// Живые дашборды и аналитика</div>
-  <div class="dashboards-grid">
-    <a href="http://141.105.67.20:8081/" target="_blank" class="dash-card reveal">
-      <div class="dash-card-label">Web-дашборд</div>
-      <div class="dash-card-title">Недвижимость на Пхукете</div>
-      <div class="dash-card-url"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Открыть дашборд</div>
-    </a>
-    <a href="https://docs.google.com/spreadsheets/d/1Rd_Fgc9uBF0DNh7RF35xvZqjwLULqBlTZuhzdu2hmCs/" target="_blank" class="dash-card reveal">
-      <div class="dash-card-label">Google Sheets</div>
-      <div class="dash-card-title">Сеть частных детских садов и школ</div>
-      <div class="dash-card-url"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Открыть таблицу</div>
-    </a>
-    <a href="https://docs.google.com/spreadsheets/d/1SEIuPwnN4Mq8DRIiN0aUI2PjZsAQA4bhjEFQJBE7SQI/" target="_blank" class="dash-card reveal">
-      <div class="dash-card-label">Google Sheets</div>
-      <div class="dash-card-title">Образовательные программы Игоря Рыбакова</div>
-      <div class="dash-card-url"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Открыть таблицу</div>
-    </a>
-    <a href="https://alan-n8n.ru/callsrps/" target="_blank" class="dash-card reveal">
-      <div class="dash-card-label">Web-дашборд</div>
-      <div class="dash-card-title">Контроль качества диалогов</div>
-      <div class="dash-card-url"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>alan-n8n.ru/callsrps</div>
-    </a>
-    <a href="https://alan-n8n.ru/dashboard-rps/" target="_blank" class="dash-card reveal">
-      <div class="dash-card-label">Web-дашборд</div>
-      <div class="dash-card-title">Аналитический дашборд Плэйскул</div>
-      <div class="dash-card-url"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>alan-n8n.ru/dashboard-rps</div>
-    </a>
-  </div>
-</section>
-<section id="experience">
-  <div class="section-label">// 03 — experience</div>
-  <h2 class="section-title">Опыт работы</h2>
-
-  <!-- TUMANOV GROUP — новое место работы -->
-  <div class="exp-card reveal" style="border-color:rgba(0,229,255,.18);box-shadow:0 0 32px rgba(0,229,255,.04);">
-    <div class="exp-header">
-      <div>
-        <div class="exp-company"><a href="https://www.tumanov.group" target="_blank" style="color:inherit;text-decoration:none;border-bottom:1px dashed rgba(0,229,255,.5);">TUMANOV GROUP</a></div>
-        <div class="exp-role">Специалист по CRM, автоматизации и BI-аналитике</div>
-      </div>
-      <div>
-        <div class="exp-period-main">Декабрь 2025 — сейчас</div>
-        <div class="exp-period-sub">Таиланд (Пхукет) / Москва · удалённо</div>
-      </div>
-    </div>
-    <ul class="exp-duties">
-      <li>Техническое сопровождение amoCRM: настройка воронок, этапов, полей, триггеров и автоматических действий под специфику международного рынка недвижимости (Пхукет) и образовательных продуктов</li>
-      <li>Разработка и поддержка интеграций через amoCRM API: вебхуки, синхронизация с внешними сервисами, обработка событий в реальном времени, фильтрация и пагинация больших массивов данных (до 1 500+ сделок)</li>
-      <li>Создание кастомных виджетов и JavaScript-скриптов для amoCRM с применением Claude и ChatGPT в качестве AI-ассистентов при разработке</li>
-      <li>Построение автоматизаций на n8n: умное распределение лидов по менеджерам (Круг 2, 3, 4) с анти-повтором и дедупликацией, цепочки Telegram-уведомлений, интеграции с Google Drive и PostgreSQL</li>
-      <li>Разработка и миграция Telegram-ботов: переход с коммерческих решений (Salebot) на self-hosted инфраструктуру n8n + PostgreSQL-бэкенд; проектирование схемы данных и логики взаимодействия</li>
-      <li>BI-аналитика в Google Sheets: воронки по менеджерам и кругам продаж, стоимость лида, конверсии по этапам, аналитика эффективности интернов с автоматическим сбором данных</li>
-      <li>Автоматизация анализа звонков и встреч: n8n + AssemblyAI + OpenAI — расшифровка, классификация типа разговора, AI-оценка по скрипту, сохранение результатов в Google Sheets</li>
-      <li>Работа с нестандартными сценариями amoCRM API: массовая фильтрация по массивам ID, batch-обработка, корректная работа с часовыми поясами (UTC+7 Пхукет, Московское время)</li>
-      <li>Google Apps Script: автоматические отчёты, обращения к amoCRM API, агрегация данных из нескольких источников, append-or-update операции для исключения дублей</li>
-      <li>Управление серверной инфраструктурой: self-hosted n8n на VPS Hostkey, настройка процессов, резервное копирование воркфлоу, мониторинг стабильности</li>
-      <li>Разработка системы дайджестов для инвесторов в недвижимость: автоматическая агрегация и рассылка актуальных новостей по рынку Пхукета через n8n + Telegram</li>
-    </ul>
-
-  </div>
-
-  <!-- Рыбаков Плэйскул -->
-  <div class="exp-card reveal">
-    <div class="exp-header">
-      <div>
-        <div class="exp-company">Рыбаков Плэйскул / Глобальный университет Игоря Рыбакова</div>
-        <div class="exp-role">Технический специалист CRM / автоматизация / BI</div>
-        <div class="exp-role-prev">В 2022–2023 — руководитель колл-центра и отдела контроля качества</div>
-      </div>
-      <div>
-        <div class="exp-period-main">Июнь 2022 — сейчас</div>
-        <div class="exp-period-sub">&#x2248;4 года · Москва / удалённо</div>
-      </div>
-    </div>
-    <ul class="exp-duties">
-      <li><strong>Старт работы (2022–2023):</strong> руководство колл-центром и отделом контроля качества — регламенты, стандарты работы КЦ, контроль метрик, управление персоналом, расчёт ЗП, онбординг новых сотрудников, разработка скриптов, единой базы знаний и системы оценки операторов</li>
-      <li>Полный цикл технического сопровождения CRM: amoCRM и Bitrix24 — настройка, доработка, поддержка пользователей, миграции данных</li>
-      <li>Подключение и обслуживание смежных систем: телефония (SIPUNI, Mango, Вымпелком), мессенджеры (Wazzup), рассылки (DashaMail, smsc.ru)</li>
-      <li>Интеграция образовательной платформы GetCourse: воронки продаж, управление доступами, транзакции и платёжные ссылки</li>
-      <li>Автоматизации на n8n: от Telegram-уведомлений до сложных цепочек с AI, транскрибацией и базой данных PostgreSQL</li>
-      <li>Скрипты на Google Apps Script: автоматические отчёты, интеграции с amoCRM API, обработка и агрегация данных</li>
-      <li>Разработка кастомных виджетов и скриптов для amoCRM на JavaScript с применением AI-ассистентов (ChatGPT, Claude)</li>
-      <li>Дашборды в Google Sheets: сквозная аналитика от рекламного клика до закрытой сделки</li>
-      <li>Работа с сайтами на Tilda: правки контента, создание лендингов, подключение форм к CRM</li>
-    </ul>
-    <div class="exp-results">
-      <div class="exp-results-label">// Ключевые результаты как руководитель колл-центра (2022–2023)</div>
-      <ul class="exp-results-list">
-        <li>Конверсия из входящей заявки в квалифицированный лид, переданный на экскурсию — <strong>с 76% до 95%</strong> (рост на 19 п.п.)</li>
-        <li>B2B-воронка: конверсия лид → встреча с клиентом — <strong>с 10% до 45%</strong> (по целевым лидам — 62%)</li>
-        <li>Клиентские оценки «5» работы оператора после звонка — <strong>с 35% до 83%</strong></li>
-        <li><strong>85%</strong> входящих лидов отрабатывается в первые 5 минут после поступления</li>
-        <li>Среднее время ответа на входящий звонок — <strong>7 секунд</strong></li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Где Материал — руководитель колл-центра -->
-  <div class="exp-card reveal">
-    <div class="exp-header">
-      <div>
-        <div class="exp-company"><a href="https://career.habr.com/companies/gdematerial-ru" target="_blank" style="color:inherit;text-decoration:none;border-bottom:1px dashed rgba(0,229,255,.5);">Где Материал</a></div>
-        <div class="exp-role">Руководитель колл-центра</div>
-      </div>
-      <div>
-        <div class="exp-period-main">Май 2019 — Май 2022</div>
-        <div class="exp-period-sub">3 года · Волгоград / Москва · удалённо</div>
-      </div>
-    </div>
-    <p class="exp-sub">Торговая площадка стройматериалов — сервис поиска и сравнения цен с доставкой из ближайшего магазина.</p>
-    <ul class="exp-duties">
-      <li>Управление командой ~10 операторов на каналах: звонки, почта, чаты, мессенджеры, SMM</li>
-      <li>Анализ операционных метрик контакт-центра, прогноз нагрузки и оперативное перераспределение сотрудников между каналами</li>
-      <li>Формализация регламентов и стандартов работы, оптимизация процессов обработки и передачи обращений</li>
-      <li>Запуск с нуля удалённого контакт-центра — филиал в Казахстане</li>
-      <li>Обучение и развитие персонала: операторы вырастали до менеджеров по продажам</li>
-      <li>Внедрение kanban-системы управления задачами контакт-центра</li>
-      <li>Разработка мер для повышения KPI сотрудников по производительности и качеству коммуникации</li>
-    </ul>
-    <div class="exp-results">
-      <div class="exp-results-label">// Ключевые операционные результаты</div>
-      <ul class="exp-results-list">
-        <li>Конверсия из входящего звонка в принятый — <strong>с 75% до 90%</strong> за счёт корректировки графика смен (часть команды переведена с 2/2 на 5/2)</li>
-        <li>Конверсия звонок → заказ по целевым звонкам — <strong>с 45% до 70%</strong> после внедрения скриптов по непрофильным товарам</li>
-        <li>Сокращение бюджета контакт-центра — <strong>с 650 000 ₽ до 320 000 ₽ в месяц</strong> (~−51%) без потери качества обслуживания</li>
-        <li>Реализован крупный заказ на сумму свыше <strong>3 000 000 ₽</strong> при среднем чеке 70 000 ₽</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="section-label" style="margin-top:40px;margin-bottom:16px;">// Консалтинг и внешние проекты</div>
-  <div class="projects-grid">
-    <div class="project-card reveal">
-      <div class="project-name">ЖК «Андерсен»</div>
-      <div class="project-type">Застройщик</div>
-      <div class="project-desc">Запуск IP-телефонии и amoCRM для отдела продаж жилого комплекса с нуля</div>
-    </div>
-    <div class="project-card reveal">
-      <div class="project-name">Astra Academy</div>
-      <div class="project-type">Тренинги и консалтинг</div>
-      <div class="project-desc">Запуск телефонии и amoCRM для отдела продаж тренинговой компании</div>
-    </div>
-    <div class="project-card reveal">
-      <div class="project-name">Moscow Improv Club</div>
-      <div class="project-type">Школа импровизации</div>
-      <div class="project-desc">Аудит и доработка amoCRM, настройка лидогенерации с сайта</div>
-    </div>
-  </div>
-</section>
-
-<!-- EDUCATION -->
-<section>
-  <div class="section-label">// 04 — education</div>
-  <h2 class="section-title">Образование</h2>
-  <div class="edu-card reveal">
-    <div class="edu-year">2013</div>
-    <div>
-      <div class="edu-uni">Краснодарский университет МВД Российской Федерации</div>
-      <div class="edu-spec">Высшее · Экономист · Бухгалтерский учёт, анализ и аудит · Краснодар</div>
-    </div>
-  </div>
-  <div class="course-card reveal">
-    <div class="course-year">2023</div>
-    <div>
-      <div class="course-name">#РеальныйОП 2.0 — Строим «фундамент» и формируем отдел продаж</div>
-      <div class="course-org">Grebenuk Resulting · Москва</div>
-    </div>
-  </div>
-
-  <div class="cert-section-label">Сертификаты Битрикс24</div>
-
-  <a href="https://drive.google.com/file/d/1AQy3j9T-88a3dWOF2HoQ6QoZbk2kHp8v/view?usp=sharing" target="_blank" class="cert-card reveal">
-    <div class="cert-card-year">B24</div>
-    <div class="cert-card-body">
-      <div class="cert-card-name">Битрикс24. Основы</div>
-      <div class="cert-card-org">1С-Битрикс</div>
-    </div>
-    <div class="cert-card-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
-  </a>
-
-  <a href="https://drive.google.com/file/d/1q5cu1P9rcAp5omGka5ScDqg4tGEL1_8Q/view?usp=sharing" target="_blank" class="cert-card reveal">
-    <div class="cert-card-year">B24</div>
-    <div class="cert-card-body">
-      <div class="cert-card-name">Автоматизация цифровых рабочих мест</div>
-      <div class="cert-card-org">1С-Битрикс</div>
-    </div>
-    <div class="cert-card-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
-  </a>
-
-  <a href="https://drive.google.com/file/d/1W1-ev-3oCMc2mP7aisU2je84JDBs6Srh/view?usp=sharing" target="_blank" class="cert-card reveal">
-    <div class="cert-card-year">B24</div>
-    <div class="cert-card-body">
-      <div class="cert-card-name">Автоматизация бизнес-процессов</div>
-      <div class="cert-card-org">1С-Битрикс</div>
-    </div>
-    <div class="cert-card-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
-  </a>
-
-  <a href="https://drive.google.com/file/d/1_VvIMuU65WRBhzzkgNo4n32_neL3YjR3/view?usp=sharing" target="_blank" class="cert-card reveal">
-    <div class="cert-card-year">B24</div>
-    <div class="cert-card-body">
-      <div class="cert-card-name">No-code в Битрикс24</div>
-      <div class="cert-card-org">1С-Битрикс</div>
-    </div>
-    <div class="cert-card-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div>
-  </a>
-</section>
-
-<!-- ABOUT -->
-<section>
-  <div class="section-label">// 05 — about</div>
-  <h2 class="section-title">О себе</h2>
-  <div class="about-grid">
-    <div class="about-card reveal">
-      <div class="about-card-title">Формат работы</div>
-      <p>Удалённо. Полная, частичная занятость или проектная работа. База — Нальчик.</p>
-    </div>
-    <div class="about-card reveal">
-      <div class="about-card-title">Желаемая роль</div>
-      <p>Технический специалист amoCRM / Bitrix24, инженер автоматизаций (n8n / API) или BI-аналитик в Google Sheets. Ожидаемый уровень — 90 000–120 000 &#x20BD; на руки, обсуждается под объём задач.</p>
-    </div>
-    <div class="about-card reveal">
-      <div class="about-card-title">Языки</div>
-      <p>Русский — родной. Английский — B1: документация, API-доки, переписка с техподдержкой зарубежных сервисов.</p>
-    </div>
-    <div class="about-card reveal">
-      <div class="about-card-title">Рекомендации</div>
-      <p>
-        Наталья — руководитель отдела маркетинга, «Рыбаков Плэйскул»<br>
-        <span style="color:var(--accent);font-size:11px;">контакт по запросу</span><br><br>
-        Владислав Умнов — IT Lead, TUMANOV GROUP<br>
-        <span style="color:var(--accent);font-size:11px;">контакт по запросу</span>
-      </p>
-    </div>
-  </div>
-</section>
-
-</div>
-
-<footer id="contact">
-  <div class="wrapper">
-    <div class="footer-inner">
-      <div>
-        <div class="footer-name">Хакунов Алан Асланович</div>
-        <div class="footer-note">Открыт к новым проектам · 2026</div>
-      </div>
-      <a href="https://t.me/alanhakunov" target="_blank" class="tg-btn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8l-1.7 8c-.12.58-.44.72-.9.45l-2.5-1.84-1.2 1.16c-.13.13-.24.24-.5.24l.18-2.56 4.6-4.16c.2-.18-.04-.28-.31-.1L8.13 15l-2.44-.76c-.53-.17-.54-.53.11-.78l9.55-3.68c.44-.16.83.1.69.78l-.4-.76z"/></svg>
-        Написать в Telegram
-      </a>
-    </div>
-  </div>
-</footer>
-
+<aside class="side">
+  <div class="brand"><div class="mono">АХ</div><div><b>Хакунов Алан</b><span>CRM · автоматизация · BI</span></div></div>
+  <nav class="tabs" role="tablist" aria-label="Места работы"></nav>
+  <div class="foot">Открыт к проектам<br><a href="https://t.me/alanhakunov" target="_blank" rel="noopener">Написать в Telegram</a></div>
+</aside>
+<main class="panel" id="panel"></main>
 <script>
-(function() {
-  var observer = new IntersectionObserver(function(entries) {
-    entries.forEach(function(entry, i) {
-      if (entry.isIntersecting) {
-        setTimeout(function() { entry.target.classList.add('visible'); }, i * 75);
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.01 });
+window.DATA = {
+  me: {
+    name: 'Хакунов Алан',
+    role: 'Технический специалист amoCRM / Bitrix24 и BI-аналитик',
+    summary: '7 лет в продажах и операционке: около 4 лет руководил колл-центрами, последние 3 года занимаюсь CRM (amoCRM, Bitrix24), автоматизациями на n8n и BI-аналитикой в Google Sheets. Знаю боль отдела продаж изнутри и закрываю её кодом и автоматизациями.',
+    contacts: [
+      { label: '+7 (964) 039-28-54', href: 'tel:+79640392854' },
+      { label: 'hakunov1991@gmail.com', href: 'mailto:hakunov1991@gmail.com' },
+      { label: '@alanhakunov', href: 'https://t.me/alanhakunov' },
+      { label: 'Нальчик, удалённо' }
+    ],
+    stats: [
+      { n: '4+', l: 'лет опыта' },
+      { n: '1–3 мин', l: 'до квалификации лида' },
+      { n: '100%', l: 'звонков под контролем' },
+      { n: '−30%', l: 'расходов на SaaS в год' }
+    ],
+    skills: [
+      { t: 'CRM-системы', tags: ['amoCRM', 'Kommo', 'Bitrix24', 'GetCourse', 'SendPulse', 'Salebot', 'BotHelp'] },
+      { t: 'Автоматизация', tags: ['n8n', 'REST API', 'Webhooks', 'JavaScript', 'Python', 'Telegram-боты и Mini App', 'Google Apps Script', 'Vakas Tools'] },
+      { t: 'Мессенджеры и телефония', tags: ['Wazzup', 'whatCRM', 'Chat2Desk', 'DashaMail', 'smsc.ru', 'SIPUNI', 'Mango', 'Вымпелком', 'Телфин', 'UIS'] },
+      { t: 'Аналитика и BI', tags: ['Google Sheets BI', 'Яндекс.Метрика', 'Яндекс.Директ API', 'Ройстат', 'Дашборды', 'Сквозная аналитика', 'Оценка звонков по чек-листу'] },
+      { t: 'AI и языковые модели', tags: ['ChatGPT', 'Claude', 'Claude Code', 'AI API', 'DeepSeek', 'AssemblyAI', 'Whisper', 'Yandex STT', 'Suvvy.ai', 'Учёт персональных данных в ИИ-процессах (152-ФЗ)'] },
+      { t: 'Инструменты и сервер', tags: ['Figma', 'Notion / WEEEK', 'Miro', 'Bubble.io', 'Tilda', 'PostgreSQL', 'MySQL', '1C', 'Docker', 'Traefik / nginx', 'Cloudflare', 'SSH'] }
+    ],
+    edu: [
+      { y: '2013', t: 'Краснодарский университет МВД РФ', s: 'Высшее, экономист. Бухгалтерский учёт, анализ и аудит' },
+      { y: '2023', t: '#РеальныйОП 2.0: строим фундамент и формируем отдел продаж', s: 'Grebenuk Resulting, Москва' }
+    ],
+    certs: [
+      { t: 'Битрикс24. Основы', href: 'https://drive.google.com/file/d/1AQy3j9T-88a3dWOF2HoQ6QoZbk2kHp8v/view?usp=sharing' },
+      { t: 'Автоматизация цифровых рабочих мест', href: 'https://drive.google.com/file/d/1q5cu1P9rcAp5omGka5ScDqg4tGEL1_8Q/view?usp=sharing' },
+      { t: 'Автоматизация бизнес-процессов', href: 'https://drive.google.com/file/d/1W1-ev-3oCMc2mP7aisU2je84JDBs6Srh/view?usp=sharing' },
+      { t: 'No-code в Битрикс24', href: 'https://drive.google.com/file/d/1_VvIMuU65WRBhzzkgNo4n32_neL3YjR3/view?usp=sharing' }
+    ],
+    adv: [
+      { t: 'Один специалист вместо трёх', p: 'Разбираю процесс, пишу код и держу сервер. Аналитик, разработчик и администратор в одном человеке: меньше передач и потерь смысла.' },
+      { t: 'Продажи знаю изнутри', p: 'Около 4 лет руководил колл-центрами. Понимаю, как работает менеджер, поэтому автоматизирую то, что реально мешает.' },
+      { t: 'Результат в цифрах', p: 'Время обработки заявки с 10–15 до 1–3 минут. Контроль качества звонков за менее $5 в месяц вместо 40 000 ₽ зарплаты. Расходы на сервисы минус 30% в год.' },
+      { t: 'Цифры можно проверить', p: 'В дашбордах клик по числу открывает сделки, из которых оно посчитано. Рядом со средним всегда медиана.' },
+      { t: 'Надёжность', p: 'Перед правкой боевого снимаю копию, у каждого робота есть сторож. Ночных сбоев стало 2 вместо 24. Работу проверяю до слова «готово».' },
+      { t: 'Три CRM и переносы', p: 'amoCRM, Kommo и Bitrix24: запуск, доработка, миграция данных и интеграции с телефонией, мессенджерами и 1С.' },
+      { t: 'Работа с командой в другом часовом поясе', p: 'Десять месяцев работал на проекте с Пхукета и Москвы: часовые пояса, асинхронная связь, понятные отчёты.' },
+      { t: 'Объясняю просто', p: 'Говорю с владельцем и руководителем без жаргона: что сделано, зачем, как вернуть назад.' }
+    ],
+    how: [
+      { t: 'Разбор', p: 'Смотрю, как устроен процесс сейчас: путь клиента, роли, где теряются заявки. Читаю цифры и записи разговоров.' },
+      { t: 'Схема', p: 'Рисую воронку, поля и правила. Согласую простым языком, до того как что-то менять.' },
+      { t: 'Запуск', p: 'Внедряю по шагам, с копией перед каждым изменением. Боевое трогаю только после проверки на тестовых данных.' },
+      { t: 'Проверка', p: 'Прохожу путь клиента и менеджера сам, сверяю цифры с первоисточником и ставлю сторожа на роботов.' },
+      { t: 'Передача', p: 'Оставляю инструкции и объясняю команде. После запуска слежу за стабильностью.' }
+    ],
+    about: [
+      { t: 'Формат работы', p: 'Удалённо. Полная, частичная занятость или проектная работа.' },
+      { t: 'Желаемая роль', p: 'Технический специалист amoCRM / Kommo / Bitrix24, инженер автоматизаций (n8n / API) или BI-аналитик в Google Sheets. Ожидания: 100 000–130 000 ₽ на руки, обсуждается под объём задач.' },
+      { t: 'Языки', p: 'Русский родной. Английский B1: документация, API-доки, переписка с поддержкой зарубежных сервисов.' },
+      { t: 'Рекомендации', p: 'Наталья, руководитель отдела маркетинга, «Рыбаков Плэйскул». Владислав Умнов, IT Lead, TUMANOV GROUP. Контакты по запросу.' }
+    ]
+  },
 
-  document.querySelectorAll('.reveal').forEach(function(el) {
-    observer.observe(el);
-  });
+  places: [
+    {
+      id: 'playschool',
+      tab: 'Рыбаков Плэйскул',
+      company: 'Рыбаков Плэйскул',
+      companyHref: 'https://playschool.ru',
+      intro: 'Сеть частных детских садов и школ, Глобальный университет Игоря Рыбакова.',
+      role: 'Технический специалист CRM, автоматизации и BI',
+      prev: 'В 2022–2023: руководитель колл-центра и отдела контроля качества',
+      period: 'Июнь 2022 — по настоящее время',
+      where: 'Москва, удалённо',
+      status: 'Работаю сейчас',
+      live: true,
+      headline: [
+        { n: '4 года', l: 'в компании' },
+        { n: '1–3 мин', l: 'на квалификацию лида' },
+        { n: '100%', l: 'звонков разбирается автоматически' },
+        { n: '95%', l: 'конверсия заявка → экскурсия' }
+      ],
+      duties: [
+        'Полный цикл технического сопровождения CRM: amoCRM и Bitrix24. Настройка, доработка, поддержка пользователей, миграции данных',
+        'Подключение смежных систем: телефония (SIPUNI, Mango, Вымпелком), мессенджеры (Wazzup), рассылки (DashaMail, smsc.ru)',
+        'Интеграция GetCourse: воронки продаж, доступы, транзакции и платёжные ссылки',
+        'Автоматизации на n8n: от Telegram-уведомлений до цепочек с AI, транскрибацией и PostgreSQL',
+        'Скрипты на Google Apps Script: отчёты, интеграции с amoCRM API, агрегация данных',
+        'Кастомные виджеты и скрипты для amoCRM на JavaScript с AI-ассистентами (ChatGPT, Claude)',
+        'Дашборды в Google Sheets: сквозная аналитика от рекламного клика до закрытой сделки',
+        'Сайты на Tilda: правки, лендинги, подключение форм к CRM'
+      ],
+      resultsLabel: 'Результаты как руководителя колл-центра (2022–2023)',
+      results: [
+        'Конверсия заявки в квалифицированный лид, переданный на экскурсию: с 76% до 95%',
+        'B2B-воронка, лид → встреча: с 10% до 45% (по целевым лидам 62%)',
+        'Оценки «5» работы оператора после звонка: с 35% до 83%',
+        '85% входящих лидов отрабатывается в первые 5 минут',
+        'Среднее время ответа на входящий звонок: 7 секунд'
+      ],
+      cases: [
+        {
+          num: '01', name: 'AI-квалификация лидов',
+          title: 'Время обработки обращения: с 10–15 минут до 1–3 минут. Менеджер получает только квалифицированных',
+          metric: '10 → 1–3 мин',
+          body: 'Каждое входящее обращение обрабатывал менеджер вручную: спам, повторные вопросы про цену и расписание, неквалифицированные лиды в одном потоке. Внедрил AI-бота через <strong>Suvvy.ai</strong> с интеграцией в amoCRM и Wazzup. Бот ведёт первичный диалог, собирает данные, заполняет карточку сделки и отсеивает спам. Первый ответ клиенту <strong>в течение 15 секунд</strong>, 24/7. Из ~150 обращений в месяц до менеджера доходит <strong>80–90 квалифицированных лидов</strong>; время менеджера на квалификацию: <strong>с 1–3 часов в день до нуля</strong>.',
+          stack: ['amoCRM API', 'Suvvy.ai', 'Wazzup', 'Webhooks']
+        },
+        {
+          num: '02', name: 'Анализ звонков',
+          title: 'Заменил контролёра качества за 40 000 ₽/мес инфраструктурой дешевле $5, со 100% покрытием',
+          metric: '< $5 / мес',
+          body: 'Раньше вручную слушали только звонки длиннее 90 секунд, остальные 120–150 разговоров в месяц проходили мимо контроля. Собрал систему на <strong>n8n + AssemblyAI + DeepSeek</strong>: запись из CRM расшифровывается, AI сравнивает текст со скриптом продаж и ставит балл по каждому пункту. Итог с оценкой и резюме приходит в Telegram через несколько минут после разговора. Теперь <strong>100% звонков</strong> разбираются автоматически, инфраструктура стоит <strong>меньше $5 в месяц</strong>.',
+          stack: ['n8n', 'AssemblyAI', 'DeepSeek API', 'Telegram Bot', 'Google Sheets', 'amoCRM'],
+          link: { label: 'Открыть демо-дашборд', href: 'demo/rps-calls.html' }
+        },
+        {
+          num: '03', name: 'Сквозная аналитика',
+          title: 'Еженедельный отчёт для руководства: с 1–2 часов ручной сборки до 15 минут автоматически',
+          metric: '1–2 ч → 15 мин',
+          body: 'Отчёт собирался вручную из amoCRM, телефонии и Яндекс.Метрики, возникали расхождения в данных. Написал скрипт на <strong>Google Apps Script</strong>, который запрашивает API всех источников (amoCRM, телефония, Яндекс.Метрика, Ройстат), сводит данные в таблицу и строит дашборд. Отчёт формируется <strong>за 15 минут</strong> без участия человека, данные согласованы между источниками.',
+          stack: ['Google Apps Script', 'amoCRM API', 'Яндекс.Метрика API', 'Roistat', 'Google Sheets']
+        },
+        {
+          num: '04', name: 'Аудит SaaS-расходов',
+          title: 'Провёл аудит сервисов и срезал 30% лишних трат без потери функционала',
+          metric: '−30% / год',
+          body: 'Проверил все SaaS-сервисы: реальную нагрузку, пересечения по функционалу, дубли. Часть платных интеграций перенёс на <strong>n8n</strong>, который уже стоял на своём сервере, ряд задач закрыл через <strong>Google Apps Script</strong>. Годовые расходы на инструменты сократились <strong>на 30%</strong>.',
+          stack: ['amoCRM', 'n8n', 'Google Apps Script', 'Аудит процессов']
+        }
+      ],
+      linksTitle: 'Дашборды',
+      links: [
+        { label: 'Демо · заявки', title: 'Лиды: воронки, конверсии, кампусы, скорость ответа', href: 'demo/rps-leads.html' },
+        { label: 'Демо · источники', title: 'Источники заявок, метки, формы, визиты', href: 'demo/rps-sources.html' },
+        { label: 'Демо · звонки', title: 'Контроль качества диалогов и ИИ-ассистент', href: 'demo/rps-calls.html' },
+        { label: 'Демо · реклама', title: 'Директ: расход, план и факт по кампусам', href: 'demo/rps-direct.html' },
+        { label: 'Демо · удержание', title: 'Family Health: риск ухода семей', href: 'demo/rps-family.html' },
+        { label: 'Демо · тёплая база', title: 'Тёплая база по кампусам: кого вернуть', href: 'demo/rps-warm.html' }
+      ]
+    },
+
+    {
+      id: 'morozilka',
+      tab: 'Морозилка',
+      company: 'Морозилка',
+      companyHref: 'https://school.morozilka.site',
+      role: 'Технический специалист',
+      period: 'Июль 2026 — по настоящее время',
+      where: 'Удалённо',
+      status: 'Работаю сейчас',
+      live: true,
+      intro: 'Онлайн-школа подготовки к ЕГЭ и ОГЭ: годовые курсы, кураторы, пробники. Продажи идут через Telegram-ботов, сайты на Tilda, amoCRM и GetCourse.',
+      headline: [
+        { n: '12,4 → 6,2 с', l: 'загрузка раздела РОПа' },
+        { n: '31 пункт', l: 'в чек-листе контроля качества' },
+        { n: '~700', l: 'индивидуальных учебных планов' },
+        { n: '2 вместо 24', l: 'ночных сбоев после сторожей' }
+      ],
+      duties: [
+        'Поднял и веду серверную часть: VPS в Docker, база MySQL, прокси через Cloudflare, резервные копии и правки по правилу «сначала копия, потом изменение»',
+        'Сделал единый дашборд продаж и маркетинга: воронка, цикл сделки, менеджеры, звонки, UTM, Метрика, Директ. Каждая цифра открывает список сделок в amoCRM',
+        'Построил дашборд GetCourse: пробники, кураторы, оплаты, домашки, активность, продления, выгрузка в Excel',
+        'Запустил кабинеты ученика и куратора и индивидуальные учебные планы: опрос, вводный тест, план по расписанию, правка куратором',
+        'Настроил контроль качества: ночной разбор сделок и звонков по чек-листу с цитатой под каждым баллом, отдельный контроль для отдела заботы',
+        'Сделал HR-сервис вместо Google-таблицы: кадры, текучесть, заявки на канбане, опросы, рассылки, доступ по ролям',
+        'Написал Telegram-ботов и Mini App: продажа доступа с проверкой оплаты, тренажёр по русскому языку, бот и кабинет для амбассадоров, бот для креаторов, бот поддержки',
+        'Настроил UTM-генератор, перенос меток на оплату и промокоды одной кнопкой: слово появляется в BotHelp, менеджеру ставится задача',
+        'Автоматизировал сделки в amoCRM: раздача заявок по долям и графику, склейка дублей, реанимация закрытых, перенос базы продлений, виджеты для карточки сделки',
+        'Подключил интеграции: amoCRM, GetCourse, BotHelp, Chat2Desk, Sipuni, Яндекс.Метрика, Яндекс.Директ, n8n, Tilda',
+        'Выстроил мониторинг: сторожа на каждого робота, внешний сторож на Cloudflare, ночная проверка и починка по рецептам, журнал тревог'
+      ],
+      cases: [
+        {
+          num: '01', name: 'Контроль качества',
+          title: 'Каждый звонок и сделка проверяются по чек-листу из 31 пункта, под каждым баллом стоит цитата',
+          metric: '31 пункт',
+          body: 'Ночью система расшифровывает звонки, берёт переписку по сделке и сравнивает с чек-листом. Оценку выставляют <strong>Claude и DeepSeek</strong>, а под каждым баллом показывают цитату, из-за которой он поставлен. Это снимает споры с менеджерами: видно, откуда взялась оценка. После пересчёта сроков исчезло <strong>около 100 ложных нарушений</strong>. Отдельная версия проверяет обращения отдела заботы.',
+          stack: ['Python', 'Claude', 'DeepSeek', 'Whisper', 'amoCRM', 'Chat2Desk'],
+          link: { label: 'Открыть демо-отчёт', href: 'demo/mz-okk.html' }
+        },
+        {
+          num: '02', name: 'Дашборд продаж и маркетинга',
+          title: 'Цифры можно перепроверить сами: клик по любой открывает сделки, из которых она посчитана',
+          metric: '2783 = 2783',
+          body: 'Для РОПа, маркетолога, менеджеров и преподавателей собрал единую аналитику с доступом по ролям. Число визитов сверил с Метрикой: <strong>совпало до единицы</strong>. Самый тяжёлый раздел РОПа за месяц грузился <strong>12,4 секунды, теперь 6,2</strong>. Есть тревога «оплатил, а сделку потеряли».',
+          stack: ['JavaScript', 'MySQL', 'amoCRM API', 'Яндекс.Метрика', 'Docker', 'nginx'],
+          link: { label: 'Открыть демо-дашборд', href: 'demo/mz-analytics.html' }
+        },
+        {
+          num: '03', name: 'Индивидуальные учебные планы',
+          title: 'Ученик получает план под своё расписание, куратор его правит, руководитель видит общую картину',
+          metric: '~700 планов',
+          body: 'Ученик проходит опрос и вводный тест, система строит план по предметам и дням занятий. Куратор может поправить и сбросить план. План открыт ученикам примерно <strong>20 кураторов</strong>, создано около <strong>700 планов</strong>. Для руководителей есть вкладка показателей: где данных нет, так и написано, а не ноль. Сторож каждые 10 минут заходит в кабинеты как с телефона.',
+          stack: ['GetCourse', 'Python', 'MySQL', 'JavaScript'],
+          link: { label: 'Открыть демо-кабинеты', href: 'demo/mz-iup.html' }
+        },
+        {
+          num: '04', name: 'Надёжность',
+          title: 'Ночных проблем стало 2 вместо 24: каждый робот работает под сторожем',
+          metric: '24 → 2',
+          body: 'Каждый робот запускается через общий сторож, на Cloudflare стоит внешний, который проверяет сервер каждые 5 минут. Ночью «доктор» чинит типовые поломки по готовым рецептам, а сторож правил проверяет код до выкладки. Общий прогон составляет около <strong>1100 проверок</strong>.',
+          stack: ['Bash', 'Python', 'cron', 'Cloudflare', 'Docker']
+        }
+      ],
+      linksTitle: 'Дашборды и кабинеты',
+      links: [
+        { label: 'Демо · аналитика', title: 'Продажи, маркетинг, звонки', href: 'demo/mz-analytics.html' },
+        { label: 'Демо · GetCourse', title: 'Пробники, кураторы, оплаты, домашки, продления', href: 'demo/mz-gc.html' },
+        { label: 'Демо · учебные планы', title: 'Показатели, кабинет куратора и ученика', href: 'demo/mz-iup.html' },
+        { label: 'Демо · HR', title: 'Кадры, текучесть, заявки на канбане', href: 'demo/mz-hr.html' },
+        { label: 'Демо · распределение', title: 'Раздача заявок, промокоды, статусы', href: 'demo/mz-raspr.html' },
+        { label: 'Демо · амбассадоры', title: 'Telegram Mini App: задания, баллы, магазин', href: 'demo/mz-ambassador.html' },
+        { label: 'Демо · тренажёр', title: 'Telegram Mini App для тренировки по русскому', href: 'demo/mz-trainer.html' },
+        { label: 'Демо · контроль качества', title: 'Отчёт ОКК по менеджерам и пунктам', href: 'demo/mz-okk.html' }
+      ]
+    },
+
+    {
+      id: 'tumanov',
+      tab: 'TUMANOV GROUP',
+      company: 'TUMANOV GROUP',
+      companyHref: 'https://www.tumanov.group',
+      role: 'Специалист по CRM, автоматизации и BI-аналитике',
+      period: 'Декабрь 2025 — октябрь 2026',
+      where: 'Таиланд (Пхукет) / Москва, удалённо',
+      status: 'Завершено в октябре 2026',
+      live: false,
+      headline: [
+        { n: '10 мес', l: 'в компании' },
+        { n: '3–5 мин', l: 'от лида до дозвона' },
+        { n: '1 500+', l: 'сделок в обходе за раз' },
+        { n: '40–50 ч', l: 'записей встреч в месяц' }
+      ],
+      duties: [
+        'Техническое сопровождение amoCRM: воронки, этапы, поля, триггеры под международный рынок недвижимости (Пхукет) и образовательные продукты',
+        'Интеграции через amoCRM API: вебхуки, синхронизация с внешними сервисами, события в реальном времени, пагинация больших массивов (1 500+ сделок)',
+        'Кастомные виджеты и JavaScript-скрипты для amoCRM с применением Claude и ChatGPT',
+        'Автоматизации на n8n: умное распределение лидов по менеджерам (Круг 2, 3, 4) с анти-повтором и дедупликацией, цепочки Telegram-уведомлений, Google Drive и PostgreSQL',
+        'Миграция Telegram-ботов с Salebot на self-hosted n8n + PostgreSQL: схема данных и логика взаимодействия',
+        'BI в Google Sheets: воронки по менеджерам и кругам продаж, стоимость лида, конверсии по этапам, аналитика интернов',
+        'Нестандартные сценарии amoCRM API: фильтрация по массивам ID, batch-обработка, часовые пояса (UTC+7 и Москва)',
+        'Серверная часть: self-hosted n8n на VPS Hostkey, резервные копии воркфлоу, мониторинг стабильности',
+        'Дайджесты для инвесторов в недвижимость: сбор и рассылка новостей рынка Пхукета через n8n + Telegram'
+      ],
+      cases: [
+        {
+          num: '01', name: 'Распределение лидов',
+          title: 'Время от поступления лида до взятия в работу и дозвона: с 8–10 минут до 3–5 минут',
+          metric: '8–10 → 3–5 мин',
+          body: 'Менеджеры теряли время на выяснение, чей это контакт и кто уже звонил. Построил на <strong>n8n</strong> систему распределения: воркфлоу обходит до 1 500 незакрытых лидов в amoCRM, проверяет историю событий и назначает менеджера, который раньше не касался контакта. Дубликаты сделок закрываются автоматически, остаётся самая ранняя. Время до дозвона сократилось <strong>с 8–10 до 3–5 минут</strong>.',
+          stack: ['n8n', 'amoCRM API', 'Telegram Bot', 'PostgreSQL', 'Google Sheets']
+        },
+        {
+          num: '02', name: 'Оценка брокеров',
+          title: 'Не «кто больше продал», а «кто больше принёс компании» с учётом стоимости лидов',
+          metric: 'Чистая прибыль',
+          body: 'Менеджеры работают на чистой комиссии, стандартные KPI не подходят. Собрал в <strong>Google Sheets</strong> аналитику: сколько лидов потратил брокер, во что они обошлись и какой <strong>чистый вклад</strong> остался. Пример: брокер №1 потратил 100 лидов и принёс $10 000, брокер №2 — 50 лидов и $7 000. При цене лида $100 первый принёс $0 чистыми, второй $2 000. Руководство пересматривает распределение лидов на фактах.',
+          stack: ['Google Apps Script', 'amoCRM API', 'Google Sheets', 'Юнит-экономика']
+        },
+        {
+          num: '03', name: 'Транскрибация встреч',
+          title: '40–50 часов записей в месяц превращаются в текст и краткое резюме без участия человека',
+          metric: '40–50 ч / мес',
+          body: 'Записи встреч копились в папке: слушать часовые звонки было некому. Настроил воркфлоу на <strong>n8n</strong>: файл попадает в Google Drive, расшифровывается через AssemblyAI, OpenAI определяет тип встречи и пишет резюме, результат уходит в Google Sheets. Руководитель получает суть встречи <strong>за 30 секунд</strong> вместо часа прослушивания.',
+          stack: ['n8n', 'AssemblyAI', 'OpenAI API', 'Google Drive', 'Google Sheets']
+        }
+      ],
+      linksTitle: 'Дашборды',
+      links: [
+        { label: 'Демо · директор и РОП', title: 'Рейтинг брокеров, конверсия, когорты, штрафы', href: 'demo/director.html' },
+        { label: 'Демо · маркетинг', title: 'Расход, лиды, ROMI, прогноз и выводы ИИ', href: 'demo/marketing.html' },
+        { label: 'Демо · воронка', title: 'Оцифровка воронки: где теряем лиды', href: 'demo/funnel.html' },
+        { label: 'Демо · контроль качества', title: 'Светофор менеджеров и сводка в Telegram', href: 'demo/svetofor.html' }
+      ]
+    },
+
+    {
+      id: 'gdematerial',
+      tab: 'Где Материал',
+      company: 'Где Материал',
+      companyHref: 'https://career.habr.com/companies/gdematerial-ru',
+      role: 'Руководитель колл-центра',
+      period: 'Май 2019 — май 2022',
+      where: 'Волгоград / Москва, удалённо',
+      status: 'Завершено в 2022',
+      live: false,
+      intro: 'Торговая площадка стройматериалов: сервис поиска и сравнения цен с доставкой из ближайшего магазина.',
+      headline: [
+        { n: '3 года', l: 'в должности' },
+        { n: '~10', l: 'операторов в команде' },
+        { n: '−51%', l: 'бюджет колл-центра' },
+        { n: '3 млн ₽', l: 'крупнейший заказ' }
+      ],
+      duties: [
+        'Управление командой около 10 операторов: звонки, почта, чаты, мессенджеры, SMM',
+        'Метрики контакт-центра, прогноз нагрузки, перераспределение сотрудников между каналами',
+        'Регламенты и стандарты работы, оптимизация обработки и передачи обращений',
+        'Запуск с нуля удалённого контакт-центра: филиал в Казахстане',
+        'Обучение персонала: операторы вырастали до менеджеров по продажам',
+        'Внедрение kanban-системы управления задачами контакт-центра',
+        'Меры для роста KPI сотрудников по производительности и качеству коммуникации'
+      ],
+      resultsLabel: 'Ключевые результаты',
+      results: [
+        'Конверсия входящего звонка в принятый: с 75% до 90% за счёт графика смен (часть команды с 2/2 на 5/2)',
+        'Конверсия звонок → заказ по целевым звонкам: с 45% до 70% после скриптов по непрофильным товарам',
+        'Бюджет контакт-центра: с 650 000 ₽ до 320 000 ₽ в месяц (около −51%) без потери качества',
+        'Крупный заказ более 3 000 000 ₽ при среднем чеке 70 000 ₽'
+      ],
+      cases: [],
+      links: []
+    },
+
+    {
+      id: 'outside',
+      tab: 'Сторонние проекты',
+      company: 'Консалтинг и внешние проекты',
+      role: 'Внедрение и доработка CRM и телефонии',
+      period: 'Параллельно с основной работой',
+      where: 'Удалённо',
+      status: 'Разовые проекты',
+      live: false,
+      headline: [],
+      duties: [],
+      cases: [],
+      links: [],
+      projects: [
+        { n: 'FeedConsult', t: 'Комбикорма, B2B-продажи', href: 'https://feedconsult.ru', site: 'feedconsult.ru', d: 'Запуск CRM на Битрикс24 для компании, продающей комбикорм фермам: воронки, этапы и автоматические задачи менеджерам' },
+        { n: 'Periodent', t: 'Стоматологическая клиника', href: 'https://www.periodent.ee/', site: 'periodent.ee', d: 'Запуск CRM на Kommo для стоматологической клиники: воронка заявок, обязательные поля и передача заявок с сайта в CRM' },
+        { n: 'ЖК «Андерсен»', t: 'Застройщик', href: 'https://жкандерсен.рф', site: 'жкандерсен.рф', d: 'Запуск IP-телефонии и amoCRM для отдела продаж жилого комплекса с нуля' },
+        { n: 'Astra Academy', t: 'Тренинги и консалтинг', d: 'Запуск телефонии и amoCRM для отдела продаж тренинговой компании' },
+        { n: 'Moscow Improv Club', t: 'Школа импровизации', href: 'https://moscowimprovclub.com', site: 'moscowimprovclub.com', d: 'Аудит и доработка amoCRM, настройка лидогенерации с сайта' }
+      ]
+    }
+  ]
+};
+</script>
+<script>
+(function () {
+  var D = window.DATA;
+  var esc = function (s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
+  var ext = '<svg class="ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>';
+
+  function aboutPanel() {
+    var m = D.me;
+    var h = '<header class="hero">';
+    h += '<p class="eyebrow">Обо мне</p>';
+    h += '<h1 class="name">' + esc(m.name) + '</h1>';
+    h += '<p class="role">' + esc(m.role) + '</p>';
+    h += '<p class="summary">' + esc(m.summary) + '</p>';
+    h += '<div class="contacts">' + m.contacts.map(function (c) {
+      return c.href ? '<a class="chip" href="' + c.href + '"' + (c.href.indexOf('http') === 0 ? ' target="_blank" rel="noopener"' : '') + '>' + esc(c.label) + '</a>' : '<span class="chip">' + esc(c.label) + '</span>';
+    }).join('') + '</div>';
+    h += '<dl class="stats">' + m.stats.map(function (s) {
+      return '<div class="stat"><dt>' + esc(s.l) + '</dt><dd>' + esc(s.n) + '</dd></div>';
+    }).join('') + '</dl></header>';
+
+    h += '<section class="block"><h2 class="h">Чем работаю</h2><div class="skills">' + m.skills.map(function (g) {
+      return '<div class="sk"><h3>' + esc(g.t) + '</h3><div class="tags">' + g.tags.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('') + '</div></div>';
+    }).join('') + '</div></section>';
+
+    h += '<section class="block"><h2 class="h">Образование и сертификаты</h2><div class="edu">' + m.edu.map(function (e) {
+      return '<div class="edu-i"><span class="yr">' + e.y + '</span><div><h3>' + esc(e.t) + '</h3><p>' + esc(e.s) + '</p></div></div>';
+    }).join('') + '</div><ul class="certs">' + m.certs.map(function (c) {
+      return '<li><a href="' + c.href + '" target="_blank" rel="noopener">' + esc(c.t) + ext + '</a></li>';
+    }).join('') + '</ul></section>';
+
+    h += '<section class="block"><h2 class="h">Преимущества</h2><div class="facts">' + m.adv.map(function (a) {
+      return '<div class="fact"><h3>' + esc(a.t) + '</h3><p>' + esc(a.p) + '</p></div>';
+    }).join('') + '</div></section>';
+
+    h += '<section class="block"><h2 class="h">Как я работаю</h2><div class="facts">' + m.how.map(function (a, i) {
+      return '<div class="fact"><h3>Шаг ' + (i + 1) + '. ' + esc(a.t) + '</h3><p>' + esc(a.p) + '</p></div>';
+    }).join('') + '</div></section>';
+
+    h += '<section class="block"><h2 class="h">Формат и условия</h2><div class="facts">' + m.about.map(function (a) {
+      return '<div class="fact"><h3>' + esc(a.t) + '</h3><p>' + esc(a.p) + '</p></div>';
+    }).join('') + '</div></section>';
+    return h;
+  }
+
+  function placePanel(p) {
+    var h = '<header class="phead">';
+    h += '<p class="status' + (p.live ? ' live' : '') + '"><i></i>' + esc(p.status) + '</p>';
+    h += '<h2 class="company">' + (p.companyHref ? '<a href="' + p.companyHref + '" target="_blank" rel="noopener">' + esc(p.company) + '</a>' : esc(p.company)) + '</h2>';
+    h += '<p class="role">' + esc(p.role) + '</p>';
+    if (p.prev) h += '<p class="prev">' + esc(p.prev) + '</p>';
+    h += '<p class="meta"><span>' + esc(p.period) + '</span><span>' + esc(p.where) + '</span></p>';
+    if (p.intro) h += '<p class="intro">' + esc(p.intro) + '</p>';
+    h += '</header>';
+
+    if (p.headline && p.headline.length) {
+      h += '<dl class="stats headline">' + p.headline.map(function (s) {
+        return '<div class="stat"><dt>' + esc(s.l) + '</dt><dd>' + esc(s.n) + '</dd></div>';
+      }).join('') + '</dl>';
+    }
+    if (p.projects) {
+      h += '<section class="block"><h2 class="h">Проекты</h2><div class="projects">' + p.projects.map(function (x) {
+        return '<article class="proj"><p class="pt">' + esc(x.t) + '</p><h3>' + esc(x.n) + '</h3><p class="pd">' + esc(x.d) + '</p>' +
+          (x.href ? '<a class="link" href="' + x.href + '" target="_blank" rel="noopener">' + esc(x.site || x.href) + ext + '</a>' : '') + '</article>';
+      }).join('') + '</div></section>';
+    }
+    if (p.cases && p.cases.length) {
+      h += '<section class="block"><h2 class="h">Кейсы</h2><div class="cases">' + p.cases.map(function (c) {
+        return '<article class="case"><div class="case-top"><p class="cn">' + c.num + ' · ' + esc(c.name) + '</p><p class="metric">' + esc(c.metric) + '</p></div>' +
+          '<h3>' + esc(c.title) + '</h3><p class="cb">' + c.body + '</p>' +
+          '<div class="tags">' + c.stack.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('') + '</div>' +
+          (c.link ? '<a class="link" href="' + c.link.href + '" target="_blank" rel="noopener">' + esc(c.link.label) + ext + '</a>' : '') + '</article>';
+      }).join('') + '</div></section>';
+    }
+    if (p.duties && p.duties.length) {
+      h += '<section class="block"><h2 class="h">Что делал</h2><ul class="list">' + p.duties.map(function (d) { return '<li>' + esc(d) + '</li>'; }).join('') + '</ul></section>';
+    }
+    if (p.results && p.results.length) {
+      h += '<section class="block"><h2 class="h">' + esc(p.resultsLabel) + '</h2><ul class="list ok">' + p.results.map(function (d) { return '<li>' + esc(d) + '</li>'; }).join('') + '</ul></section>';
+    }
+    if (p.links && p.links.length) {
+      h += '<section class="block"><h2 class="h">' + esc(p.linksTitle || 'Живые дашборды') + '</h2>' + (p.linksNote ? '<p class="intro" style="margin:-8px 0 18px">' + esc(p.linksNote) + '</p>' : '') + '<div class="links">' + p.links.map(function (l) {
+        return '<a class="lk" href="' + l.href + '" target="_blank" rel="noopener"><span>' + esc(l.label) + '</span><b>' + esc(l.title) + '</b>' + ext + '</a>';
+      }).join('') + '</div></section>';
+    }
+    return h;
+  }
+
+  var items = [{ id: 'about', tab: 'Обо мне', sub: 'Стек и условия', html: aboutPanel() }].concat(D.places.map(function (p) {
+    return { id: p.id, tab: p.tab, sub: p.period.replace('по настоящее время', 'сейчас'), live: p.live, html: placePanel(p) };
+  }));
+
+  window.mountApp = function (opts) {
+    var tabsEl = document.querySelector(opts.tabs), panelEl = document.querySelector(opts.panel);
+    var btns = items.map(function (it, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'tab';
+      b.setAttribute('role', 'tab');
+      b.dataset.id = it.id;
+      b.innerHTML = (opts.tabHtml ? opts.tabHtml(it, i) : '<span class="tl">' + esc(it.tab) + '</span>');
+      b.addEventListener('click', function () { show(it.id, true); });
+      tabsEl.appendChild(b);
+      return b;
+    });
+    function show(id, push) {
+      var idx = 0;
+      items.forEach(function (it, i) { if (it.id === id) idx = i; });
+      var it = items[idx];
+      panelEl.innerHTML = it.html;
+      panelEl.className = (panelEl.className.replace(/\bpanel-\S+/g, '') + ' panel-' + it.id).trim();
+      btns.forEach(function (b, i) { b.setAttribute('aria-selected', i === idx ? 'true' : 'false'); });
+      if (push) { try { history.replaceState(null, '', '#' + it.id); } catch (e) {} }
+      if (opts.onShow) opts.onShow(it, idx, push);
+      panelEl.classList.remove('enter'); void panelEl.offsetWidth; panelEl.classList.add('enter');
+    }
+    document.addEventListener('keydown', function (e) {
+      if (e.target.closest && e.target.closest('a,input')) return;
+      var cur = 0; btns.forEach(function (b, i) { if (b.getAttribute('aria-selected') === 'true') cur = i; });
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' && opts.vertical) { if (cur < items.length - 1) { show(items[cur + 1].id, true); btns[cur + 1].focus(); } }
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' && opts.vertical) { if (cur > 0) { show(items[cur - 1].id, true); btns[cur - 1].focus(); } }
+    });
+    var h = location.hash.replace('#', '');
+    show(items.some(function (i) { return i.id === h; }) ? h : 'about', false);
+    return { show: show, items: items };
+  };
 })();
+</script>
+<script>
+mountApp({tabs:'.tabs',panel:'#panel',vertical:true,
+  tabHtml:function(it){return '<span class="tx"><span>'+it.tab+'</span><small>'+it.sub+'</small></span>'+(it.live?'<i class="dot"></i>':'');},
+  onShow:function(it,i,push){var s=document.querySelector('.tab[aria-selected=true]');if(s&&s.scrollIntoView)s.scrollIntoView({inline:'center',block:'nearest'});if(push)window.scrollTo({top:0,behavior:'smooth'});}});
 </script>
 </body>
 </html>

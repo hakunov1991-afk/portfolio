@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Контроль качества диалогов — демо</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+<link rel="stylesheet" href="rps.css">
+<style>.call{display:grid;gap:6px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.call-top{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between}
+.score{font-weight:700;font-size:18px;min-width:44px;text-align:center;border-radius:8px;padding:2px 8px}
+.chat{display:grid;gap:10px;max-height:380px;overflow:auto;padding:4px}
+.msg{padding:10px 14px;border-radius:12px;max-width:560px;font-size:14px}
+.msg.u{background:var(--accent);color:#fff;justify-self:end}
+.msg.a{background:var(--track)}
+.sug{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}</style>
+</head>
+<body>
+<script src="kit.js"></script>
+<script>
+K.shell({ brand: 'Контроль качества', sub: 'Диалоги и звонки · демо', back: '../index.html#playschool' });
+var R = K.rng(404), mgr = ['Анна К.', 'Мария П.', 'Ирина С.', 'Оксана В.', 'Елена Т.', 'Наталья Б.'];
+var topics = [['Первичный звонок: запись на экскурсию', 'Менеджер выяснила возраст ребёнка и цель, предложила два времени экскурсии. Клиент записан на четверг.'], ['Вопрос по стоимости', 'Клиент спросил цену. Менеджер назвала стоимость и рассказала, что входит. Альтернатив не предложила, клиент взял паузу.'], ['Повторный звонок после экскурсии', 'Менеджер уточнила впечатления, сняла возражение про расстояние, договорилась о звонке в пятницу.'], ['Лагерь: бронь места', 'Клиент выбрал смену. Менеджер подтвердила наличие мест, отправила ссылку на оплату.'], ['Недозвон, клиент перезвонил', 'Клиент перезвонил на пропущенный. Менеджер ответила на пятом гудке, обработала запрос за три минуты.'], ['Возражение: дорого', 'Менеджер не уточнила бюджет и сразу предложила скидку. Остальные ценности школы не озвучены.']];
+var calls = []; for (var i = 0; i < 24; i++) { var t = topics[Math.floor(R() * topics.length)], sc = Math.round(52 + R() * 46); calls.push({ id: 7000 + i, m: Math.floor(R() * 6), t: t[0], s: t[1], sc: sc, dur: Math.round(2 + R() * 11), when: ('0' + (1 + Math.floor(i / 3))).slice(-2) + '.10, ' + (10 + Math.floor(R() * 9)) + ':' + ('0' + Math.floor(R() * 60)).slice(-2) }); }
+function scoreCls(s) { return s >= 85 ? 'c-ok' : s >= 70 ? 'c-warn' : 'c-bad'; }
+
+K.app({ sections: [
+  { id: 'list', t: 'Звонки', s: 'Последние разговоры с оценкой и кратким итогом', render: function (p) {
+    p.innerHTML = '<p class="note" style="margin-bottom:12px">Показаны последние 24 звонка из 300 за период. Оценку ставит ИИ по скрипту, итог приходит и в Telegram.</p><div style="margin-bottom:14px" id="f"></div><div class="grid" id="l"></div>';
+    var cur = 'all';
+    function draw() { document.getElementById('l').innerHTML = calls.filter(function (c) { return cur === 'all' || (cur === 'low' ? c.sc < 70 : c.sc >= 85); }).map(function (c) { return '<article class="call"><div class="call-top"><b>' + c.t + '</b><span class="score ' + scoreCls(c.sc) + '">' + c.sc + '</span></div><p class="note" style="margin:0;max-width:none">' + mgr[c.m] + ' · ' + c.when + ' · ' + c.dur + ' мин</p><p style="font-size:14px">' + c.s + '</p></article>'; }).join(''); }
+    K.seg(document.getElementById('f'), [['all', 'Все'], ['low', 'Ниже 70'], ['top', 'От 85']], 'all', function (v) { cur = v; draw(); }); draw();
+  } },
+  { id: 'stat', t: 'Статистика', s: 'Сводка по оценкам за 30 дней', render: function (p) {
+    var all = calls.map(function (c) { return c.sc; }), lab = [], v = [], R2 = K.rng(9);
+    for (var i = 0; i < 14; i++) { lab.push(('0' + (i + 1)).slice(-2) + '.10'); v.push(Math.round(66 + i * .8 + R2() * 6)); }
+    p.innerHTML = K.kpis([{ l: 'Разобрано звонков', v: K.fmt(286) }, { l: 'Средняя оценка', v: K.fmt(K.avg(all), 1), d: K.deltaHtml(K.avg(all), K.avg(all) * .96) }, { l: 'Медиана оценки', v: K.fmt(K.median(all), 0), d: '<span class="delta flat">рядом со средним</span>' }, { l: 'Ниже 70', v: all.filter(function (x) { return x < 70; }).length + ' из 24' }]) + '<div class="card"><h2>Средняя оценка по дням</h2><p class="note">&nbsp;</p><div id="c"></div></div>';
+    K.line(document.getElementById('c'), lab, [{ name: 'Оценка', color: '#e45f36', data: v }], { area: true });
+  } },
+  { id: 'mgr', t: 'Оценки по менеджерам', s: 'Кто и как проводит разговоры', render: function (p) {
+    p.innerHTML = '<div class="card"><h2>Средняя оценка</h2><p class="note">&nbsp;</p><div id="c"></div></div><div class="card" style="margin-top:14px"><h2>Критерии скрипта</h2><p class="note">Доля звонков, где критерий выполнен</p><div id="k"></div></div>';
+    K.bars(document.getElementById('c'), mgr, [{ name: 'Оценка', data: mgr.map(function (_, i) { var x = calls.filter(function (c) { return c.m === i; }).map(function (c) { return c.sc; }); return Math.round(K.avg(x) || 70); }), colors: mgr.map(function (_, i) { var x = Math.round(K.avg(calls.filter(function (c) { return c.m === i; }).map(function (c) { return c.sc; })) || 70); return x >= 85 ? '#4ade80' : x >= 70 ? '#fbbf24' : '#f87171'; }) }], { h: 220 });
+    K.hbars(document.getElementById('k'), [{ n: 'Поприветствовала и представилась', v: 96 }, { n: 'Выяснила возраст и цель', v: 82 }, { n: 'Предложила экскурсию', v: 74 }, { n: 'Обработала возражение', v: 61 }, { n: 'Договорилась о следующем шаге', v: 69 }], { fmt: function (v) { return v + '%'; } });
+    document.querySelectorAll('#k .bar-row').forEach(function (e) { e.style.gridTemplateColumns = 'minmax(130px,230px) 1fr 44px'; });
+  } },
+  { id: 'ai', t: 'ИИ-ассистент', s: 'Вопросы по звонкам за 30 дней', render: function (p) {
+    var ans = { 'Где чаще всего теряем клиента?': 'Чаще всего на возражении про цену: в 39% таких звонков менеджер сразу предлагает скидку и не рассказывает о ценности. Лучше сначала уточнить бюджет.', 'У кого самые сильные звонки?': 'Самые высокие оценки у Анны К. и Марии П.: они чаще договариваются о следующем шаге. Стоит разобрать два их звонка на планёрке.', 'Что улучшить в скрипте?': 'Добавить вопрос про цель обучения в начале и фразу для возражения «далеко ехать». Эти два места дают больше всего потерь.' };
+    p.innerHTML = '<div class="card"><h2>Чат по звонкам</h2><p class="note">В боевой версии ответы строит языковая модель по расшифровкам. Здесь заготовлены три вопроса</p><div class="chat" id="c"><div class="msg a">Привет. Спросите о звонках за последние 30 дней.</div></div><div class="sug" id="s"></div></div>';
+    Object.keys(ans).forEach(function (q) { var b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = q; b.addEventListener('click', function () { var c = document.getElementById('c'); c.insertAdjacentHTML('beforeend', '<div class="msg u">' + q + '</div>'); setTimeout(function () { c.insertAdjacentHTML('beforeend', '<div class="msg a">' + ans[q] + '</div>'); c.scrollTop = c.scrollHeight; }, 450); c.scrollTop = c.scrollHeight; }); document.getElementById('s').appendChild(b); });
+  } }
+] });
+</script>
+</body>
+</html>

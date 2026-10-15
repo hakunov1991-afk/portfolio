@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Амбассадоры — демо</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+<link rel="stylesheet" href="mz.css">
+<style>
+:root{--bg:#07111f;--card:#10203a;--line:#1d3254;--ink:#f1f5ff;--text:#d6e0f5;--muted:#8da2c6;--accent:#3fa2f2;--track:#1d3254}
+body{background:#050b14;padding:18px 12px 40px}
+.wrap{max-width:420px;margin:0 auto}
+.top{color:#8da2c6;font-size:13px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.top a{color:#8da2c6}
+.phone{background:var(--bg);border-color:#1a1a22}
+.phone-top{color:var(--ink)}
+.pts{font-family:var(--fd);color:var(--accent)}
+.task{background:var(--card);border-radius:16px;padding:14px;margin-bottom:10px;color:var(--text)}
+.task b{color:var(--ink)}
+.task .row{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:8px}
+.btn{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#04101f}
+.tabbar{background:var(--card);border-color:var(--line)}
+.tabbar button[aria-selected=true]{color:var(--accent)}
+.gift{display:grid;grid-template-columns:1fr auto;gap:6px;align-items:center}
+.prog{height:8px;background:var(--track);border-radius:999px;overflow:hidden;margin-top:8px}
+.prog i{display:block;height:100%;background:var(--accent)}
+.pill{background:#1d3254;color:var(--accent)}
+.toast{background:#f1f5ff;color:#07111f}
+</style>
+</head>
+<body>
+<script src="kit.js"></script>
+<div class="wrap">
+  <div class="top"><span>Telegram Mini App · демо</span><a href="../index.html#morozilka">К портфолио</a></div>
+  <div class="phone">
+    <div class="phone-top"><span>Амбассадоры</span><span class="pts" id="pts"></span></div>
+    <div class="phone-body" id="body"></div>
+    <div class="tabbar" id="tabs"></div>
+  </div>
+</div>
+<script>
+var pts = 340, cur = 'tasks', done = { 2: true };
+var tasks = [['Снять ролик про пробник', 120, 'Тик Ток'], ['Рассказать о занятиях в сториз', 60, 'Инстаграм'], ['Пригласить друга на открытый урок', 90, 'Друзья'], ['Ответить на вопросы в чате', 40, 'Чат']];
+var gifts = [['Блокнот школы', 150], ['Худи Морозилки', 600], ['Сертификат на занятие', 400], ['Наушники', 900]];
+var faq = [['Как начисляются баллы?', 'За каждое выполненное задание. Баллы появляются после проверки ролика.'], ['Сколько проверка?', 'Обычно до суток.'], ['Как получить подарок?', 'Выберите подарок в магазине, мы пришлём его в течение недели.']];
+var tabs = [['tasks', 'Задания'], ['shop', 'Магазин'], ['orders', 'Заказы'], ['faq', 'FAQ'], ['me', 'Профиль']];
+function draw() {
+  document.getElementById('pts').textContent = pts + ' баллов';
+  document.getElementById('tabs').innerHTML = tabs.map(function (t) { return '<button type="button" role="tab" data-t="' + t[0] + '" aria-selected="' + (t[0] === cur) + '">' + t[1] + '</button>'; }).join('');
+  document.querySelectorAll('#tabs button').forEach(function (b) { b.addEventListener('click', function () { cur = b.dataset.t; draw(); }); });
+  var h = '';
+  if (cur === 'tasks') h = tasks.map(function (t, i) { return '<div class="task"><b>' + t[0] + '</b><div class="row"><span class="pill">' + t[2] + ' · +' + t[1] + '</span>' + (done[i] ? '<span class="pill">Проверено</span>' : '<button class="btn pri" data-i="' + i + '" type="button">Отправить на проверку</button>') + '</div></div>'; }).join('');
+  if (cur === 'shop') h = gifts.map(function (g, i) { var can = pts >= g[1]; return '<div class="task"><div class="gift"><b>' + g[0] + '</b><span>' + g[1] + ' б.</span></div><div class="prog"><i style="width:' + Math.min(100, pts / g[1] * 100) + '%"></i></div><div class="row"><span style="font-size:12px;color:var(--muted)">' + (can ? 'Можно заказать' : 'Ещё ' + (g[1] - pts) + ' баллов') + '</span><button class="btn ' + (can ? 'pri' : '') + '" data-g="' + i + '" type="button" ' + (can ? '' : 'disabled') + '>Заказать</button></div></div>'; }).join('');
+  if (cur === 'orders') h = '<div class="task"><b>Блокнот школы</b><div class="row"><span style="font-size:12px;color:var(--muted)">12.10</span><span class="pill">Отправлен</span></div></div><div class="task"><b>Сертификат на занятие</b><div class="row"><span style="font-size:12px;color:var(--muted)">03.10</span><span class="pill">Выдан</span></div></div>';
+  if (cur === 'faq') h = faq.map(function (f) { return '<div class="task"><b>' + f[0] + '</b><p style="margin-top:6px;font-size:14px">' + f[1] + '</p></div>'; }).join('');
+  if (cur === 'me') h = '<div class="task"><b>Профиль</b><p style="margin-top:6px;font-size:14px">Уровень 2. Выполнено заданий: 7. Роликов принято: 5.</p><div class="prog"><i style="width:60%"></i></div><p style="font-size:12px;color:var(--muted);margin-top:6px">До уровня 3 осталось 160 баллов</p></div>';
+  document.getElementById('body').innerHTML = h;
+  document.querySelectorAll('[data-i]').forEach(function (b) { b.addEventListener('click', function () { var i = +b.dataset.i; done[i] = true; pts += tasks[i][1]; K.toast('Демо: задание принято, баллы начислены'); draw(); }); });
+  document.querySelectorAll('[data-g]').forEach(function (b) { b.addEventListener('click', function () { pts -= gifts[+b.dataset.g][1]; K.toast('Демо: подарок заказан'); draw(); }); });
+}
+draw();
+</script>
+</body>
+</html>

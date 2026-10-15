@@ -1,0 +1,24 @@
+/* Светлая «плиточная» тема демо Морозилки */
+:root{--bg:#f4f4f2;--card:#fff;--line:#e4e4df;--ink:#161a3a;--text:#262a44;--muted:#6c6f86;--accent:#2739b3;--sky:#3fa2f2;--pink:#f25c9c;--navy:#161a3a;--r:20px;
+--ok:#177245;--ok-bg:#e1f3e8;--warn:#9a5b00;--warn-bg:#fdf0d3;--bad:#b42318;--bad-bg:#fde6e2;--track:#ebebe6;--th:#f7f7f4;--hover:#f9f9ff;--chip:#ebebe6;
+--f:'Golos Text','Inter',system-ui,sans-serif;--fd:'Montserrat','Golos Text',system-ui,sans-serif}
+.card,.kpi{border-radius:20px;border-color:transparent}
+.btn.pri{background:var(--accent);border-color:var(--accent)}
+.btn.pri:hover{background:#1f2f9a}
+.menu button[aria-selected=true]{background:var(--accent)}
+.seg button[aria-pressed=true]{background:#fff}
+.stat-pink{color:var(--pink)}
+.pillb{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;background:#e7ebff;color:var(--accent)}
+.click{background:none;border:0;color:inherit;font:inherit;font-weight:700;cursor:pointer;border-bottom:1px dashed var(--muted);padding:0}
+.click:hover{color:var(--accent);border-bottom-color:var(--accent)}
+.kanban{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(210px,1fr);gap:12px;overflow-x:auto;padding-bottom:6px}
+.col{background:#ecece8;border-radius:16px;padding:10px}
+.col h3{font-size:13px;font-family:var(--fd);margin:2px 4px 8px;color:var(--ink)}
+.tk{background:#fff;border-radius:12px;padding:10px 12px;margin-bottom:8px;font-size:13px}
+.tk small{display:block;color:var(--muted);margin-top:2px}
+.phone{max-width:390px;margin:0 auto;border-radius:34px;border:8px solid #1a1a22;overflow:hidden;background:var(--bg);box-shadow:0 20px 60px rgba(22,26,58,.25);display:flex;flex-direction:column;min-height:760px}
+.phone-top{padding:14px 18px 8px;font-family:var(--fd);font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.phone-body{padding:6px 14px 14px;flex:1;overflow:auto}
+.tabbar{display:flex;background:var(--card);border-top:1px solid var(--line)}
+.tabbar button{flex:1;border:0;background:none;padding:12px 4px;font-size:12px;color:var(--muted);font-weight:600}
+.tabbar button[aria-selected=true]{color:var(--accent)}

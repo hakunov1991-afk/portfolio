@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Аналитика GetCourse — демо</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+<link rel="stylesheet" href="mz.css">
+</head>
+<body>
+<script src="kit.js"></script>
+<script src="mzdata.js"></script>
+<script>
+K.shell({ brand: 'GetCourse', sub: 'Учебная аналитика · демо', back: '../index.html#morozilka' });
+var M = MZ, S = M.students;
+function sc(v) { return v >= 80 ? 'c-ok' : v >= 60 ? 'c-warn' : 'c-bad'; }
+K.app({ sections: [
+  { id: 'mock', t: 'Пробники', s: 'Баллы пробных экзаменов по предметам', render: function (p) {
+    var R = K.rng(5), lab = ['Пробник 1', 'Пробник 2', 'Пробник 3', 'Пробник 4', 'Пробник 5', 'Пробник 6'];
+    var series = M.subjects.map(function (s, i) { return { name: s, color: ['#2739b3', '#3fa2f2', '#f25c9c', '#8d8db0'][i], data: lab.map(function (_, k) { return Math.round(48 + i * 3 + k * 4.5 + R() * 5); }) }; });
+    var bins = [['0–40', 6], ['41–60', 21], ['61–80', 37], ['81–100', 16]];
+    p.innerHTML = K.kpis([{ l: 'Сдали пробник', v: K.fmt(1840), d: K.deltaHtml(1840, 1700) }, { l: 'Средний балл', v: '67,4', d: K.deltaHtml(67.4, 64.1) }, { l: 'Медиана', v: '68', d: '<span class="delta flat">рядом со средним</span>' }, { l: 'Рост с первого', v: '+17 баллов', d: '<span class="delta up">по потоку</span>' }]) + '<div class="grid g21"><div class="card"><h2>Средний балл по пробникам</h2><p class="note">По предметам</p><div id="l"></div></div><div class="card"><h2>Распределение баллов</h2><p class="note">Доля учеников</p><div id="b"></div></div></div>';
+    K.line(document.getElementById('l'), lab, series, { h: 240 });
+    K.bars(document.getElementById('b'), bins.map(function (x) { return x[0]; }), [{ name: 'Доля, %', color: '#2739b3', data: bins.map(function (x) { return x[1]; }) }], { h: 240, axis: function (v) { return v + '%'; } });
+  } },
+  { id: 'cur', t: 'Кураторы', s: 'Рейтинг кураторов. Предмет определяется по группе в GetCourse', render: function (p) {
+    var rows = M.curators.map(function (n, i) { var x = S.filter(function (s) { return s.cur === i; }), sc2 = K.avg(x.map(function (s) { return s.score; })); return { n: n, subj: M.subjects[i % 4], k: x.length, score: sc2 || 60, hw: K.avg(x.map(function (s) { return s.hw; })) || 50, speed: Math.round(4 + (i * 5) % 20) }; }).sort(function (a, b) { return b.score - a.score; });
+    p.innerHTML = '<div class="card"><h2>Рейтинг кураторов</h2><p class="note">Балл учеников, доля сданных домашек, скорость проверки</p><div class="scroll"><table><thead><tr><th>#</th><th>Куратор</th><th>Предмет</th><th class="num">Учеников</th><th class="num">Средний балл</th><th class="num">Домашки</th><th class="num">Проверка, часов</th></tr></thead><tbody>' + rows.map(function (r, i) { return '<tr><td><span class="rank' + (i < 3 ? ' top3' : '') + '">' + (i + 1) + '</span></td><td><b>' + r.n + '</b></td><td>' + r.subj + '</td><td class="num">' + r.k + '</td><td class="num ' + sc(r.score) + '">' + K.fmt(r.score, 1) + '</td><td class="num ' + sc(r.hw) + '">' + K.fmt(r.hw, 0) + '%</td><td class="num ' + (r.speed <= 8 ? 'c-ok' : r.speed <= 16 ? 'c-warn' : 'c-bad') + '">' + r.speed + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+  } },
+  { id: 'pay', t: 'Оплаты', s: 'Оплаты учеников и удержание', render: function (p) {
+    var R = K.rng(31), lab = [], a = [], b = []; for (var i = 0; i < 12; i++) { lab.push('нед. ' + (i + 1)); a.push(Math.round(60 + R() * 40 + i * 3)); b.push(Math.round(20 + R() * 18)); }
+    p.innerHTML = K.kpis([{ l: 'Платящих учеников', v: K.fmt(2014) }, { l: 'Оплат за 90 дней', v: K.fmt(a.reduce(function (x, y) { return x + y; }, 0)) }, { l: 'Продлений', v: K.pct(38.2), d: K.deltaHtml(38.2, 35.6) }, { l: 'Оплат без сделки', v: 7, d: '<span class="delta down">нужно сверить с amoCRM</span>' }]) + '<div class="card"><h2>Оплаты по неделям</h2><p class="note">Новые и продления</p><div id="c"></div></div>';
+    K.bars(document.getElementById('c'), lab, [{ name: 'Новые', color: '#2739b3', data: a }, { name: 'Продления', color: '#f25c9c', data: b }], { stack: true, h: 240 });
+  } },
+  { id: 'hw', t: 'Домашки', s: 'Сдача и проверка домашних заданий', render: function (p) {
+    var by = M.subjects.map(function (s, i) { var x = S.filter(function (t) { return t.subj === i; }); return { n: s, v: Math.round(K.avg(x.map(function (t) { return t.hw; })) || 50) }; });
+    p.innerHTML = K.kpis([{ l: 'Домашек в разрезе', v: K.fmt(17420) }, { l: 'Сдано вовремя', v: K.pct(71.3) }, { l: 'Ждут проверки', v: K.fmt(486), d: '<span class="delta down">очередь растёт</span>' }, { l: 'Проверка, медиана', v: '6 ч' }]) + '<div class="grid g2"><div class="card"><h2>Доля сданных по предметам</h2><p class="note">&nbsp;</p><div id="a"></div></div><div class="card"><h2>Очередь проверки</h2><p class="note">Сколько работ ждёт больше суток</p><div id="b"></div></div></div>';
+    K.hbars(document.getElementById('a'), by, { fmt: function (v) { return v + '%'; } });
+    K.hbars(document.getElementById('b'), M.curators.slice(0, 5).map(function (n, i) { return { n: n, v: [42, 31, 18, 12, 7][i], c: i === 0 ? '#f25c9c' : undefined }; }));
+  } },
+  { id: 'act', t: 'Активность', s: 'Видео, вебинары и вход в кабинет', render: function (p) {
+    var days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'], R = K.rng(2), mx = days.map(function (_, r) { return [0, 1, 2, 3, 4, 5].map(function (h) { return Math.round((r > 4 ? 40 : 70) * (h > 2 ? 1.5 : .8) * (.6 + R())); }); });
+    p.innerHTML = '<div class="grid g2"><div class="card"><h2>Когда учатся</h2><p class="note">Число входов в кабинет</p><div id="h"></div></div><div class="card"><h2>Видео и вебинары</h2><p class="note">Досмотрено до конца, %</p><div id="v"></div></div></div>';
+    K.heat(document.getElementById('h'), days, ['8–11', '11–14', '14–17', '17–20', '20–23', '23–2'], mx, { corner: '', color: [39, 57, 179] });
+    K.hbars(document.getElementById('v'), [{ n: 'Разбор пробника', v: 74 }, { n: 'Теория: алгебра', v: 61 }, { n: 'Вебинар по сочинению', v: 48 }, { n: 'Практика: задание 19', v: 39 }], { fmt: function (v) { return v + '%'; } });
+  } },
+  { id: 'renew', t: 'Продления', s: 'Кто продлил обучение на следующий период', render: function (p) {
+    var R = K.rng(70), segs = M.subjects.map(function (s) { return { n: s, base: 100 + Math.round(R() * 60), ren: 0 }; }); segs.forEach(function (x) { x.ren = Math.round(x.base * (.28 + R() * .22)); });
+    p.innerHTML = '<div class="card"><h2>Продления по предметам</h2><p class="note">Из тех, у кого заканчивается период</p><div class="scroll"><table><thead><tr><th>Предмет</th><th class="num">Заканчивается</th><th class="num">Продлили</th><th class="num">Доля</th></tr></thead><tbody>' + segs.map(function (x) { var v = x.ren / x.base * 100; return '<tr><td><b>' + x.n + '</b></td><td class="num">' + x.base + '</td><td class="num">' + x.ren + '</td><td class="num ' + (v >= 40 ? 'c-ok' : v >= 30 ? 'c-warn' : 'c-bad') + '">' + K.pct(v) + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+  } }
+] });
+</script>
+</body>
+</html>

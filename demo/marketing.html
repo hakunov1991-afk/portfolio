@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Маркетинговый дашборд — демо</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="demo.css">
+</head>
+<body>
+<script src="kit.js"></script>
+<script>
+K.shell({ brand: 'Marketing Report', sub: 'Маркетинг и директор · демо' });
+
+/* ---------- 180 дней выдуманных данных ---------- */
+var R = K.rng(101), DAYS = 180, day = [];
+var base = new Date(2026, 3, 14);
+for (var i = 0; i < DAYS; i++) {
+  var d = new Date(base.getTime() + i * 864e5), dow = d.getDay(), wk = (dow === 0 || dow === 6) ? .72 : 1, trend = 1 + i / 260;
+  var spend = Math.round((310 + R() * 110) * wk * trend), leads = Math.round(spend / (11 + R() * 4)), sql = Math.round(leads * (.2 + R() * .06)), meet = Math.round(sql * (.5 + R() * .1)), sales = R() < sql / 62 ? 1 + (R() < .15 ? 1 : 0) : 0;
+  day.push({ d: d, spend: spend, leads: leads, sql: sql, meet: meet, sales: sales, rev: sales * Math.round(5200 + R() * 2600) });
+}
+var MN = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+function sum(a, k) { return a.reduce(function (s, x) { return s + x[k]; }, 0); }
+function bucket(arr, n) { var out = []; for (var i = 0; i < arr.length; i += n) { var c = arr.slice(i, i + n); out.push({ d: c[0].d, spend: sum(c, 'spend'), leads: sum(c, 'leads'), sql: sum(c, 'sql'), meet: sum(c, 'meet'), sales: sum(c, 'sales'), rev: sum(c, 'rev') }); } return out; }
+var PER = { day: ['День', function () { return day.slice(-28); }, 1], week: ['Неделя', function () { return bucket(day.slice(-84), 7); }, 7], month: ['Месяц', function () { return bucket(day.slice(-180), 30); }, 30] };
+var cur = 'day';
+function series() { return PER[cur][1](); }
+function lab(x) { return cur === 'month' ? MN[x.d.getMonth()] : x.d.getDate() + ' ' + MN[x.d.getMonth()]; }
+function romi(rev, spend) { return spend ? (rev - spend) / spend * 100 : 0; }
+var active;
+function rerender() { active.render(document.getElementById('panel')); }
+
+var chans = [['Facebook / Instagram', 4100, 5], ['Google Ads', 3300, 4], ['Яндекс Директ', 2900, 3], ['Telegram Ads', 1700, 2], ['Партнёры и агенты', 900, 6], ['Сайт, органика', 400, 7]];
+function chanRows() {
+  var r = K.rng(55), k = PER[cur][2] / 30;
+  return chans.map(function (c) {
+    var spend = Math.round(c[1] * k * (.9 + r() * .2)), leads = Math.round(spend / (9 + r() * 12) + (c[0] === 'Сайт, органика' ? 20 * k : 0)), sql = Math.round(leads * (.12 + r() * .2)), sales = Math.round(sql * (.04 + r() * .1) * 10) / 10, rev = Math.round(sales * 6200);
+    return { n: c[0], spend: spend, leads: leads, sql: sql, sales: sales, rev: rev };
+  });
+}
+
+var sections = [
+  { id: 'dash', t: 'Дашборд', s: 'Расход, лиды, продажи и окупаемость за выбранный период', render: function (p) {
+    p.innerHTML = '<div id="sg"></div>'; K.seg(document.getElementById('sg'), [['day', 'День'], ['week', 'Неделя'], ['month', 'Месяц']], cur, function (v) { cur = v; rerender(); });
+    document.getElementById('sg').style.marginBottom = '14px';
+    var s = series(), n = s.length, a = s[n - 1], b = s[n - 2];
+    var wrap = document.createElement('div'); p.appendChild(wrap);
+    wrap.innerHTML = K.kpis([
+      { l: 'Расход', v: K.money(a.spend), d: K.deltaHtml(a.spend, b.spend, false) },
+      { l: 'Лиды (МКЛ)', v: K.fmt(a.leads), d: K.deltaHtml(a.leads, b.leads) },
+      { l: 'Стоимость лида', v: K.money(a.spend / a.leads, 1), d: K.deltaHtml(a.spend / a.leads, b.spend / b.leads, false) },
+      { l: 'Квалифицированные (SQL)', v: K.fmt(a.sql), d: K.deltaHtml(a.sql, b.sql) },
+      { l: 'Встречи', v: K.fmt(a.meet), d: K.deltaHtml(a.meet, b.meet) },
+      { l: 'Продажи', v: K.fmt(a.sales), d: K.deltaHtml(a.sales || 1, b.sales || 1) },
+      { l: 'Выручка', v: K.money(a.rev), d: K.deltaHtml(a.rev || 1, b.rev || 1) },
+      { l: 'ROMI', v: K.pct(romi(a.rev, a.spend), 0), d: '<span class="delta flat">выручка минус расход, к расходу</span>' }
+    ]);
+    wrap.insertAdjacentHTML('beforeend', '<div class="grid g2"><div class="card"><h2>Расход по периодам</h2><p class="note">$</p><div id="c1"></div></div><div class="card"><h2>Лиды и квалифицированные</h2><p class="note">штук</p><div id="c2"></div></div></div>');
+    K.bars(document.getElementById('c1'), s.map(lab), [{ name: 'Расход', color: '#0088cc', data: s.map(function (x) { return x.spend; }) }], { axis: function (v) { return K.fmt(v); }, h: 220 });
+    K.line(document.getElementById('c2'), s.map(lab), [{ name: 'Лиды', color: '#0088cc', data: s.map(function (x) { return x.leads; }) }, { name: 'SQL', color: '#c9a96e', data: s.map(function (x) { return x.sql; }) }], { h: 220 });
+  } },
+
+  { id: 'trend', t: 'Тренд и прогноз', s: 'Куда идёт расход и сколько продаж ждать до конца периода', render: function (p) {
+    var s = day.slice(-42), labels = [], real = [], cum = [], c = 0, c2 = 0, cumRev = [];
+    s.forEach(function (x) { labels.push(x.d.getDate() + ' ' + MN[x.d.getMonth()]); real.push(x.spend); c += x.spend; c2 += x.rev; cum.push(c); cumRev.push(c2); });
+    var avg = real.slice(-14).reduce(function (a, v) { return a + v; }, 0) / 14, fl = [], fc = [], fr = [], lastc = c, lastr = c2, ar = cumRev[cumRev.length - 1] / 42;
+    for (var i = 1; i <= 14; i++) { var d = new Date(s[s.length - 1].d.getTime() + i * 864e5); labels.push(d.getDate() + ' ' + MN[d.getMonth()]); lastc += avg; lastr += ar; fl.push(Math.round(avg)); fc.push(Math.round(lastc)); fr.push(Math.round(lastr)); }
+    var heat = [], hr = K.rng(9), dn = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'], hrs = ['9', '11', '13', '15', '17', '19', '21', '23'];
+    for (var r = 0; r < 7; r++) { var row = []; for (var h = 0; h < 8; h++) row.push(Math.round((r > 4 ? 3 : 7) * (h === 2 || h === 5 || h === 6 ? 2 : 1) * (.6 + hr() * .9))); heat.push(row); }
+    p.innerHTML = '<div class="grid g21"><div class="card"><h2>Расход: факт и прогноз на 14 дней</h2><p class="note">Пунктир — прогноз по среднему за последние 14 дней</p><div id="t1"></div></div><div class="card"><h2>Прогноз до конца периода</h2><p class="note">&nbsp;</p><dl class="kpis" style="grid-template-columns:1fr"><div class="kpi"><dt>Расход</dt><dd>' + K.money(fc[13]) + '</dd></div><div class="kpi"><dt>Выручка</dt><dd>' + K.money(fr[13]) + '</dd></div><div class="kpi"><dt>Ожидаемый ROMI</dt><dd>' + K.pct(romi(fr[13], fc[13]), 0) + '</dd></div></dl></div></div>' +
+      '<div class="grid g2"><div class="card"><h2>Накопительно: расход против выручки</h2><p class="note">С начала периода</p><div id="t2"></div></div><div class="card"><h2>Когда приходят лиды</h2><p class="note">День недели и час (среднее число лидов)</p><div id="t3"></div></div></div>' +
+      '<div class="card"><h2>Воронка за 28 дней</h2><p class="note">&nbsp;</p><div id="t4"></div></div>';
+    K.line(document.getElementById('t1'), labels, [{ name: 'Расход, $', color: '#0088cc', data: real.concat(fl), dashFrom: real.length }], { area: false });
+    K.line(document.getElementById('t2'), labels, [{ name: 'Расход', color: '#b42318', data: cum.concat(fc), dashFrom: cum.length }, { name: 'Выручка', color: '#15803d', data: cumRev.concat(fr), dashFrom: cumRev.length }], { h: 220 });
+    K.heat(document.getElementById('t3'), dn, hrs.map(function (h) { return h + ':00'; }), heat, { corner: '' });
+    var l28 = day.slice(-28);
+    K.funnel(document.getElementById('t4'), [{ n: 'Лиды', v: sum(l28, 'leads') }, { n: 'Квалифицированные', v: sum(l28, 'sql') }, { n: 'Встречи', v: sum(l28, 'meet') }, { n: 'Продажи', v: Math.max(3, sum(l28, 'sales')), c: '#c9a96e' }]);
+  } },
+
+  { id: 'chan', t: 'Каналы', s: 'Где деньги работают лучше, а где хуже', render: function (p) {
+    p.innerHTML = '<div id="sg"></div><div class="card"><h2>Эффективность каналов</h2><p class="note">Зелёный: ROMI выше 150%, красный: ниже 30%</p><div id="tb"></div></div>';
+    K.seg(document.getElementById('sg'), [['day', 'День'], ['week', 'Неделя'], ['month', 'Месяц']], cur, function (v) { cur = v; rerender(); });
+    document.getElementById('sg').style.marginBottom = '14px';
+    var rows = chanRows();
+    document.getElementById('tb').innerHTML = '<div class="scroll"><table><thead><tr><th>Канал</th><th class="num">Расход</th><th class="num">Лиды</th><th class="num">Цена лида</th><th class="num">SQL</th><th class="num">Продажи</th><th class="num">Выручка</th><th class="num">ROMI</th></tr></thead><tbody>' +
+      rows.map(function (r) { var ro = romi(r.rev, r.spend), cl = ro > 150 ? 'c-ok' : ro < 30 ? 'c-bad' : 'c-warn'; return '<tr><td><b>' + r.n + '</b></td><td class="num">' + K.money(r.spend) + '</td><td class="num">' + r.leads + '</td><td class="num">' + K.money(r.spend / r.leads, 1) + '</td><td class="num">' + r.sql + '</td><td class="num">' + K.fmt(r.sales, 1) + '</td><td class="num">' + K.money(r.rev) + '</td><td class="num ' + cl + '">' + K.fmt(ro, 0) + '%</td></tr>'; }).join('') + '</tbody></table></div>';
+  } },
+
+  { id: 'ai', t: 'Выводы ИИ', s: 'Короткий разбор периода простыми словами. Текст составлен для демо', render: function (p) {
+    var rows = chanRows().sort(function (a, b) { return romi(b.rev, b.spend) - romi(a.rev, a.spend); }), best = rows[0], worst = rows[rows.length - 1];
+    p.innerHTML = '<div class="grid g2"><div class="card"><h2>Главное за период</h2><ul style="margin:8px 0 0 18px;display:grid;gap:8px"><li>Лучший канал: ' + best.n + ', окупаемость ' + K.fmt(romi(best.rev, best.spend), 0) + '%. Стоит добавить бюджет постепенно, по 10–15% в неделю.</li><li>Слабый канал: ' + worst.n + ', окупаемость ' + K.fmt(romi(worst.rev, worst.spend), 0) + '%. Сначала проверить качество лидов, потом решать про отключение.</li><li>Лиды в будни приходят в основном в 13:00 и с 19:00 до 23:00. Менеджерам стоит планировать смены под эти часы.</li><li>Выходные дают около 70% будничного расхода, а цена лида в это время ниже.</li></ul></div>' +
+      '<div class="card"><h2>Что проверить на неделе</h2><ul style="margin:8px 0 0 18px;display:grid;gap:8px"><li>Доля лидов, взятых за 5 минут: если ниже 80%, часть бюджета сгорает на ожидании.</li><li>Причины отказа по каналу с самой высокой ценой лида.</li><li>Совпадают ли расходы в рекламных кабинетах с таблицей: расхождение больше 3% означает сбой выгрузки.</li></ul><p class="note" style="margin-top:14px">В боевой версии этот текст пишет языковая модель по цифрам периода и приходит в Telegram по расписанию.</p></div></div>';
+  } }
+];
+sections.forEach(function (s) { var r = s.render; s.render = function (p) { active = s; r(p); }; });
+K.app({ sections: sections });
+</script>
+</body>
+</html>
