@@ -13,12 +13,12 @@
   function thumb(key, i) {
     var h = 0; for (var k = 0; k < key.length; k++) h = (h * 31 + key.charCodeAt(k)) >>> 0;
     function r() { h = (h * 1664525 + 1013904223) >>> 0; return h / 4294967296; }
-    var W = 240, H = 96, s = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true" focusable="false">';
-    var kind = i % 3, n = 14, pts = [];
-    for (var j = 0; j < n; j++) pts.push(28 + r() * 44 + (kind === 1 ? j * 1.8 : 0));
+    var W = 520, H = 110, s = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">';
+    var kind = i % 3, n = 16, pts = [];
+    for (var j = 0; j < n; j++) pts.push(30 + r() * 44 + (kind === 1 ? j * 1.6 : 0));
     if (kind === 0) {
       var bw = W / n;
-      pts.forEach(function (v, j) { var bh = v * .8; s += '<rect x="' + (j * bw + 4) + '" y="' + (H - bh) + '" width="' + (bw - 8) + '" height="' + bh + '" rx="4" fill="var(--accent)" opacity="' + (.2 + j / n * .55).toFixed(2) + '"/>'; });
+      pts.forEach(function (v, j) { var bh = v * .8; s += '<rect x="' + (j * bw + 7) + '" y="' + (H - bh) + '" width="' + (bw - 14) + '" height="' + bh + '" rx="5" fill="var(--accent)" opacity="' + (.2 + j / n * .55).toFixed(2) + '"/>'; });
     } else {
       var d = pts.map(function (v, j) { return (j ? 'L' : 'M') + (j * W / (n - 1)).toFixed(1) + ' ' + (H - v).toFixed(1); }).join('');
       s += '<path d="' + d + 'L' + W + ' ' + H + 'L0 ' + H + 'Z" fill="var(--accent)" opacity="' + (kind === 1 ? .18 : .1) + '"/>';
