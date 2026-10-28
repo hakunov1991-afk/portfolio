@@ -35,7 +35,7 @@ var sections = [
     c.innerHTML = K.kpis([{ l: 'Заявок', v: K.fmt(P.length), d: K.deltaHtml(P.length, P.length * .94) }, { l: 'Оплат', v: won, d: K.deltaHtml(won, won * .9) }, { l: 'Конверсия в оплату', v: K.pct(rate(won, P.length)), d: K.deltaHtml(rate(won, P.length), rate(won, P.length) * .97) }, { l: 'Закрыто без оплаты', v: lost, d: K.deltaHtml(lost, lost * 1.05, false) }]) +
       '<div class="grid g2"><div class="card"><h2>Заявки по воронкам</h2><p class="note">&nbsp;</p><div id="a"></div></div><div class="card"><h2>Где сейчас открытые</h2><p class="note">По этапам</p><div id="b"></div></div></div>';
     K.hbars(document.getElementById('a'), D.funnels.map(function (f, i) { return { n: f, v: P.filter(function (d) { return d.funnel === i; }).length }; }));
-    K.hbars(document.getElementById('b'), D.stages.map(function (s, i) { return { n: s, v: P.filter(function (d) { return d.stage === i && d.status === 'open'; }).length }; }));
+    K.hbars(document.getElementById('b'), D.stages.slice(0, 5).map(function (s, i) { return { n: s, v: P.filter(function (d) { return d.stage === i && d.status === 'open'; }).length }; }));
   }),
   page('conv', 'Конверсии', 'От заявки до оплаты по этапам', function (c) {
     var P = pool(), st = D.stages.map(function (s, i) { return { n: s, v: P.filter(function (d) { return d.stage >= i; }).length, c: i === 5 ? '#e45f36' : undefined }; });

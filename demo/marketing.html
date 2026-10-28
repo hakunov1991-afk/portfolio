@@ -19,22 +19,23 @@ var base = new Date(2026, 3, 14);
 for (var i = 0; i < DAYS; i++) {
   var d = new Date(base.getTime() + i * 864e5), dow = d.getDay(), wk = (dow === 0 || dow === 6) ? .72 : 1, trend = 1 + i / 260;
   var spend = Math.round((310 + R() * 110) * wk * trend), leads = Math.round(spend / (11 + R() * 4)), sql = Math.round(leads * (.2 + R() * .06)), meet = Math.round(sql * (.5 + R() * .1)), sales = R() < sql / 62 ? 1 + (R() < .15 ? 1 : 0) : 0;
-  day.push({ d: d, spend: spend, leads: leads, sql: sql, meet: meet, sales: sales, rev: sales * Math.round(5200 + R() * 2600) });
+  day.push({ d: d, spend: spend, leads: leads, sql: sql, meet: meet, sales: sales, rev: sales * Math.round(2300 + R() * 1500) });
 }
 var MN = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
 function sum(a, k) { return a.reduce(function (s, x) { return s + x[k]; }, 0); }
 function bucket(arr, n) { var out = []; for (var i = 0; i < arr.length; i += n) { var c = arr.slice(i, i + n); out.push({ d: c[0].d, spend: sum(c, 'spend'), leads: sum(c, 'leads'), sql: sum(c, 'sql'), meet: sum(c, 'meet'), sales: sum(c, 'sales'), rev: sum(c, 'rev') }); } return out; }
-var PER = { day: ['День', function () { return day.slice(-28); }, 1], week: ['Неделя', function () { return bucket(day.slice(-84), 7); }, 7], month: ['Месяц', function () { return bucket(day.slice(-180), 30); }, 30] };
-var cur = 'day';
-function series() { return PER[cur][1](); }
-function lab(x) { return cur === 'month' ? MN[x.d.getMonth()] : x.d.getDate() + ' ' + MN[x.d.getMonth()]; }
+var PER = { d7: ['7 дней', 7, 1], d30: ['30 дней', 30, 1], d90: ['90 дней', 90, 7] };
+var cur = 'd30';
+function series() { return bucket(day.slice(-PER[cur][1]), PER[cur][2]); }
+function lab(x) { return x.d.getDate() + ' ' + MN[x.d.getMonth()]; }
+function agg(arr) { return { spend: sum(arr, 'spend'), leads: sum(arr, 'leads'), sql: sum(arr, 'sql'), meet: sum(arr, 'meet'), sales: sum(arr, 'sales'), rev: sum(arr, 'rev') }; }
 function romi(rev, spend) { return spend ? (rev - spend) / spend * 100 : 0; }
 var active;
 function rerender() { active.render(document.getElementById('panel')); }
 
 var chans = [['Facebook / Instagram', 4100, 5], ['Google Ads', 3300, 4], ['Яндекс Директ', 2900, 3], ['Telegram Ads', 1700, 2], ['Партнёры и агенты', 900, 6], ['Сайт, органика', 400, 7]];
 function chanRows() {
-  var r = K.rng(55), k = PER[cur][2] / 30;
+  var r = K.rng(55), k = PER[cur][1] / 30;
   return chans.map(function (c) {
     var spend = Math.round(c[1] * k * (.9 + r() * .2)), leads = Math.round(spend / (9 + r() * 12) + (c[0] === 'Сайт, органика' ? 20 * k : 0)), sql = Math.round(leads * (.12 + r() * .2)), sales = Math.round(sql * (.04 + r() * .1) * 10) / 10, rev = Math.round(sales * 6200);
     return { n: c[0], spend: spend, leads: leads, sql: sql, sales: sales, rev: rev };
@@ -43,9 +44,9 @@ function chanRows() {
 
 var sections = [
   { id: 'dash', t: 'Дашборд', s: 'Расход, лиды, продажи и окупаемость за выбранный период', render: function (p) {
-    p.innerHTML = '<div id="sg"></div>'; K.seg(document.getElementById('sg'), [['day', 'День'], ['week', 'Неделя'], ['month', 'Месяц']], cur, function (v) { cur = v; rerender(); });
+    p.innerHTML = '<div id="sg"></div>'; K.seg(document.getElementById('sg'), [['d7', '7 дней'], ['d30', '30 дней'], ['d90', '90 дней']], cur, function (v) { cur = v; rerender(); });
     document.getElementById('sg').style.marginBottom = '14px';
-    var s = series(), n = s.length, a = s[n - 1], b = s[n - 2];
+    var s = series(), N = PER[cur][1], a = agg(day.slice(-N)), b = agg(day.slice(-2 * N, -N));
     var wrap = document.createElement('div'); p.appendChild(wrap);
     wrap.innerHTML = K.kpis([
       { l: 'Расход', v: K.money(a.spend), d: K.deltaHtml(a.spend, b.spend, false) },
@@ -81,7 +82,7 @@ var sections = [
 
   { id: 'chan', t: 'Каналы', s: 'Где деньги работают лучше, а где хуже', render: function (p) {
     p.innerHTML = '<div id="sg"></div><div class="card"><h2>Эффективность каналов</h2><p class="note">Зелёный: ROMI выше 150%, красный: ниже 30%</p><div id="tb"></div></div>';
-    K.seg(document.getElementById('sg'), [['day', 'День'], ['week', 'Неделя'], ['month', 'Месяц']], cur, function (v) { cur = v; rerender(); });
+    K.seg(document.getElementById('sg'), [['d7', '7 дней'], ['d30', '30 дней'], ['d90', '90 дней']], cur, function (v) { cur = v; rerender(); });
     document.getElementById('sg').style.marginBottom = '14px';
     var rows = chanRows();
     document.getElementById('tb').innerHTML = '<div class="scroll"><table><thead><tr><th>Канал</th><th class="num">Расход</th><th class="num">Лиды</th><th class="num">Цена лида</th><th class="num">SQL</th><th class="num">Продажи</th><th class="num">Выручка</th><th class="num">ROMI</th></tr></thead><tbody>' +
