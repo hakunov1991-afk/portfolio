@@ -13,7 +13,7 @@
   function thumb(key, i) {
     var h = 0; for (var k = 0; k < key.length; k++) h = (h * 31 + key.charCodeAt(k)) >>> 0;
     function r() { h = (h * 1664525 + 1013904223) >>> 0; return h / 4294967296; }
-    var W = 520, H = 110, s = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">';
+    var W = 300, H = 110, s = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">';
     var kind = i % 3, n = 16, pts = [];
     for (var j = 0; j < n; j++) pts.push(30 + r() * 44 + (kind === 1 ? j * 1.6 : 0));
     if (kind === 0) {
@@ -28,6 +28,27 @@
     return s + '</svg>';
   }
 
+  var PARTS = {
+    'rps-leads': ['Воронки', 'Конверсии', 'Кампусы', 'Скорость ответа', 'Менеджеры'],
+    'rps-sources': ['Источники', 'Метки UTM', 'Формы сайта', 'Визиты'],
+    'rps-calls': ['Звонки', 'Оценки', 'Менеджеры', 'ИИ-ассистент'],
+    'rps-direct': ['Обзор', 'Кампусы', 'Недели', 'План и факт', 'Каналы'],
+    'rps-family': ['Семьи', 'Кейсы', 'Сигналы риска'],
+    'rps-warm': ['Этапы', 'Месяцы', 'Причины', 'Кого вернуть'],
+    'mz-analytics': ['Продажи', 'Отказы', 'Маркетинг', 'Звонки'],
+    'mz-gc': ['Пробники', 'Кураторы', 'Оплаты', 'Домашки', 'Продления'],
+    'mz-iup': ['Показатели', 'Кабинет куратора', 'Кабинет ученика'],
+    'mz-hr': ['Кадры', 'Обращения', 'Канбан', 'Рассылки'],
+    'mz-raspr': ['Статусы', 'Мои заявки', 'Отчёты', 'Промокоды'],
+    'mz-ambassador': ['Задания', 'Баллы', 'Магазин'],
+    'mz-trainer': ['Тренировка', 'Прогресс', 'Серия дней'],
+    'mz-okk': ['Итоги', 'Менеджеры', 'Чек-лист', 'Веса'],
+    'director': ['Рейтинг', 'Конверсия', 'Когорты', 'Штрафы'],
+    'marketing': ['Расход', 'ROMI', 'Прогноз', 'Выводы ИИ'],
+    'funnel': ['Воронка', 'Причины потери', 'SLA'],
+    'svetofor': ['Светофор', 'Динамика', 'Сводка в Telegram'],
+    'bx-callcenter': ['Скорость ответа', 'Звонки', 'Встречи', 'Качество', 'Нагрузка']
+  };
   function stats(items, cls) { return items; }
 
   function aboutPanel() {
@@ -41,7 +62,7 @@
       '<a class="btn" href="tel:+79640392854">' + I.phone + '+7 964 039-28-54</a>' +
       '<a class="btn" href="mailto:hakunov1991@gmail.com">' + I.mail + 'Почта</a></div>';
     var s = M.stats;
-    h += '<dl class="stats-band"><div class="lead-stat"><dd>' + esc(s[0].n) + '</dd><dt>' + esc(s[0].l) + '</dt></div>' +
+    h += '<dl class="stats-band"><div class="lead-stat">' + (s[0].pair ? s[0].pair.map(function (x, i) { return (i ? '<span class="plus" aria-hidden="true">+</span>' : '') + '<div class="pr"><dd>' + esc(x.n) + '</dd><dt>' + esc(x.l) + '</dt></div>'; }).join('') : '<dd>' + esc(s[0].n) + '</dd><dt>' + esc(s[0].l) + '</dt>') + '</div>' +
       '<div class="stat-rows">' + s.slice(1).map(function (x) { return '<div class="stat-row"><dd>' + esc(x.n) + '</dd><dt>' + esc(x.l) + '</dt></div>'; }).join('') + '</div></dl>';
     h += '</header>';
 
@@ -49,9 +70,9 @@
       return '<div class="row"><span class="row-n">' + ('0' + (i + 1)).slice(-2) + '</span><h3>' + esc(a.t) + '</h3><p>' + esc(a.p) + '</p></div>';
     }).join('') + '</div></section>';
 
-    h += '<section class="block"><h2 class="h2">Как я работаю</h2><div class="steps">' + M.how.map(function (a) {
-      return '<div class="step"><h3>' + esc(a.t) + '</h3><p>' + esc(a.p) + '</p></div>';
-    }).join('') + '</div></section>';
+    h += '<section class="block"><h2 class="h2">Как я работаю</h2><ol class="steps">' + M.how.map(function (a, i) {
+      return '<li class="step" style="--i:' + i + '"><div class="chev"><span>' + ('0' + (i + 1)) + '</span><b>' + esc(a.t) + '</b></div><p>' + esc(a.p) + '</p></li>';
+    }).join('') + '</ol></section>';
 
     h += '<section class="block"><h2 class="h2">Чем работаю</h2><div class="skills-wrap">' + M.skills.map(function (g) {
       return '<div class="skillrow"><h3>' + esc(g.t) + '</h3><div class="tags">' + g.tags.map(function (t) { return '<span class="tag">' + esc(t) + '</span>'; }).join('') + '</div></div>';
@@ -63,9 +84,17 @@
       return '<li><a href="' + c.href + '" target="_blank" rel="noopener">' + esc(c.t) + I.ext + '</a></li>';
     }).join('') + '</ul></div></div></section>';
 
-    h += '<section class="block"><h2 class="h2">Формат и условия</h2><div class="facts">' + M.about.map(function (a, i) {
-      return '<div class="card fact' + (i === 1 ? ' lead' : '') + '"><h3>' + esc(a.t) + '</h3><p>' + esc(a.p) + '</p></div>';
-    }).join('') + '</div></section>';
+    var T = M.terms;
+    h += '<section class="block"><h2 class="h2">Формат и условия</h2><div class="terms">' +
+      '<div class="tcard role"><p class="tl">Желаемая роль</p><ul class="rl">' + T.role.roles.map(function (r) { return '<li>' + esc(r) + '</li>'; }).join('') + '</ul>' +
+      '<div class="pay"><span class="tl">Ожидания</span><b>' + esc(T.role.pay) + '</b><small>' + esc(T.role.payNote) + '</small></div></div>' +
+      '<div class="tcard"><p class="tl">Формат работы</p><div class="tags">' + T.format.map(function (f) { return '<span class="tag">' + esc(f) + '</span>'; }).join('') + '</div></div>' +
+      '<div class="tcard"><p class="tl">Языки</p><dl class="langs">' + T.langs.map(function (x) { return '<div><dt>' + esc(x.l) + '</dt><dd>' + esc(x.v) + '</dd></div>'; }).join('') + '</dl></div>' +
+      '</div></section>';
+    h += '<section class="block"><h2 class="h2">Рекомендации</h2><div class="recs">' + T.recs.map(function (r) {
+      return '<div class="rec"><span class="av" aria-hidden="true">' + esc(r.n.charAt(0)) + '</span><b>' + esc(r.n) + '</b><span>' + esc(r.r) + '</span><em>' + esc(r.c) + '</em>' +
+        (r.tg ? '<a class="link" href="' + r.href + '" target="_blank" rel="noopener"><span>' + esc(r.tg) + '</span>' + I.ext + '</a>' : '') + '</div>';
+    }).join('') + '</div><p class="recnote">' + esc(T.recsNote) + '</p></section>';
     h += footer();
     return h;
   }
@@ -107,7 +136,10 @@
     }
     if (p.links && p.links.length) {
       h += '<section class="block"><h2 class="h2">' + esc(p.linksTitle || 'Дашборды') + '</h2><div class="links">' + p.links.map(function (l, i) {
-        return '<a class="lk" href="' + l.href + '" target="_blank" rel="noopener"><div class="thumb">' + thumb(l.href, i) + '</div><div class="txt"><span>' + esc(l.label) + '</span><b>' + esc(l.title) + '</b><span class="go" style="font-family:var(--f-body);letter-spacing:0;text-transform:none;font-size:13px">Открыть' + I.ext + '</span></div></a>';
+        var f = l.href.replace(/^demo\//, '').replace(/[#?].*$/, '').replace('.html', ''), parts = PARTS[f] || [], shown = parts.slice(0, 5);
+        return '<a class="lk" href="' + l.href + '" target="_blank" rel="noopener"><div class="lk-top"><span class="ix">' + ('0' + (i + 1)).slice(-2) + '</span><span class="arr" aria-hidden="true">' + I.ext + '</span></div>' +
+          '<span class="lab">' + esc(l.label) + '</span><b>' + esc(l.title) + '</b>' +
+          (shown.length ? '<div class="parts">' + shown.map(function (x) { return '<i>' + esc(x) + '</i>'; }).join('') + (parts.length > 5 ? '<i class="more">+' + (parts.length - 5) + '</i>' : '') + '</div>' : '') + '</a>';
       }).join('') + '</div></section>';
     }
     return h + footer();
