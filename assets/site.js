@@ -66,7 +66,7 @@
       '<div class="stat-rows">' + s.slice(1).map(function (x) { return '<div class="stat-row"><dd>' + esc(x.n) + '</dd><dt>' + esc(x.l) + '</dt></div>'; }).join('') + '</div></dl>';
     h += '</header>';
 
-    h += '<section class="block"><h2 class="h2">Чем я полезен работодателю</h2><div class="adv rows">' + M.adv.map(function (a, i) {
+    h += '<section class="block"><h2 class="h2">Чем я полезен работодателю</h2><div class="perks rows">' + M.adv.map(function (a, i) {
       return '<div class="row"><span class="row-n">' + ('0' + (i + 1)).slice(-2) + '</span><h3>' + esc(a.t) + '</h3><p>' + esc(a.p) + '</p></div>';
     }).join('') + '</div></section>';
 
