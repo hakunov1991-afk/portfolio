@@ -167,7 +167,7 @@
     panel.setAttribute('aria-labelledby', 'tab-' + it.id);
     panel.classList.remove('enter'); void panel.offsetWidth; panel.classList.add('enter');
     btns.forEach(function (b, i) { b.setAttribute('aria-selected', i === idx ? 'true' : 'false'); b.tabIndex = i === idx ? 0 : -1; });
-    document.title = (idx ? it.tab + ' · ' : '') + 'Хакунов Алан, CRM, автоматизация, BI';
+    document.title = (idx ? it.tab + ' · ' : '') + 'Алан Хакунов — специалист amoCRM, Bitrix24, n8n, BI';
     var sel = btns[idx]; if (sel.scrollIntoView) sel.scrollIntoView({ inline: 'center', block: 'nearest' });
     if (push) { try { history.replaceState(null, '', '#' + it.id); } catch (e) {} window.scrollTo({ top: 0, behavior: 'smooth' }); }
   }
