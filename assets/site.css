@@ -413,7 +413,7 @@ main{background:var(--panel);border-radius:var(--r-l);padding:22px 20px 110px;ma
 .lead-stat .pr + .plus + .pr{padding-top:0}
 
 /* Name and portrait share a single framed card. */
-.identity-card{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,30%);align-items:center;gap:16px;padding:20px;border:1px solid var(--line);border-radius:var(--r-l);background:var(--surface);margin:22px 0}
-.identity-card .name{font-size:clamp(32px,8.3vw,64px);margin:0;min-width:0}
+.identity-card{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,27%);align-items:center;gap:16px;padding:20px;border:1px solid var(--line);border-radius:var(--r-l);background:var(--surface);margin:22px 0}
+.identity-card .name{font-size:clamp(30px,8.6vw,68px);line-height:1.04;letter-spacing:.025em;margin:0;min-width:0}
 .identity-card .hero-portrait{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:12px}
-@media(min-width:760px){.identity-card{grid-template-columns:minmax(0,1fr) minmax(0,27%);gap:32px;padding:32px}.identity-card .name{font-size:clamp(54px,7.2vw,112px)}}
+@media(min-width:760px){.identity-card{grid-template-columns:minmax(0,1fr) minmax(0,24%);gap:28px;padding:32px}.identity-card .name{font-size:clamp(58px,8.6vw,136px)}}
