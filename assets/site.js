@@ -52,10 +52,10 @@
   function stats(items, cls) { return items; }
 
   function aboutPanel() {
-    var h = '<header class="hero"><img class="hero-portrait" src="assets/alan-portrait.webp" alt="Алан Хакунов" width="144" height="180" decoding="async" fetchpriority="high">';
+    var h = '<header class="hero">';
     h += '<p class="avail"><i></i>Открыт к проектам и вакансиям</p>';
     var parts = M.name.split(' ');
-    h += '<h1 class="name">' + esc(parts[0]) + '<br><span>' + esc(parts.slice(1).join(' ')) + '</span></h1>';
+    h += '<div class="identity-card"><h1 class="name">' + esc(parts[0]) + '<br><span>' + esc(parts.slice(1).join(' ')) + '</span></h1><img class="hero-portrait" src="assets/alan-portrait.webp" alt="Алан Хакунов" width="220" height="275" decoding="async" fetchpriority="high"></div>';
     h += '<p class="role-line">' + esc(M.role) + '</p>';
     h += '<p class="summary">' + esc(M.summary) + '</p>';
     h += '<div class="cta"><a class="btn pri" href="' + TG + '" target="_blank" rel="noopener">' + I.tg + 'Написать в Telegram</a>' +
