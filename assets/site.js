@@ -52,7 +52,7 @@
   function stats(items, cls) { return items; }
 
   function aboutPanel() {
-    var h = '<header class="hero">';
+    var h = '<header class="hero"><img class="hero-portrait" src="assets/alan-portrait.webp" alt="Алан Хакунов" width="144" height="180" decoding="async" fetchpriority="high">';
     h += '<p class="avail"><i></i>Открыт к проектам и вакансиям</p>';
     var parts = M.name.split(' ');
     h += '<h1 class="name">' + esc(parts[0]) + '<br><span>' + esc(parts.slice(1).join(' ')) + '</span></h1>';
