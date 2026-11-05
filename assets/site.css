@@ -413,5 +413,5 @@ main{background:var(--panel);border-radius:var(--r-l);padding:22px 20px 110px;ma
 .lead-stat .pr + .plus + .pr{padding-top:0}
 
 /* Compact personal portrait, beside the introduction on wide screens. */
-.hero-portrait{display:block;width:112px;height:140px;object-fit:cover;border-radius:16px;border:1px solid var(--line);margin:0 0 20px}
-@media(min-width:760px){.hero-portrait{float:right;width:144px;height:180px;margin:4px 0 24px 28px}.hero .stats-band{clear:both}}
+.hero-portrait{display:block;width:144px;height:180px;object-fit:cover;border-radius:16px;border:1px solid var(--line);margin:0 0 20px}
+@media(min-width:760px){.hero-portrait{float:right;width:220px;height:275px;margin:4px 0 24px 28px}.hero .stats-band{clear:both}}
